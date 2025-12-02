@@ -12,8 +12,9 @@ export const Confirm = () => {
   useEffect(() => {
     const confirmarCuenta = async () => {
       try {
-        const res = await axios.get(
-  `${import.meta.env.VITE_BACKEND_URL}api/usuarios/confirmar/${token}`
+        const url = `${import.meta.env.VITE_BACKEND_URL.replace(/\/$/, "")}api/usuarios/confirmar/${token}`;
+axios.get(url);
+
 );
 
         setMensaje('Cuenta confirmada ✅');
