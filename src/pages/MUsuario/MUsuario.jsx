@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useFetch } from "../hooks/useFetch"; // importamos hook
+import { useFetch } from "../../hooks/useFetch.js"; // importamos hook
 import "./MUsuario.css";
 
 const MUsuario = () => {
