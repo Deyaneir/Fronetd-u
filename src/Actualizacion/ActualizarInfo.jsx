@@ -31,20 +31,15 @@ const ActualizarInfo = () => {
     "https://api.dicebear.com/6.x/bottts/svg?seed=Avatar5",
   ];
 
-  const BASE_URL = import.meta.env.VITE_BACKEND_URL; 
-  // ej: https://diverse-janeta-epn-a654e5e7.koyeb.app
+  const BASE_URL = import.meta.env.VITE_BACKEND_URL; // Asegúrate de que termina sin "/"
 
   // 🔹 Traer datos del usuario
   useEffect(() => {
     const fetchUserInfo = async () => {
       const token = localStorage.getItem("token");
-      if (!token) {
-        toast.error("No estás autenticado");
-        return;
-      }
+      if (!token) return;
 
       try {
-        // ⚠️ Ruta correcta incluyendo /api/usuarios
         const res = await axios.get(`${BASE_URL}/api/usuarios/perfil`, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -59,7 +54,7 @@ const ActualizarInfo = () => {
         setUserCareer(res.data.carrera || "");
       } catch (err) {
         console.error("Error al cargar datos del usuario:", err.response?.data || err);
-        toast.error(err.response?.data?.msg || "Error al obtener perfil");
+        toast.error("No se pudo obtener el perfil. Revisa tu sesión o backend.");
       }
     };
 
@@ -84,7 +79,10 @@ const ActualizarInfo = () => {
     setCropperModalOpen(false);
     setImageToCrop(null);
 
-    if (!croppedImageBlob) return toast.error("No se pudo obtener la imagen recortada.");
+    if (!croppedImageBlob) {
+      toast.error("No se pudo obtener la imagen recortada.");
+      return;
+    }
 
     const formData = new FormData();
     formData.append("file", croppedImageBlob);
@@ -105,13 +103,9 @@ const ActualizarInfo = () => {
   };
 
   const handleUpdate = async () => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      toast.error("No estás autenticado");
-      return;
-    }
-
     try {
+      const token = localStorage.getItem("token");
+
       await axios.put(
         `${BASE_URL}/api/usuarios/actualizar`,
         {
@@ -143,11 +137,7 @@ const ActualizarInfo = () => {
 
       <div className="avatar-wrapper">
         <div className="avatar-circle" onClick={handleFileClick}>
-          {avatar ? (
-            <img src={avatar} alt="Avatar" className="avatar-img-preview" />
-          ) : (
-            <span className="default-avatar">👤</span>
-          )}
+          {avatar ? <img src={avatar} alt="Avatar" className="avatar-img-preview" /> : <span className="default-avatar">👤</span>}
         </div>
 
         <div className="btns-avatar">
@@ -173,12 +163,7 @@ const ActualizarInfo = () => {
       )}
 
       {cropperModalOpen && imageToCrop && (
-        <AvatarCropperModal
-          imageSrc={imageToCrop}
-          open={cropperModalOpen}
-          onClose={() => setCropperModalOpen(false)}
-          onCropComplete={handleCroppedAvatar}
-        />
+        <AvatarCropperModal imageSrc={imageToCrop} open={cropperModalOpen} onClose={() => setCropperModalOpen(false)} onCropComplete={handleCroppedAvatar} />
       )}
 
       <div className="form-section">
