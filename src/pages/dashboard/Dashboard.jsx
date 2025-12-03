@@ -3,15 +3,15 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import storeAuth from "../../context/storeAuth";   
 import './Dashboard.css';
+import storeAuth from "../../context/storeAuth";   
 
 const Dashboard = () => {
     const navigate = useNavigate();
-    const [userName, setUserName] = useState("Usuario");
+    const [userName, setUserName] = useState("usuario");
     const [userRole, setUserRole] = useState("");
     const [isLoading, setIsLoading] = useState(true);
-    const [quote, setQuote] = useState(null);
+    const [quote, setQuote] = useState("");
     const [menuOpen, setMenuOpen] = useState(false);
     const [avatar, setAvatar] = useState(null);
 
@@ -24,11 +24,13 @@ const Dashboard = () => {
         navigate("/login");
     };
 
-    // 📌 Cargar usuario y frase
+    // 📌 CARGAR USUARIO + AVATAR
     useEffect(() => {
         const fetchUserInfo = async () => {
             try {
-                const token = storeAuth.getState().token;
+                // 🟣 TOKEN CORREGIDO: storeAuth o localStorage
+                const token = storeAuth.getState().token || localStorage.getItem("token");
+
                 if (!token) return setIsLoading(false);
 
                 const res = await axios.get(
@@ -36,16 +38,20 @@ const Dashboard = () => {
                     { headers: { Authorization: `Bearer ${token}` } }
                 );
 
-                // 🔹 Debug
-                console.log("Perfil:", res.data);
+                if (res.data?.nombre) setUserName(res.data.nombre);
+                if (res.data?.rol) setUserRole(res.data.rol);
 
-                const usuario = res.data || {};
-                if (usuario.nombre) setUserName(usuario.nombre);
-                if (usuario.rol) setUserRole(usuario.rol);
-                if (usuario.avatar) setAvatar(usuario.avatar);
+                // ✔ Cargar avatar con URL completa si es relativo
+                if (res.data?.avatar) {
+                    const url = res.data.avatar.startsWith("http")
+                        ? res.data.avatar
+                        : `${import.meta.env.VITE_BACKEND_URL}/${res.data.avatar}`;
+
+                    setAvatar(url);
+                }
 
             } catch (error) {
-                console.error("Error al obtener perfil:", error);
+                console.error("Error al obtener el usuario:", error);
             } finally {
                 setIsLoading(false);
             }
@@ -53,37 +59,51 @@ const Dashboard = () => {
 
         const fetchQuote = async () => {
             try {
-                const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/frase`);
-                console.log("Frase raw:", res.data);
+                const response = await axios.get(
+                    `${import.meta.env.VITE_BACKEND_URL}/frase`
+                );
 
-                let fraseData = Array.isArray(res.data) ? res.data[0] : res.data;
-                const { q: frase, a: autor } = fraseData || {};
-                if (!frase) return;
+                if (!response.data || !response.data[0]) return;
+
+                const { q: frase, a: autor } = response.data[0];
 
                 const traduccion = await axios.get(
                     `https://api.mymemory.translated.net/get?q=${encodeURIComponent(frase)}&langpair=en|es`
                 );
 
-                setQuote({ texto: `"${traduccion.data.responseData.translatedText}"`, autor });
+                setQuote({
+                    texto: `"${traduccion.data.responseData.translatedText}"`,
+                    autor
+                });
 
             } catch (error) {
-                console.error("Error al obtener frase motivadora:", error);
+                console.error("Error frase motivadora:", error);
             }
         };
 
         fetchUserInfo();
         fetchQuote();
 
-        // 🎉 Toast al iniciar sesión
-        const token = storeAuth.getState().token;
-        if (token && !localStorage.getItem("loginToastShown")) {
+        // 🟦 Toast solo al iniciar sesión
+        const token = storeAuth.getState().token || localStorage.getItem("token");
+        const toastShownBefore = localStorage.getItem("loginToastShown");
+
+        if (token && !toastShownBefore) {
             localStorage.setItem("loginToastShown", "true");
-            toast.success("Inicio de sesión exitoso 🎉", { position: "top-right", autoClose: 2000 });
+            setTimeout(() => {
+                toast.success("Inicio de sesión exitoso 🎉", {
+                    position: "top-right",
+                    autoClose: 2000,
+                });
+            }, 0);
         }
+
     }, []);
 
-    // 📸 Avatar
+    // 📸 Abrir selector de archivo
     const handleFileClick = () => fileInputRef.current.click();
+
+    // 📸 Vista previa del avatar nuevo
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -97,36 +117,72 @@ const Dashboard = () => {
         <section className="dashboard-section">
             <ToastContainer />
 
-            {/* Menú hamburguesa */}
-            <button className={`hamburger-btn ${menuOpen ? "open" : ""}`} onClick={() => setMenuOpen(!menuOpen)}>
-                <span></span><span></span><span></span>
+            {/* BOTÓN 3 LÍNEAS */}
+            <button
+                className={`hamburger-btn ${menuOpen ? "open" : ""}`}
+                onClick={() => setMenuOpen(!menuOpen)}
+            >
+                <span></span>
+                <span></span>
+                <span></span>
             </button>
 
+            {/* MENÚ DESLIZABLE */}
             <nav className={`side-menu ${menuOpen ? "show" : ""}`}>
+
+                {/* TOP DEL MENÚ */}
                 <div className="menu-header">
                     <h3 className="menu-title">Menú</h3>
+
+                    {/* Avatar */}
                     <div className="avatar-section">
                         <div className="avatar-container" onClick={handleFileClick}>
-                            {avatar ? <img src={avatar} alt="Avatar" className="avatar-img" /> : <span className="default-avatar">👤</span>}
-                            <div className="avatar-overlay"><i className="fa fa-camera"></i></div>
+                            {avatar ? (
+                                <img src={avatar} alt="Avatar" className="avatar-img" />
+                            ) : (
+                                <span className="default-avatar">👤</span>
+                            )}
+                            <div className="avatar-overlay">
+                                <i className="fa fa-camera"></i>
+                            </div>
                         </div>
-                        <input type="file" ref={fileInputRef} onChange={handleFileChange} className="input-file-hidden" accept="image/*" />
+
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            onChange={handleFileChange}
+                            className="input-file-hidden"
+                            accept="image/*"
+                        />
                     </div>
                 </div>
+
+                {/* BOTONES DEL MENÚ */}
                 <div className="menu-buttons">
                     <button onClick={() => navigate("/Dashboard")}>Inicio</button>
                     <button onClick={() => navigate("/MUsuario")}>Mi cuenta</button>
-                    <button onClick={() => {}}>Favoritos</button>
+                    <button onClick={() => { }}>Favoritos</button>
                     <button onClick={() => navigate("/Ajustes")}>Ajustes</button>
                     <button onClick={handleLogout}>Cerrar sesión</button>
                 </div>
             </nav>
 
-            <div className={`menu-overlay ${menuOpen ? "show" : ""}`} onClick={() => setMenuOpen(false)}></div>
+            {/* OVERLAY DEL MENÚ */}
+            <div
+                className={`menu-overlay ${menuOpen ? "show" : ""}`}
+                onClick={() => setMenuOpen(false)}
+            ></div>
 
+            {/* CONTENIDO PRINCIPAL */}
             <div className="dashboard-header">
-                {isLoading ? <h2>Cargando...</h2> : <h2>¡Bienvenido de nuevo, {userName}!</h2>}
+                {isLoading ? (
+                    <h2>Cargando...</h2>
+                ) : (
+                    <h2>¡Bienvenido de nuevo, {userName}!</h2>
+                )}
+
                 <p>Explora lo mejor de tu comunidad universitaria.</p>
+
                 {quote && (
                     <div className="motivational-quote">
                         <p className="quote-text">{quote.texto}</p>
@@ -135,21 +191,29 @@ const Dashboard = () => {
                 )}
             </div>
 
+            {/* TARJETAS DEL DASHBOARD */}
             <div className="dashboard-grid">
                 <div className="dashboard-card events-card">
                     <h3 className="card-title">Eventos en tu U 🎉</h3>
                     <p>Descubre próximos eventos en tu campus.</p>
                     <button className="dashboard-btn">Ver Eventos</button>
                 </div>
+
                 <div className="dashboard-card groups-card">
                     <h3 className="card-title">Grupos y Comunidades 🤝</h3>
                     <p>Únete a clubes con tus mismos intereses.</p>
                     <button className="dashboard-btn">Explorar Grupos</button>
                 </div>
+
                 <div className="dashboard-card matches-card">
                     <h3 className="card-title">Tus Posibles Matches 💖</h3>
                     <p>Conecta con estudiantes que comparten tu vibe.</p>
-                    <button className="dashboard-btn" onClick={() => navigate("/matches")}>Ver Matches</button>
+                    <button
+                        className="dashboard-btn"
+                        onClick={() => navigate("/matches")}
+                    >
+                        Ver Matches
+                    </button>
                 </div>
             </div>
         </section>
