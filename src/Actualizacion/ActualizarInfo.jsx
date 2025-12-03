@@ -33,11 +33,6 @@ const ActualizarInfo = () => {
 
   const BASE_URL = import.meta.env.VITE_BACKEND_URL; // ej: https://diverse-janeta-epn-a654e5e7.koyeb.app
 
-axios.get(`${BASE_URL}/api/usuarios/perfil`, {
-  headers: { Authorization: `Bearer ${token}` },
-});
-
-
   // 🔹 Traer datos del usuario
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -48,6 +43,7 @@ axios.get(`${BASE_URL}/api/usuarios/perfil`, {
         const res = await axios.get(`${BASE_URL}/api/usuarios/perfil`, {
           headers: { Authorization: `Bearer ${token}` },
         });
+
         setUserName(res.data.nombre || "");
         setAvatar(res.data.avatar || null);
         setUserPhone(res.data.telefono || "");
@@ -58,11 +54,12 @@ axios.get(`${BASE_URL}/api/usuarios/perfil`, {
         setUserCareer(res.data.carrera || "");
       } catch (err) {
         console.error("Error al cargar datos del usuario:", err.response?.data || err);
+        toast.error(err.response?.data?.msg || "No se pudo cargar la información del usuario");
       }
     };
 
     fetchUserInfo();
-  }, []);
+  }, [BASE_URL]);
 
   const handleFileClick = () => fileInputRef.current.click();
 
@@ -132,7 +129,6 @@ axios.get(`${BASE_URL}/api/usuarios/perfil`, {
   return (
     <div className="actualizar-container">
       <ToastContainer />
-
       <h2 className="titulo">Actualizar información de cuenta</h2>
 
       <div className="avatar-wrapper">
@@ -163,7 +159,12 @@ axios.get(`${BASE_URL}/api/usuarios/perfil`, {
       )}
 
       {cropperModalOpen && imageToCrop && (
-        <AvatarCropperModal imageSrc={imageToCrop} open={cropperModalOpen} onClose={() => setCropperModalOpen(false)} onCropComplete={handleCroppedAvatar} />
+        <AvatarCropperModal
+          imageSrc={imageToCrop}
+          open={cropperModalOpen}
+          onClose={() => setCropperModalOpen(false)}
+          onCropComplete={handleCroppedAvatar}
+        />
       )}
 
       <div className="form-section">
