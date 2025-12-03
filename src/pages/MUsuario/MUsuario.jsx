@@ -43,10 +43,13 @@ const MUsuario = () => {
       const token = localStorage.getItem('token');
       if (!token) return;
 
-     const BASE_URL = `${import.meta.env.VITE_BACKEND_URL}/api/usuarios`;
+     // Vamos a usar la ruta correcta que se debe formar si el servidor usa /api/usuarios
+const BASE_URL = `${import.meta.env.VITE_BACKEND_URL}`; // Solo el dominio
 
-const response = await axios.get(`${BASE_URL}/perfil`, {
-  headers: { Authorization: `Bearer ${token}` }
+// Si su backend tiene 'app.use('/api/usuarios', router)'
+const response = await axios.get(`${BASE_URL}/api/usuarios/perfil`, { // <--- Poner toda la ruta
+    headers: { Authorization: `Bearer ${token}` }
+});
 });
 
 
