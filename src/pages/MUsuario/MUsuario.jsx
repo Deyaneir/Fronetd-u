@@ -1,19 +1,19 @@
 // MUsuario.jsx - Frontend
 
-import React, { useState, useEffect, useRef } from "react"; // ✅ Corregido: SOLO hooks nativos aquí
+import React, { useState, useEffect, useRef } from "react"; // ✅ Importación de Hooks nativos CORRECTA
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-// ✅ CORRECCIÓN DE RUTA Y EXTENSIÓN: Asume que useFetch.js está en la raíz de src/hooks/
-// Ajusta la extensión (.js o .jsx) según tu archivo real
+// ✅ CORRECCIÓN DE RUTA: Asegúrate de que esta ruta sea correcta para tu estructura
+// (Ej: Si tu archivo es useFetch.jsx, cambia .js por .jsx)
 import { useFetch } from "../../hooks/useFetch.js"; 
 
 import "./MUsuario.css";
 
 const MUsuario = () => {
   const navigate = useNavigate();
-  // ✅ useFetch se llama como una función para obtener el wrapper (fetchData)
+  // Inicialización del custom hook
   const fetchData = useFetch(); 
   const fileInputRef = useRef(null);
 
@@ -40,7 +40,7 @@ const MUsuario = () => {
         const token = localStorage.getItem("token");
         if (!token) return;
 
-        // ✅ Ruta correcta: /api/usuarios/perfil
+        // Llamada al endpoint correcto: /api/usuarios/perfil
         const data = await fetchData(
           `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/perfil`,
           null,
@@ -48,6 +48,7 @@ const MUsuario = () => {
           { Authorization: `Bearer ${token}` }
         );
 
+        // Cargar datos del usuario
         setUserName(data.nombre || "Usuario");
         setUserStatus(data.estado || "Disponible");
         setAvatar(data.avatar || null);
@@ -59,12 +60,12 @@ const MUsuario = () => {
         setUserCareer(data.carrera || "");
 
       } catch (err) {
-        console.error(err);
+        console.error("Error al cargar perfil:", err);
       }
     };
 
     fetchUserInfo();
-  }, []);
+  }, [fetchData]); // Se incluye fetchData como dependencia para cumplir las reglas de hooks
 
   // 🔹 Subir avatar
   const handleFileClick = () => fileInputRef.current.click();
@@ -89,7 +90,7 @@ const MUsuario = () => {
 
       const token = localStorage.getItem("token");
       if (token) {
-        // ✅ Ruta correcta: /api/usuarios/actualizar
+        // Llamada al endpoint correcto: /api/usuarios/actualizar
         await fetchData(
           `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/actualizar`,
           { avatar: newAvatarUrl },
@@ -136,7 +137,7 @@ const MUsuario = () => {
         return (
           <div className="user-profile-section">
             <h3>{userName}</h3>
-            <div className="avatar-circle-large">
+            <div className="avatar-circle-large" onClick={handleFileClick}>
               {avatar ? <img src={getAvatarUrl(avatar)} alt="Avatar" /> : <span>👤</span>}
             </div>
             <div className="profile-info">
