@@ -31,8 +31,8 @@ const Dashboard = () => {
                 const token = storeAuth.getState().token;
                 if (!token) return setIsLoading(false);
 
-                const res = await axios.get(
-                    `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/perfil`,
+                const res = await 
+                    axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/usuarios/perfil`),
                     {
                         headers: {
                             Authorization: `Bearer ${token}`
@@ -55,8 +55,9 @@ const Dashboard = () => {
 
         const fetchQuote = async () => {
             try {
-                const response = await axios.get(
-                    `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/frase`
+                const response = await 
+                    axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/usuarios/frase`)
+
                 );
 
                 const { q: frase, a: autor } = response.data[0];
