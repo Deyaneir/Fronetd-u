@@ -19,18 +19,29 @@ const ResetPassword = () => {
   const handleReset = async (data) => {
     const loadingToast = toast.loading("Restableciendo contraseña...");
     try {
-      // ✅ CORRECCIÓN CLAVE: Enviar 'confirmpassword' para que el backend pueda validarlo.
+      // ✅ Ruta backend corregida
       const res = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/reset-password/${token}`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/reset-password/${token}`,
         { 
-          password: data.password, // Enviamos el campo principal
-          confirmpassword: data.confirmPassword // Enviamos la confirmación con el nombre que espera el backend
+          password: data.password,
+          confirmpassword: data.confirmPassword
         }
       );
-      toast.update(loadingToast, { render: res.data.msg, type: "success", isLoading: false, autoClose: 4000 });
+      toast.update(loadingToast, { 
+        render: res.data.msg || "Contraseña actualizada ✅", 
+        type: "success", 
+        isLoading: false, 
+        autoClose: 4000 
+      });
       setTimeout(() => navigate("/login"), 2000);
     } catch (error) {
-      toast.update(loadingToast, { render: error.response?.data?.msg || "Error 😞", type: "error", isLoading: false, autoClose: 4000 });
+      toast.update(loadingToast, { 
+        render: error.response?.data?.msg || "Error al restablecer contraseña 😞", 
+        type: "error", 
+        isLoading: false, 
+        autoClose: 4000 
+      });
+      console.error(error);
     }
   };
 
@@ -43,7 +54,7 @@ const ResetPassword = () => {
     inputContainer: { position: "relative", width: "100%", marginTop: "20px" },
     input: { 
       width: "100%", 
-      padding: "12px 12px 12px 12px", // ojo pegado al borde derecho
+      padding: "12px", 
       border: "2px solid #ccc", 
       borderRadius: "10px", 
       fontSize: "16px", 
@@ -65,7 +76,7 @@ const ResetPassword = () => {
           {/* Nueva contraseña */}
           <div style={styles.inputContainer}>
             <input
-              type={showPassword ? "text" : "password"} // ojo abierto → visible, ojo cerrado → oculto
+              type={showPassword ? "text" : "password"}
               placeholder="Nueva contraseña"
               style={styles.input}
               {...register("password", { required: "La contraseña es obligatoria", minLength: { value: 6, message: "Mínimo 6 caracteres" } })}
@@ -79,7 +90,7 @@ const ResetPassword = () => {
           {/* Confirmar contraseña */}
           <div style={styles.inputContainer}>
             <input
-              type={showConfirm ? "text" : "password"} // ojo abierto → visible, ojo cerrado → oculto
+              type={showConfirm ? "text" : "password"}
               placeholder="Reescribe la contraseña"
               style={styles.input}
               {...register("confirmPassword", { required: "Debes confirmar", validate: value => value === password || "No coinciden" })}
