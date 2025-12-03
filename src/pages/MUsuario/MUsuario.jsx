@@ -25,32 +25,19 @@ const MUsuario = () => {
   const [userUniversity, setUserUniversity] = useState("");
   const [userCareer, setUserCareer] = useState("");
 
-  const avatarOptions = [
-    "https://api.dicebear.com/6.x/bottts/svg?seed=Avatar1",
-    "https://api.dicebear.com/6.x/bottts/svg?seed=Avatar2",
-    "https://api.dicebear.com/6.x/bottts/svg?seed=Avatar3",
-    "https://api.dicebear.com/6.x/bottts/svg?seed=Avatar4",
-    "https://api.dicebear.com/6.x/bottts/svg?seed=Avatar5"
-  ];
-  const [avatarModalOpen, setAvatarModalOpen] = useState(false);
-
-  // 🔹 Función para forzar recarga de imagen
+  // 🔹 Forzar recarga de avatar
   const getAvatarUrl = (url) => url ? `${url}?t=${new Date().getTime()}` : null;
 
-  // 🔹 Función para cargar perfil desde backend
+  // 🔹 Cargar información del perfil desde backend
   const fetchUserInfo = async () => {
     try {
       const token = localStorage.getItem('token');
       if (!token) return;
 
-     // Vamos a usar la ruta correcta que se debe formar si el servidor usa /api/usuarios
-const BASE_URL = `${import.meta.env.VITE_BACKEND_URL}`; // Solo el dominio
-
-// Si su backend tiene 'app.use('/api/usuarios', router)'
-const response = await axios.get(`${BASE_URL}/perfil`, { 
-    headers: { Authorization: `Bearer ${token}` }
-});
-
+      const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+      const response = await axios.get(`${BASE_URL}/api/usuarios/perfil`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
 
       setUserName(response.data.nombre || "Usuario");
       setUserStatus(response.data.estado || "Disponible");
@@ -62,7 +49,6 @@ const response = await axios.get(`${BASE_URL}/perfil`, {
       setUserUniversity(response.data.universidad || "");
       setUserCareer(response.data.carrera || "");
 
-      // Actualizamos contexto global
       setProfileData(response.data);
     } catch (err) {
       console.error("Error al obtener perfil:", err.response?.data || err);
@@ -92,23 +78,21 @@ const response = await axios.get(`${BASE_URL}/perfil`, {
     }
 
     try {
-      // Subir a Cloudinary
+      // Subir avatar a Cloudinary
       const resCloudinary = await axios.post(
         "https://api.cloudinary.com/v1_1/dm5yhmz9a/image/upload",
         formData
       );
       const newAvatarUrl = resCloudinary.data.secure_url;
 
-      // Actualizar en backend
+      // Actualizar avatar en backend
       await axios.put(`${import.meta.env.VITE_BACKEND_URL}/api/usuarios/actualizar`, 
         { avatar: newAvatarUrl },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      // Actualizar estado local y contexto global
       setAvatar(newAvatarUrl);
       setProfileData(prev => ({ ...prev, avatar: newAvatarUrl }));
-
       toast.success("Avatar actualizado correctamente.");
     } catch (err) {
       console.error("Error al subir o guardar el avatar:", err.response?.data || err);
@@ -123,6 +107,7 @@ const response = await axios.get(`${BASE_URL}/perfil`, {
 
   const handleMenuToggle = () => setMenuOpen(!menuOpen);
 
+  // Cerrar menú al hacer clic afuera o presionar Escape
   useEffect(() => {
     const handleClickOutside = (event) => {
       const menu = document.querySelector(".side-menu");
@@ -142,6 +127,7 @@ const response = await axios.get(`${BASE_URL}/perfil`, {
     };
   }, [menuOpen]);
 
+  // Renderizar contenido derecho según tab activo
   const renderRightContent = () => {
     switch (activeTab) {
       case "cuenta":
@@ -167,7 +153,7 @@ const response = await axios.get(`${BASE_URL}/perfil`, {
             </div>
           </div>
         );
-      case "favoritos": return <div><h3>Favoritos</h3><p>Información de tu cuenta...</p></div>;
+      case "favoritos": return <div><h3>Favoritos</h3><p>Información de tus favoritos...</p></div>;
       case "chats": return <div><h3>Chats</h3><p>Tus conversaciones...</p></div>;
       case "notificaciones": return <div><h3>Notificaciones</h3><p>Tus notificaciones...</p></div>;
       default: return null;
@@ -196,7 +182,7 @@ const response = await axios.get(`${BASE_URL}/perfil`, {
         <div className="menu-buttons">
           <button onClick={() => navigate("/Dashboard")}>Inicio</button>
           <button onClick={() => navigate("/MUsuario")}>Mi cuenta</button>
-          <button onClick={() => {}}>Favoritos</button>
+          <button onClick={() => setActiveTab("favoritos")}>Favoritos</button>
           <button onClick={() => navigate("/Ajustes")}>Ajustes</button>
           <button onClick={handleLogout}>Cerrar sesión</button>
         </div>
