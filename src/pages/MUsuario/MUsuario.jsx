@@ -47,7 +47,7 @@ const MUsuario = () => {
 const BASE_URL = `${import.meta.env.VITE_BACKEND_URL}`; // Solo el dominio
 
 // Si su backend tiene 'app.use('/api/usuarios', router)'
-const response = await axios.get(`${BASE_URL}/api/usuarios/perfil`, { 
+const response = await axios.get(`${BASE_URL}/perfil`, { 
     headers: { Authorization: `Bearer ${token}` }
 });
 
