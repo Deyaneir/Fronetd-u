@@ -8,8 +8,7 @@ import storeAuth from "../../context/storeAuth";
 
 const Dashboard = () => {
     const navigate = useNavigate();
-    // 📌 Inicializa con el valor que vendrá del backend
-    const [userName, setUserName] = useState("Cargando..."); 
+    const [userName, setUserName] = useState("Cargando...");
     const [userRole, setUserRole] = useState("");
     const [isLoading, setIsLoading] = useState(true);
     const [quote, setQuote] = useState(null);
@@ -17,8 +16,8 @@ const Dashboard = () => {
     const [avatar, setAvatar] = useState(null);
 
     const fileInputRef = useRef(null);
-    
-    // 💡 Nueva función: para refrescar el URL del avatar (si Cloudinary es volátil)
+
+    // Función para evitar caché de imagen
     const getAvatarUrl = (url) => (url ? `${url}?t=${new Date().getTime()}` : null);
 
     const handleLogout = () => {
@@ -40,10 +39,8 @@ const Dashboard = () => {
                     }
                 );
 
-                // 📌 Datos del backend: 
                 const user = res.data.usuario || res.data;
 
-                // ✅ Actualiza el nombre y el avatar con los datos del perfil
                 setUserName(user.nombre || "Usuario");
                 setUserRole(user.rol || "");
                 setAvatar(user.avatar || null);
@@ -55,15 +52,17 @@ const Dashboard = () => {
             }
         };
 
-        // ... (mantener la lógica de fetchQuote intacta) ...
         const fetchQuote = async () => {
             try {
                 const res = await axios.get(
                     `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/frase`
                 );
 
+                // Tu backend ya está haciendo la llamada a Zenquotes.io, por lo que 
+                // los datos deben ser compatibles con lo que Zenquotes devuelve.
                 const { q, a } = res.data[0];
 
+                // Tu lógica de traducción
                 const traduccion = await axios.get(
                     `https://api.mymemory.translated.net/get?q=${encodeURIComponent(q)}&langpair=en|es`
                 );
@@ -75,9 +74,10 @@ const Dashboard = () => {
 
             } catch (error) {
                 console.error("Error frase motivadora:", error);
+                // Fallback de frase si la API falla
+                setQuote({ texto: "“El futuro pertenece a quienes creen en la belleza de sus sueños.”", autor: "Eleanor Roosevelt" });
             }
         };
-
 
         fetchUserInfo();
         fetchQuote();
@@ -95,9 +95,6 @@ const Dashboard = () => {
 
     }, []);
 
-    // Nota: MUsuario.jsx es quien debe manejar la subida real del avatar. 
-    // Aquí sólo mantendremos la función para que el input file no cause errores, 
-    // pero si la imagen ya viene del backend, no es estrictamente necesario.
     const handleFileClick = () => fileInputRef.current.click();
 
     const handleFileChange = (e) => {
@@ -124,7 +121,6 @@ const Dashboard = () => {
                 <div className="menu-header">
                     <h3 className="menu-title">Menú</h3>
 
-                    {/* ✅ AVATAR DEL USUARIO */}
                     <div className="avatar-section">
                         <div className="avatar-container" onClick={handleFileClick}>
                             {avatar ? (
@@ -169,7 +165,6 @@ const Dashboard = () => {
                 {isLoading ? (
                     <h2>Cargando...</h2>
                 ) : (
-                    {/* ✅ NOMBRE DEL USUARIO */}
                     <h2>¡Bienvenido de nuevo, {userName}!</h2>
                 )}
 
