@@ -32,7 +32,7 @@ const Dashboard = () => {
                 if (!token) return setIsLoading(false);
 
                 const res = await axios.get(
-                    `${import.meta.env.VITE_BACKEND_URL}/perfil`,
+                    `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/perfil`,
                     { headers: { Authorization: `Bearer ${token}` } }
                 );
 
@@ -49,7 +49,7 @@ const Dashboard = () => {
 
         const fetchQuote = async () => {
             try {
-                const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/frase`);
+                const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/usuarios/frase`);
                 // Ahora backend envía un objeto {q, a} directamente
                 const { q: frase, a: autor } = res.data;
 
@@ -104,7 +104,7 @@ const Dashboard = () => {
             // Guardar en backend
             const token = storeAuth.getState().token;
             await axios.put(
-                `${import.meta.env.VITE_BACKEND_URL}/actualizar`,
+                `${import.meta.env.VITE_BACKEND_URL}api/usuarios/actualizar`,
                 { avatar: newAvatarUrl },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
