@@ -12,17 +12,18 @@ export const Confirm = () => {
 
   useEffect(() => {
     const confirmarCuenta = async () => {
-     const urlBackend = import.meta.env.VITE_BACKEND_URL;
       try {
+        const urlBackend = import.meta.env.VITE_BACKEND_URL; // se toma del .env
         const res = await axios.get(`${urlBackend}/api/usuarios/confirmar/${token}`);
         setMensaje(res.data?.msg || "Cuenta confirmada ✅");
       } catch (error) {
         setMensaje(error.response?.data?.msg || "Token inválido o ya confirmado");
       } finally {
         setCargando(false);
-        setTimeout(() => setFadeIn(true), 50); // activa animación
+        setTimeout(() => setFadeIn(true), 50); // activar animación
       }
     };
+
     confirmarCuenta();
   }, [token]);
 
