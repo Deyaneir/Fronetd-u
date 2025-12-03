@@ -18,6 +18,7 @@ const ForgotPassword = () => {
 );
 
 
+
             toast.update(loadingToast, {
                 render: res.data.msg || "Revisa tu correo 📩",
                 type: "success",
