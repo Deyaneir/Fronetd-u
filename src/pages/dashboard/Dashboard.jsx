@@ -39,7 +39,7 @@ const Dashboard = () => {
                 // 📌 Mostrar en consola exactamente lo que llega
                 console.log("📌 Datos del backend:", res.data);
 
-                // 📌 Compatibilidad automática con cualquier formato
+                // 📌 Compatibilidad automática con backend
                 const user = res.data.usuario || res.data;
 
                 setUserName(user.nombre || "usuario");
