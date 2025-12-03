@@ -34,8 +34,8 @@ const MUsuario = () => {
       const token = localStorage.getItem('token');
       if (!token) return;
 
-      const BASE_URL = import.meta.env.VITE_BACKEND_URL;
-      const response = await axios.get(`${BASE_URL}/api/usuarios/perfil`, {
+      const BASE_URL = import.meta.env.VITE_BACKEND_URL; // solo la base, ejemplo: https://diverse-janeta-epn-a654e5e7.koyeb.app/api
+      const response = await axios.get(`${BASE_URL}/usuarios/perfil`, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -78,15 +78,13 @@ const MUsuario = () => {
     }
 
     try {
-      // Subir avatar a Cloudinary
       const resCloudinary = await axios.post(
         "https://api.cloudinary.com/v1_1/dm5yhmz9a/image/upload",
         formData
       );
       const newAvatarUrl = resCloudinary.data.secure_url;
 
-      // Actualizar avatar en backend
-      await axios.put(`${import.meta.env.VITE_BACKEND_URL}/api/usuarios/actualizar`, 
+      await axios.put(`${import.meta.env.VITE_BACKEND_URL}/usuarios/actualizar`, 
         { avatar: newAvatarUrl },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -107,7 +105,6 @@ const MUsuario = () => {
 
   const handleMenuToggle = () => setMenuOpen(!menuOpen);
 
-  // Cerrar menú al hacer clic afuera o presionar Escape
   useEffect(() => {
     const handleClickOutside = (event) => {
       const menu = document.querySelector(".side-menu");
@@ -127,7 +124,6 @@ const MUsuario = () => {
     };
   }, [menuOpen]);
 
-  // Renderizar contenido derecho según tab activo
   const renderRightContent = () => {
     switch (activeTab) {
       case "cuenta":
