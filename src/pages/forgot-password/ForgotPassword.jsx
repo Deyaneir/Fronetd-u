@@ -13,9 +13,10 @@ const ForgotPassword = () => {
 
         try {
             const res = await axios.post(
-                `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/olvide-password,
-                { correoInstitucional: data.email }
-            );
+    `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/olvide-password`,
+    { correoInstitucional: data.email }
+);
+
 
             toast.update(loadingToast, {
                 render: res.data.msg || "Revisa tu correo 📩",
