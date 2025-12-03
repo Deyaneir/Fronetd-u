@@ -1,34 +1,36 @@
-// src/hooks/useFetch.js
-import axios from "axios";
-import { toast } from "react-toastify";
+export const useFetch = () => {
+    const fetchData = async (url, body = null, method = "GET", headers = {}) => {
+        try {
+            const config = {
+                method,
+                headers: {
+                    ...headers
+                }
+            };
 
-export function useFetch() {
-  const fetchDataBackend = async (url, data = null, method = "POST", headers = {}) => {
-    const loadingToast = toast.loading("Procesando solicitud...");
+            if (body) {
+                if (body instanceof FormData) {
+                    config.body = body;
+                } else {
+                    config.headers["Content-Type"] = "application/json";
+                    config.body = JSON.stringify(body);
+                }
+            }
 
-    try {
-      const options = {
-        method,
-        url,
-        headers: {
-          "Content-Type": "application/json",
-          ...headers,
-        },
-        data,
-      };
+            const res = await fetch(url, config);
 
-      const response = await axios(options);
+            if (!res.ok) {
+                const errorData = await res.json().catch(() => ({}));
+                throw new Error(errorData.msg || "Error en la petición");
+            }
 
-      toast.dismiss(loadingToast);
-      return response.data;
+            return await res.json();
 
-    } catch (error) {
-      toast.dismiss(loadingToast);
-      console.error(error);
-      toast.error(error.response?.data?.msg || "Ocurrió un error inesperado");
-      throw error;
-    }
-  };
+        } catch (error) {
+            console.error("❌ Error en useFetch:", error);
+            throw error;
+        }
+    };
 
-  return fetchDataBackend;
-}
+    return fetchData;
+};
