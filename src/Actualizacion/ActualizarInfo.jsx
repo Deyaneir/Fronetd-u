@@ -31,15 +31,20 @@ const ActualizarInfo = () => {
     "https://api.dicebear.com/6.x/bottts/svg?seed=Avatar5",
   ];
 
-  const BASE_URL = import.meta.env.VITE_BACKEND_URL; // Ej: https://diverse-janeta-epn-a654e5e7.koyeb.app
+  const BASE_URL = import.meta.env.VITE_BACKEND_URL; 
+  // ej: https://diverse-janeta-epn-a654e5e7.koyeb.app
 
   // 🔹 Traer datos del usuario
   useEffect(() => {
     const fetchUserInfo = async () => {
       const token = localStorage.getItem("token");
-      if (!token) return;
+      if (!token) {
+        toast.error("No estás autenticado");
+        return;
+      }
 
       try {
+        // ⚠️ Ruta correcta incluyendo /api/usuarios
         const res = await axios.get(`${BASE_URL}/api/usuarios/perfil`, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -54,7 +59,7 @@ const ActualizarInfo = () => {
         setUserCareer(res.data.carrera || "");
       } catch (err) {
         console.error("Error al cargar datos del usuario:", err.response?.data || err);
-        toast.error(err.response?.data?.msg || "No se pudo cargar tu perfil");
+        toast.error(err.response?.data?.msg || "Error al obtener perfil");
       }
     };
 
@@ -100,10 +105,13 @@ const ActualizarInfo = () => {
   };
 
   const handleUpdate = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) return toast.error("No se encontró tu token, inicia sesión nuevamente");
+    const token = localStorage.getItem("token");
+    if (!token) {
+      toast.error("No estás autenticado");
+      return;
+    }
 
+    try {
       await axios.put(
         `${BASE_URL}/api/usuarios/actualizar`,
         {
@@ -156,13 +164,7 @@ const ActualizarInfo = () => {
             <h3 className="modal-title">Seleccionar Avatar Predefinido</h3>
             <div className="avatar-options-grid">
               {avatarOptions.map((url, i) => (
-                <img
-                  key={i}
-                  src={url}
-                  className="avatar-option"
-                  onClick={() => { setAvatar(url); setAvatarModalOpen(false); }}
-                  alt={`avatar-${i}`}
-                />
+                <img key={i} src={url} className="avatar-option" onClick={() => { setAvatar(url); setAvatarModalOpen(false); }} alt={`avatar-${i}`} />
               ))}
             </div>
             <button className="modal-close-btn" onClick={() => setAvatarModalOpen(false)}>Cerrar</button>
