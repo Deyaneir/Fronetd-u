@@ -11,20 +11,18 @@ const Dashboard = () => {
     const [userName, setUserName] = useState("usuario");
     const [userRole, setUserRole] = useState("");
     const [isLoading, setIsLoading] = useState(true);
-    const [quote, setQuote] = useState("");
+    const [quote, setQuote] = useState(null);
     const [menuOpen, setMenuOpen] = useState(false);
     const [avatar, setAvatar] = useState(null);
 
     const fileInputRef = useRef(null);
 
-    // 🚀 Logout
     const handleLogout = () => {
         localStorage.clear();
         storeAuth.getState().clearToken();
         navigate("/login");
     };
 
-    // 📌 CARGAR USUARIO + AVATAR
     useEffect(() => {
         const fetchUserInfo = async () => {
             try {
@@ -34,15 +32,13 @@ const Dashboard = () => {
                 const res = await axios.get(
                     `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/perfil`,
                     {
-                        headers: {
-                            Authorization: `Bearer ${token}`
-                        }
+                        headers: { Authorization: `Bearer ${token}` }
                     }
                 );
 
-                if (res.data?.nombre) setUserName(res.data.nombre);
-                if (res.data?.rol) setUserRole(res.data.rol);
-                if (res.data?.avatar) setAvatar(res.data.avatar);
+                setUserName(res.data?.nombre || "usuario");
+                setUserRole(res.data?.rol || "");
+                setAvatar(res.data?.avatar || null);
 
             } catch (error) {
                 console.error("Error al obtener el usuario:", error);
@@ -53,19 +49,19 @@ const Dashboard = () => {
 
         const fetchQuote = async () => {
             try {
-                const response = await axios.get(
+                const res = await axios.get(
                     `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/frase`
                 );
 
-                const { q: frase, a: autor } = response.data[0];
+                const { q, a } = res.data[0];
 
                 const traduccion = await axios.get(
-                    `https://api.mymemory.translated.net/get?q=${encodeURIComponent(frase)}&langpair=en|es`
+                    `https://api.mymemory.translated.net/get?q=${encodeURIComponent(q)}&langpair=en|es`
                 );
 
                 setQuote({
                     texto: `"${traduccion.data.responseData.translatedText}"`,
-                    autor
+                    autor: a
                 });
 
             } catch (error) {
@@ -81,20 +77,16 @@ const Dashboard = () => {
 
         if (token && !toastShownBefore) {
             localStorage.setItem("loginToastShown", "true");
-            setTimeout(() => {
-                toast.success("Inicio de sesión exitoso 🎉", {
-                    position: "top-right",
-                    autoClose: 2000,
-                });
-            }, 0);
+            setTimeout(() =>
+                toast.success("Inicio de sesión exitoso 🎉", { autoClose: 2000 }),
+                0
+            );
         }
 
     }, []);
 
-    // 📸 Abrir selector de archivo
     const handleFileClick = () => fileInputRef.current.click();
 
-    // 📸 Vista previa del avatar nuevo
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -108,24 +100,17 @@ const Dashboard = () => {
         <section className="dashboard-section">
             <ToastContainer />
 
-            {/* BOTÓN 3 LÍNEAS */}
             <button
                 className={`hamburger-btn ${menuOpen ? "open" : ""}`}
                 onClick={() => setMenuOpen(!menuOpen)}
             >
-                <span></span>
-                <span></span>
-                <span></span>
+                <span></span><span></span><span></span>
             </button>
 
-            {/* MENÚ DESLIZABLE */}
             <nav className={`side-menu ${menuOpen ? "show" : ""}`}>
-
-                {/* TOP DEL MENÚ */}
                 <div className="menu-header">
                     <h3 className="menu-title">Menú</h3>
 
-                    {/* Avatar */}
                     <div className="avatar-section">
                         <div className="avatar-container" onClick={handleFileClick}>
                             {avatar ? (
@@ -148,7 +133,6 @@ const Dashboard = () => {
                     </div>
                 </div>
 
-                {/* BOTONES DEL MENÚ */}
                 <div className="menu-buttons">
                     <button onClick={() => navigate("/Dashboard")}>Inicio</button>
                     <button onClick={() => navigate("/MUsuario")}>Mi cuenta</button>
@@ -158,13 +142,11 @@ const Dashboard = () => {
                 </div>
             </nav>
 
-            {/* OVERLAY DEL MENÚ */}
             <div
                 className={`menu-overlay ${menuOpen ? "show" : ""}`}
                 onClick={() => setMenuOpen(false)}
             ></div>
 
-            {/* CONTENIDO PRINCIPAL */}
             <div className="dashboard-header">
                 {isLoading ? (
                     <h2>Cargando...</h2>
@@ -182,7 +164,6 @@ const Dashboard = () => {
                 )}
             </div>
 
-            {/* TARJETAS DEL DASHBOARD */}
             <div className="dashboard-grid">
                 <div className="dashboard-card events-card">
                     <h3 className="card-title">Eventos en tu U 🎉</h3>
