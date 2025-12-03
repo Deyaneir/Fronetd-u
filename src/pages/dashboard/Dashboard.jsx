@@ -1,223 +1,211 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { toast, ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
-import './Dashboard.css';
-import storeAuth from "../../context/storeAuth";   
+import Usuario from "../models/Usuario.js";
+import { sendMailToRegister, sendMailToRecoveryPassword } from "../config/nodemailer.js";
 
-const Dashboard = () => {
-    const navigate = useNavigate();
-    const [userName, setUserName] = useState("usuario");
-    const [userRole, setUserRole] = useState("");
-    const [isLoading, setIsLoading] = useState(true);
-    const [quote, setQuote] = useState("");
-    const [menuOpen, setMenuOpen] = useState(false);
-    const [avatar, setAvatar] = useState(null);
+// 🔵 REGISTRO
+const registro = async (req, res) => {
+  try {
+    const { correoInstitucional, password } = req.body;
 
-    const fileInputRef = useRef(null);
+    if (Object.values(req.body).includes("")) {
+      return res.status(400).json({ msg: "Debes llenar todos los campos." });
+    }
 
-    // 🚀 Logout
-    const handleLogout = () => {
-        localStorage.clear();
-        storeAuth.getState().clearToken();
-        navigate("/login");
-    };
+    const existe = await Usuario.findOne({ correoInstitucional });
+    if (existe) {
+      return res.status(400).json({ msg: "El correo institucional ya está registrado." });
+    }
 
-    // 📌 CARGAR USUARIO + AVATAR
-    useEffect(() => {
-        const fetchUserInfo = async () => {
-            try {
-                // 🟣 TOKEN CORREGIDO: storeAuth o localStorage
-                const token = storeAuth.getState().token || localStorage.getItem("token");
+    const nuevoUsuario = new Usuario(req.body);
+    nuevoUsuario.password = await nuevoUsuario.encryptPassword(password);
 
-                if (!token) return setIsLoading(false);
+    const token = nuevoUsuario.createToken();
+    nuevoUsuario.token = token;
 
-                const res = await axios.get(
-                    `${import.meta.env.VITE_BACKEND_URL}/perfil`,
-                    { headers: { Authorization: `Bearer ${token}` } }
-                );
+    await sendMailToRegister(correoInstitucional, token);
+    await nuevoUsuario.save();
 
-                if (res.data?.nombre) setUserName(res.data.nombre);
-                if (res.data?.rol) setUserRole(res.data.rol);
-
-                // ✔ Cargar avatar con URL completa si es relativo
-                if (res.data?.avatar) {
-                    const url = res.data.avatar.startsWith("http")
-                        ? res.data.avatar
-                        : `${import.meta.env.VITE_BACKEND_URL}/${res.data.avatar}`;
-
-                    setAvatar(url);
-                }
-
-            } catch (error) {
-                console.error("Error al obtener el usuario:", error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        const fetchQuote = async () => {
-            try {
-                const response = await axios.get(
-                    `${import.meta.env.VITE_BACKEND_URL}/frase`
-                );
-
-                if (!response.data || !response.data[0]) return;
-
-                const { q: frase, a: autor } = response.data[0];
-
-                const traduccion = await axios.get(
-                    `https://api.mymemory.translated.net/get?q=${encodeURIComponent(frase)}&langpair=en|es`
-                );
-
-                setQuote({
-                    texto: `"${traduccion.data.responseData.translatedText}"`,
-                    autor
-                });
-
-            } catch (error) {
-                console.error("Error frase motivadora:", error);
-            }
-        };
-
-        fetchUserInfo();
-        fetchQuote();
-
-        // 🟦 Toast solo al iniciar sesión
-        const token = storeAuth.getState().token || localStorage.getItem("token");
-        const toastShownBefore = localStorage.getItem("loginToastShown");
-
-        if (token && !toastShownBefore) {
-            localStorage.setItem("loginToastShown", "true");
-            setTimeout(() => {
-                toast.success("Inicio de sesión exitoso 🎉", {
-                    position: "top-right",
-                    autoClose: 2000,
-                });
-            }, 0);
-        }
-
-    }, []);
-
-    // 📸 Abrir selector de archivo
-    const handleFileClick = () => fileInputRef.current.click();
-
-    // 📸 Vista previa del avatar nuevo
-    const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = () => setAvatar(reader.result);
-            reader.readAsDataURL(file);
-        }
-    };
-
-    return (
-        <section className="dashboard-section">
-            <ToastContainer />
-
-            {/* BOTÓN 3 LÍNEAS */}
-            <button
-                className={`hamburger-btn ${menuOpen ? "open" : ""}`}
-                onClick={() => setMenuOpen(!menuOpen)}
-            >
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-
-            {/* MENÚ DESLIZABLE */}
-            <nav className={`side-menu ${menuOpen ? "show" : ""}`}>
-
-                {/* TOP DEL MENÚ */}
-                <div className="menu-header">
-                    <h3 className="menu-title">Menú</h3>
-
-                    {/* Avatar */}
-                    <div className="avatar-section">
-                        <div className="avatar-container" onClick={handleFileClick}>
-                            {avatar ? (
-                                <img src={avatar} alt="Avatar" className="avatar-img" />
-                            ) : (
-                                <span className="default-avatar">👤</span>
-                            )}
-                            <div className="avatar-overlay">
-                                <i className="fa fa-camera"></i>
-                            </div>
-                        </div>
-
-                        <input
-                            type="file"
-                            ref={fileInputRef}
-                            onChange={handleFileChange}
-                            className="input-file-hidden"
-                            accept="image/*"
-                        />
-                    </div>
-                </div>
-
-                {/* BOTONES DEL MENÚ */}
-                <div className="menu-buttons">
-                    <button onClick={() => navigate("/Dashboard")}>Inicio</button>
-                    <button onClick={() => navigate("/MUsuario")}>Mi cuenta</button>
-                    <button onClick={() => { }}>Favoritos</button>
-                    <button onClick={() => navigate("/Ajustes")}>Ajustes</button>
-                    <button onClick={handleLogout}>Cerrar sesión</button>
-                </div>
-            </nav>
-
-            {/* OVERLAY DEL MENÚ */}
-            <div
-                className={`menu-overlay ${menuOpen ? "show" : ""}`}
-                onClick={() => setMenuOpen(false)}
-            ></div>
-
-            {/* CONTENIDO PRINCIPAL */}
-            <div className="dashboard-header">
-                {isLoading ? (
-                    <h2>Cargando...</h2>
-                ) : (
-                    <h2>¡Bienvenido de nuevo, {userName}!</h2>
-                )}
-
-                <p>Explora lo mejor de tu comunidad universitaria.</p>
-
-                {quote && (
-                    <div className="motivational-quote">
-                        <p className="quote-text">{quote.texto}</p>
-                        <p className="quote-author">- {quote.autor}</p>
-                    </div>
-                )}
-            </div>
-
-            {/* TARJETAS DEL DASHBOARD */}
-            <div className="dashboard-grid">
-                <div className="dashboard-card events-card">
-                    <h3 className="card-title">Eventos en tu U 🎉</h3>
-                    <p>Descubre próximos eventos en tu campus.</p>
-                    <button className="dashboard-btn">Ver Eventos</button>
-                </div>
-
-                <div className="dashboard-card groups-card">
-                    <h3 className="card-title">Grupos y Comunidades 🤝</h3>
-                    <p>Únete a clubes con tus mismos intereses.</p>
-                    <button className="dashboard-btn">Explorar Grupos</button>
-                </div>
-
-                <div className="dashboard-card matches-card">
-                    <h3 className="card-title">Tus Posibles Matches 💖</h3>
-                    <p>Conecta con estudiantes que comparten tu vibe.</p>
-                    <button
-                        className="dashboard-btn"
-                        onClick={() => navigate("/matches")}
-                    >
-                        Ver Matches
-                    </button>
-                </div>
-            </div>
-        </section>
-    );
+    res.status(200).json({ msg: "Revisa tu correo institucional para confirmar tu cuenta." });
+  } catch (error) {
+    res.status(500).json({ msg: `❌ Error en el servidor: ${error.message}` });
+  }
 };
 
-export default Dashboard;
+// 🔵 CONFIRMAR CORREO
+const confirmarMail = async (req, res) => {
+  try {
+    const { token } = req.params;
+    const usuarioBDD = await Usuario.findOne({ token });
+
+    if (!usuarioBDD) {
+      return res.status(404).json({ msg: "Token inválido o ya confirmado" });
+    }
+
+    usuarioBDD.token = null;
+    usuarioBDD.confirmEmail = true;
+    await usuarioBDD.save();
+
+    return res.status(200).json({ msg: "Cuenta confirmada ✅" });
+  } catch (error) {
+    return res.status(500).json({ msg: "Error al confirmar la cuenta" });
+  }
+};
+
+// 🔵 RECUPERAR CONTRASEÑA
+const recuperarPassword = async (req, res) => {
+  try {
+    const { correoInstitucional } = req.body;
+
+    if (!correoInstitucional) return res.status(400).json({ msg: "Debes ingresar un correo electrónico" });
+
+    const usuarioBDD = await Usuario.findOne({ correoInstitucional });
+    if (!usuarioBDD) return res.status(404).json({ msg: "El usuario no se encuentra registrado" });
+
+    const token = usuarioBDD.createToken();
+    usuarioBDD.token = token;
+
+    await sendMailToRecoveryPassword(correoInstitucional, token);
+    await usuarioBDD.save();
+
+    res.status(200).json({ msg: "Revisa tu correo electrónico para restablecer tu contraseña" });
+  } catch (error) {
+    res.status(500).json({ msg: `❌ Error en el servidor - ${error.message}` });
+  }
+};
+
+// 🔵 COMPROBAR TOKEN DE RECUPERACIÓN
+const comprobarTokenPassword = async (req, res) => {
+  try {
+    const { token } = req.params;
+    const usuarioBDD = await Usuario.findOne({ token });
+    if (!usuarioBDD) return res.status(404).json({ msg: "Token inválido" });
+
+    res.status(200).json({ msg: "Token confirmado, ya puedes crear tu nuevo password" });
+  } catch (error) {
+    res.status(500).json({ msg: `❌ Error en el servidor - ${error.message}` });
+  }
+};
+
+// 🔵 CREAR NUEVO PASSWORD
+const crearNuevoPassword = async (req, res) => {
+  try {
+    const { password, confirmpassword } = req.body;
+    const { token } = req.params;
+
+    if (Object.values(req.body).includes("")) return res.status(400).json({ msg: "Debes llenar todos los campos" });
+    if (password !== confirmpassword) return res.status(400).json({ msg: "Los passwords no coinciden" });
+
+    const usuarioBDD = await Usuario.findOne({ token });
+    if (!usuarioBDD) return res.status(404).json({ msg: "Token inválido" });
+
+    usuarioBDD.password = await usuarioBDD.encryptPassword(password);
+    usuarioBDD.token = null;
+
+    await usuarioBDD.save();
+    res.status(200).json({ msg: "Tu contraseña ha sido actualizada correctamente" });
+  } catch (error) {
+    res.status(500).json({ msg: `❌ Error en el servidor - ${error.message}` });
+  }
+};
+
+// 🔵 LOGIN (CORREGIDO)
+const loginUsuario = async (req, res) => {
+  try {
+    const { correoInstitucional, password, rol } = req.body;
+    if (!correoInstitucional || !password || !rol)
+      return res.status(400).json({ msg: "Todos los campos son obligatorios" });
+
+    const usuarioBDD = await Usuario.findOne({ correoInstitucional });
+    if (!usuarioBDD) return res.status(404).json({ msg: "Usuario no registrado" });
+    if (!usuarioBDD.confirmEmail) return res.status(400).json({ msg: "Debes confirmar tu correo primero" });
+
+    const passwordOK = await usuarioBDD.matchPassword(password);
+    if (!passwordOK) return res.status(400).json({ msg: "Contraseña incorrecta" });
+    if (usuarioBDD.rol !== rol)
+      return res.status(403).json({ msg: `No tienes permiso para ingresar como ${rol}.` });
+
+    const token = usuarioBDD.createJWT();
+
+    // 🔥 CORRECCIÓN: enviar toda la data necesaria para que cargue el dashboard
+    res.status(200).json({
+      msg: "Inicio de sesión exitoso",
+      token,
+      _id: usuarioBDD._id,
+      nombre: usuarioBDD.nombre,
+      apellido: usuarioBDD.apellido,
+      correoInstitucional: usuarioBDD.correoInstitucional,
+      rol: usuarioBDD.rol,
+      avatar: usuarioBDD.avatar,
+      telefono: usuarioBDD.telefono,
+      direccion: usuarioBDD.direccion,
+      cedula: usuarioBDD.cedula,
+      descripcion: usuarioBDD.descripcion,
+      universidad: usuarioBDD.universidad,
+      carrera: usuarioBDD.carrera
+    });
+  } catch (error) {
+    res.status(500).json({ msg: `Error en el servidor: ${error.message}` });
+  }
+};
+
+// 🔵 PERFIL (CORREGIDO)
+const perfil = (req, res) => {
+  // ❗ Se quitó resetTokenExpire porque NO existe en tu schema real
+  const { password, token, resetToken, ...usuarioSeguro } = req.usuario;
+  res.status(200).json(usuarioSeguro);
+};
+
+// 🔵 ACTUALIZAR PERFIL
+const actualizarUsuario = async (req, res) => {
+  try {
+    const { nombre, telefono, direccion, cedula, descripcion, universidad, carrera, avatar } = req.body;
+    const usuarioBDD = await Usuario.findById(req.usuario._id);
+    if (!usuarioBDD) return res.status(404).json({ msg: "Usuario no encontrado" });
+
+    usuarioBDD.nombre = nombre || usuarioBDD.nombre;
+    usuarioBDD.telefono = telefono || usuarioBDD.telefono;
+    usuarioBDD.direccion = direccion || usuarioBDD.direccion;
+    usuarioBDD.cedula = cedula || usuarioBDD.cedula;
+    usuarioBDD.descripcion = descripcion || usuarioBDD.descripcion;
+    usuarioBDD.universidad = universidad || usuarioBDD.universidad;
+    usuarioBDD.carrera = carrera || usuarioBDD.carrera;
+    usuarioBDD.avatar = avatar || usuarioBDD.avatar;
+
+    await usuarioBDD.save();
+    res.status(200).json({ msg: "Información actualizada correctamente" });
+  } catch (error) {
+    res.status(500).json({ msg: "Error al actualizar información" });
+  }
+};
+
+// 🔵 ACTUALIZAR CONTRASEÑA
+const actualizarPassword = async (req, res) => {
+  try {
+    const { oldPassword, newPassword } = req.body;
+    if (!oldPassword || !newPassword) return res.status(400).json({ msg: "Debes llenar todos los campos" });
+
+    const usuarioBDD = await Usuario.findById(req.usuario._id);
+    if (!usuarioBDD) return res.status(404).json({ msg: "Usuario no encontrado" });
+
+    const isMatch = await usuarioBDD.matchPassword(oldPassword);
+    if (!isMatch) return res.status(400).json({ msg: "Contraseña actual incorrecta" });
+
+    usuarioBDD.password = await usuarioBDD.encryptPassword(newPassword);
+    await usuarioBDD.save();
+
+    res.status(200).json({ msg: "Contraseña actualizada correctamente" });
+  } catch (error) {
+    res.status(500).json({ msg: "Error al actualizar la contraseña" });
+  }
+};
+
+export {
+  registro,
+  confirmarMail,
+  recuperarPassword,
+  comprobarTokenPassword,
+  crearNuevoPassword,
+  loginUsuario,
+  perfil,
+  actualizarUsuario,
+  actualizarPassword
+};
