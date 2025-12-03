@@ -22,7 +22,6 @@ const Dashboard = () => {
         storeAuth.getState().clearToken();
         navigate("/login");
     };
-console.log("Backend cargado:", import.meta.env.VITE_BACKEND_URL);
 
     useEffect(() => {
         const fetchUserInfo = async () => {
@@ -37,9 +36,15 @@ console.log("Backend cargado:", import.meta.env.VITE_BACKEND_URL);
                     }
                 );
 
-                setUserName(res.data?.nombre || "usuario");
-                setUserRole(res.data?.rol || "");
-                setAvatar(res.data?.avatar || null);
+                // 📌 Mostrar en consola exactamente lo que llega
+                console.log("📌 Datos del backend:", res.data);
+
+                // 📌 Compatibilidad automática con cualquier formato
+                const user = res.data.usuario || res.data;
+
+                setUserName(user.nombre || "usuario");
+                setUserRole(user.rol || "");
+                setAvatar(user.avatar || null);
 
             } catch (error) {
                 console.error("Error al obtener el usuario:", error);
