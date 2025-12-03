@@ -3,12 +3,12 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import './Dashboard.css';
 import storeAuth from "../../context/storeAuth";   
+import './Dashboard.css';
 
 const Dashboard = () => {
     const navigate = useNavigate();
-    const [userName, setUserName] = useState("usuario");
+    const [userName, setUserName] = useState("Usuario");
     const [userRole, setUserRole] = useState("");
     const [isLoading, setIsLoading] = useState(true);
     const [quote, setQuote] = useState(null);
@@ -24,7 +24,7 @@ const Dashboard = () => {
         navigate("/login");
     };
 
-    // 📌 CARGAR USUARIO + AVATAR + FRASE
+    // 📌 Cargar usuario y frase
     useEffect(() => {
         const fetchUserInfo = async () => {
             try {
@@ -32,16 +32,20 @@ const Dashboard = () => {
                 if (!token) return setIsLoading(false);
 
                 const res = await axios.get(
-                    `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/perfil`,
+                    `${import.meta.env.VITE_BACKEND_URL}/perfil`,
                     { headers: { Authorization: `Bearer ${token}` } }
                 );
 
-                if (res.data?.nombre) setUserName(res.data.nombre);
-                if (res.data?.rol) setUserRole(res.data.rol);
-                if (res.data?.avatar) setAvatar(res.data.avatar);
+                // 🔹 Debug
+                console.log("Perfil:", res.data);
+
+                const usuario = res.data || {};
+                if (usuario.nombre) setUserName(usuario.nombre);
+                if (usuario.rol) setUserRole(usuario.rol);
+                if (usuario.avatar) setAvatar(usuario.avatar);
 
             } catch (error) {
-                console.error("Error al obtener el usuario:", error);
+                console.error("Error al obtener perfil:", error);
             } finally {
                 setIsLoading(false);
             }
@@ -49,11 +53,13 @@ const Dashboard = () => {
 
         const fetchQuote = async () => {
             try {
-                const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/usuarios/frase`);
-                // Ahora backend envía un objeto {q, a} directamente
-                const { q: frase, a: autor } = res.data;
+                const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/frase`);
+                console.log("Frase raw:", res.data);
 
-                // Opcional: traducir
+                let fraseData = Array.isArray(res.data) ? res.data[0] : res.data;
+                const { q: frase, a: autor } = fraseData || {};
+                if (!frase) return;
+
                 const traduccion = await axios.get(
                     `https://api.mymemory.translated.net/get?q=${encodeURIComponent(frase)}&langpair=en|es`
                 );
@@ -61,59 +67,29 @@ const Dashboard = () => {
                 setQuote({ texto: `"${traduccion.data.responseData.translatedText}"`, autor });
 
             } catch (error) {
-                console.error("Error frase motivadora:", error);
+                console.error("Error al obtener frase motivadora:", error);
             }
         };
 
         fetchUserInfo();
         fetchQuote();
 
-        // Toast solo al iniciar sesión
+        // 🎉 Toast al iniciar sesión
         const token = storeAuth.getState().token;
-        const toastShownBefore = localStorage.getItem("loginToastShown");
-        if (token && !toastShownBefore) {
+        if (token && !localStorage.getItem("loginToastShown")) {
             localStorage.setItem("loginToastShown", "true");
-            setTimeout(() => {
-                toast.success("Inicio de sesión exitoso 🎉", { position: "top-right", autoClose: 2000 });
-            }, 0);
+            toast.success("Inicio de sesión exitoso 🎉", { position: "top-right", autoClose: 2000 });
         }
     }, []);
 
-    // 📸 Abrir selector de archivo
+    // 📸 Avatar
     const handleFileClick = () => fileInputRef.current.click();
-
-    // 📸 Subir y actualizar avatar
-    const handleFileChange = async (e) => {
+    const handleFileChange = (e) => {
         const file = e.target.files[0];
-        if (!file) return;
-
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("upload_preset", "VIBE-U");
-        formData.append("folder", "avatars");
-
-        try {
-            const resCloud = await axios.post(
-                "https://api.cloudinary.com/v1_1/dm5yhmz9a/image/upload",
-                formData
-            );
-
-            const newAvatarUrl = resCloud.data.secure_url;
-            setAvatar(newAvatarUrl);
-
-            // Guardar en backend
-            const token = storeAuth.getState().token;
-            await axios.put(
-                `${import.meta.env.VITE_BACKEND_URL}api/usuarios/actualizar`,
-                { avatar: newAvatarUrl },
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
-
-            toast.success("Avatar actualizado correctamente");
-
-        } catch (error) {
-            console.error("Error al subir avatar:", error.response?.data || error);
-            toast.error("Error al actualizar el avatar");
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = () => setAvatar(reader.result);
+            reader.readAsDataURL(file);
         }
     };
 
@@ -121,28 +97,22 @@ const Dashboard = () => {
         <section className="dashboard-section">
             <ToastContainer />
 
-            {/* BOTÓN 3 LÍNEAS */}
+            {/* Menú hamburguesa */}
             <button className={`hamburger-btn ${menuOpen ? "open" : ""}`} onClick={() => setMenuOpen(!menuOpen)}>
                 <span></span><span></span><span></span>
             </button>
 
-            {/* MENÚ DESLIZABLE */}
             <nav className={`side-menu ${menuOpen ? "show" : ""}`}>
                 <div className="menu-header">
                     <h3 className="menu-title">Menú</h3>
                     <div className="avatar-section">
                         <div className="avatar-container" onClick={handleFileClick}>
-                            {avatar ? (
-                                <img src={avatar} alt="Avatar" className="avatar-img" />
-                            ) : (
-                                <span className="default-avatar">👤</span>
-                            )}
+                            {avatar ? <img src={avatar} alt="Avatar" className="avatar-img" /> : <span className="default-avatar">👤</span>}
                             <div className="avatar-overlay"><i className="fa fa-camera"></i></div>
                         </div>
-                        <input type="file" ref={fileInputRef} onChange={handleFileChange} className="input-file-hidden" accept="image/*"/>
+                        <input type="file" ref={fileInputRef} onChange={handleFileChange} className="input-file-hidden" accept="image/*" />
                     </div>
                 </div>
-
                 <div className="menu-buttons">
                     <button onClick={() => navigate("/Dashboard")}>Inicio</button>
                     <button onClick={() => navigate("/MUsuario")}>Mi cuenta</button>
@@ -154,11 +124,9 @@ const Dashboard = () => {
 
             <div className={`menu-overlay ${menuOpen ? "show" : ""}`} onClick={() => setMenuOpen(false)}></div>
 
-            {/* CONTENIDO PRINCIPAL */}
             <div className="dashboard-header">
                 {isLoading ? <h2>Cargando...</h2> : <h2>¡Bienvenido de nuevo, {userName}!</h2>}
                 <p>Explora lo mejor de tu comunidad universitaria.</p>
-
                 {quote && (
                     <div className="motivational-quote">
                         <p className="quote-text">{quote.texto}</p>
@@ -167,7 +135,6 @@ const Dashboard = () => {
                 )}
             </div>
 
-            {/* TARJETAS */}
             <div className="dashboard-grid">
                 <div className="dashboard-card events-card">
                     <h3 className="card-title">Eventos en tu U 🎉</h3>
