@@ -4,7 +4,7 @@ import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import './Dashboard.css';
-import storeAuth from "../../context/storeAuth";   
+import storeAuth from "../../context/storeAuth";
 
 const Dashboard = () => {
     const navigate = useNavigate();
@@ -42,8 +42,6 @@ const Dashboard = () => {
 
                 if (res.data?.nombre) setUserName(res.data.nombre);
                 if (res.data?.rol) setUserRole(res.data.rol);
-
-                // ✔ Cargar avatar desde backend
                 if (res.data?.avatar) setAvatar(res.data.avatar);
 
             } catch (error) {
@@ -78,7 +76,6 @@ const Dashboard = () => {
         fetchUserInfo();
         fetchQuote();
 
-        // 🟦 Toast solo al iniciar sesión
         const token = storeAuth.getState().token;
         const toastShownBefore = localStorage.getItem("loginToastShown");
 
