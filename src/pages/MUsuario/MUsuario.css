@@ -15,22 +15,96 @@
 
 .main-nav-panel {
     width: 250px;
-    background-color: #760265;
+    background-color: #760265; /* Color SÓLIDO Morado Oscuro para la navegación fija */
     color: white;
-    padding: 20px;
-    display: flex;
+    padding: 20px; 
+    display: flex; 
     flex-direction: column;
     align-items: center;
     flex-shrink: 0;
     box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-    position: sticky;
+    position: sticky; 
     top: 0;
     height: 100vh;
 }
 
-/* ================================================= */
-/* === MENÚ LATERAL DESLIZABLE (side-menu) === */
-/* ================================================= */
+.left-panel-content {
+    margin-top: 20px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Estilos de botones dentro del panel principal */
+.main-nav-panel .menu-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+.main-nav-panel .menu-buttons button {
+    width: 100%;
+    padding: 10px 15px;
+    background: transparent;
+    color: white;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    border-radius: 8px;
+    transition: background 0.2s;
+    font-weight: 500;
+}
+
+.main-nav-panel .menu-buttons button:hover,
+.main-nav-panel .menu-buttons button.active {
+    background: rgba(255, 255, 255, 0.2);
+    font-weight: 700;
+}
+
+/* =================================== */
+/* === PANEL DERECHO (Right-Panel) === */
+/* =================================== */
+
+.right-panel {
+    flex: 1;
+    padding: 30px;
+    background-color: #ffffff;
+    min-height: 100vh;
+    overflow-y: auto;
+}
+
+
+/* ---------------------------------------------------- */
+/* MENÚ HAMBURGUESA Y MENÚ LATERAL (side-menu) */
+/* ---------------------------------------------------- */
+
+.hamburger-btn {
+    /* Ocultar en PC, solo mostrar en móvil */
+    display: none; 
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 45px;
+    height: 40px;
+    justify-content: space-between;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 3500;
+}
+
+.hamburger-btn span {
+    display: block;
+    width: 100%;
+    height: 4px;
+    background: #333;
+    border-radius: 4px;
+    transition: background 0.3s;
+}
 
 .side-menu {
     position: fixed;
@@ -38,6 +112,7 @@
     left: 0;
     width: 260px;
     height: 100%;
+    /* FONDO DEGRADADO */
     background: linear-gradient(180deg, #920ae6 0%, #4a0142 100%);
     color: white;
     box-shadow: 2px 0 10px rgba(0,0,0,0.4);
@@ -45,21 +120,213 @@
     transform: translateX(-100%);
     transition: transform 0.45s cubic-bezier(0.25, 0.8, 0.25, 1);
     z-index: 3000;
-    display: none;
+    display: none; /* Ocultar por defecto en PC */
     flex-direction: column;
     align-items: flex-start;
 }
 
-/* ================================================= */
-/* === RESPONSIVE MEDIA QUERIES (Móvil) === */
-/* ================================================= */
+.side-menu.show {
+    transform: translateX(0);
+}
+
+.menu-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-top: 50px;
+    margin-bottom: 30px;
+}
+
+.menu-title {
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+    text-align: center;
+    font-weight: 800 !important;
+}
+
+.avatar-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 30px;
+    width: 100%;
+}
+
+.avatar-container {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+    margin-bottom: 10px;
+    position: relative;
+    border: 3px solid white; 
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.avatar-overlay {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: rgba(0,0,0,0.5);
+    color: white;
+    border-radius: 50%;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.default-avatar {
+    font-size: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+}
+
+.input-file-hidden {
+    display: none;
+}
+
+/* Botones dentro del menú deslizable */
+.side-menu .menu-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+.side-menu .menu-buttons button {
+    width: 100%;
+    text-align: left;
+    padding: 10px 15px;
+    background: transparent;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-weight: 500;
+}
+
+.side-menu .menu-buttons button:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* =================================== */
+/* === ESTILOS DE CARTILLA DE PERFIL === */
+/* =================================== */
+
+.user-profile-section {
+    max-width: 400px;
+    margin: 30px auto;
+    background: #ffffff;
+    border-radius: 15px;
+    padding: 25px 20px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+    font-family: 'Inter', sans-serif;
+    border: 2px solid #920ae6;
+}
+
+.avatar-circle-large {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 15px;
+    border: 2px solid #760265;
+}
+
+.avatar-img-large {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.default-avatar-large {
+    font-size: 80px;
+    color: #920ae6;
+}
+
+.profile-info {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    background: #f3f3f3;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+}
+
+.info-row strong {
+    color: #760265;
+    font-weight: 600;
+}
+
+/* ---------------------------------------------------- */
+/* RESPONSIVE MEDIA QUERIES (Ajustes para Móvil)        */
+/* ---------------------------------------------------- */
 
 @media (max-width: 768px) {
+    .musuario-container {
+        flex-direction: column;
+    }
+
+    /* OCULTAR el panel de navegación grande en móvil */
     .main-nav-panel {
         display: none;
     }
 
+    /* MOSTRAR el botón de hamburguesa en móvil */
+    .hamburger-btn {
+        display: flex;
+        background-color: rgba(255, 255, 255, 0.8);
+        border-radius: 5px;
+        top: 10px;
+        left: 10px;
+        padding: 5px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    /* MOSTRAR el menú lateral (side-menu) */
     .side-menu {
         display: flex;
+    }
+
+    /* El contenido principal (right-panel) ocupa todo el ancho */
+    .right-panel {
+        width: 100%;
+        padding: 15px;
+        padding-top: 50px;
+        min-height: 100vh;
+    }
+
+    /* La cartilla de perfil ocupa todo el ancho disponible */
+    .user-profile-section {
+        width: 100%;
+        max-width: 100%;
+        margin: 0 auto 30px;
     }
 }
