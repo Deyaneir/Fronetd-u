@@ -29,7 +29,7 @@ const Dashboard = () => {
                 const token = storeAuth.getState().token;
                 if (!token) return setIsLoading(false);
 
-                const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/perfil`, {
+                const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/usuarios/perfil``, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
 
@@ -48,7 +48,7 @@ const Dashboard = () => {
 
         const fetchQuote = async () => {
             try {
-                const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/frase`);
+                const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/usuarios/frase`);
                 const quoteData = res.data[0];
                 if (quoteData?.q && quoteData?.a) {
                     setQuote({ texto: quoteData.q, autor: quoteData.a });
