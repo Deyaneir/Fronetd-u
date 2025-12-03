@@ -34,7 +34,6 @@ const ForgotPassword = () => {
         }
     };
 
-    // Estilos inline para reemplazar el CSS externo
     const styles = {
         container: {
             display: "flex",
@@ -97,9 +96,6 @@ const ForgotPassword = () => {
             marginTop: "20px",
             cursor: "pointer",
             transition: "0.3s"
-        },
-        buttonHover: {
-            background: "#6c24ff"
         }
     };
 
