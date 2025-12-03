@@ -24,23 +24,20 @@ const Dashboard = () => {
         navigate("/login");
     };
 
-    // 📌 CARGAR USUARIO + AVATAR
+    // 📌 CARGAR USUARIO + AVATAR + FRASE
     useEffect(() => {
         const fetchUserInfo = async () => {
             try {
-                const token = storeAuth.getState().token;
-
+                const token = storeAuth.getState().token || localStorage.getItem("token");
                 if (!token) return setIsLoading(false);
 
                 const res = await axios.get(
-                    `${import.meta.env.VITE_BACKEND_URL}/perfil`,
+                    `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/perfil`,
                     { headers: { Authorization: `Bearer ${token}` } }
                 );
 
                 if (res.data?.nombre) setUserName(res.data.nombre);
                 if (res.data?.rol) setUserRole(res.data.rol);
-
-                // ✔ Cargar avatar desde backend
                 if (res.data?.avatar) setAvatar(res.data.avatar);
 
             } catch (error) {
@@ -53,7 +50,7 @@ const Dashboard = () => {
         const fetchQuote = async () => {
             try {
                 const response = await axios.get(
-                    `${import.meta.env.VITE_BACKEND_URL}/frase`
+                    `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/frase`
                 );
 
                 const { q: frase, a: autor } = response.data[0];
@@ -73,7 +70,7 @@ const Dashboard = () => {
         fetchQuote();
 
         // 🟦 Toast solo al iniciar sesión
-        const token = storeAuth.getState().token;
+        const token = storeAuth.getState().token || localStorage.getItem("token");
         const toastShownBefore = localStorage.getItem("loginToastShown");
 
         if (token && !toastShownBefore) {
@@ -91,13 +88,42 @@ const Dashboard = () => {
     // 📸 Abrir selector de archivo
     const handleFileClick = () => fileInputRef.current.click();
 
-    // 📸 Vista previa del avatar nuevo
-    const handleFileChange = (e) => {
+    // 📸 Subida de avatar a Cloudinary y guardar en backend
+    const handleFileChange = async (e) => {
         const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = () => setAvatar(reader.result);
-            reader.readAsDataURL(file);
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("upload_preset", "VIBE-U");
+        formData.append("folder", "avatars");
+
+        const token = storeAuth.getState().token || localStorage.getItem("token");
+        if (!token) {
+            toast.error("Sesión expirada. Por favor, inicia sesión.");
+            return;
+        }
+
+        try {
+            // Subir a Cloudinary
+            const resCloudinary = await axios.post(
+                "https://api.cloudinary.com/v1_1/dm5yhmz9a/image/upload",
+                formData
+            );
+            const newAvatarUrl = resCloudinary.data.secure_url;
+            setAvatar(newAvatarUrl);
+
+            // Guardar en backend
+            await axios.put(
+                `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/actualizar`,
+                { avatar: newAvatarUrl },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+
+            toast.success("Avatar actualizado correctamente.");
+        } catch (err) {
+            console.error("Error al subir o guardar el avatar:", err.response?.data || err);
+            toast.error("Error al actualizar el avatar.");
         }
     };
 
