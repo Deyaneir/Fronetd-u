@@ -1,189 +1,298 @@
-// MUsuario.jsx - Frontend
-
-import React, { useState, useEffect, useRef } from "react"; // ✅ Importación de Hooks nativos CORRECTA
-import { useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-
-// ✅ CORRECCIÓN DE RUTA: Asegúrate de que esta ruta sea correcta para tu estructura
-// (Ej: Si tu archivo es useFetch.jsx, cambia .js por .jsx)
-import { useFetch } from "../../hooks/useFetch.js"; 
-
-import "./MUsuario.css";
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import './MUsuario.css';
 
 const MUsuario = () => {
-  const navigate = useNavigate();
-  // Inicialización del custom hook
-  const fetchData = useFetch(); 
-  const fileInputRef = useRef(null);
+  const navigate = useNavigate();
+  const [userName, setUserName] = useState("Usuario");
+  const [userStatus, setUserStatus] = useState("Disponible");
+  const [avatar, setAvatar] = useState(null);
+  const [activeTab, setActiveTab] = useState("cuenta");
+  const [menuOpen, setMenuOpen] = useState(false);
+  const fileInputRef = useRef(null);
 
-  const [userName, setUserName] = useState("Usuario");
-  const [userStatus, setUserStatus] = useState("Disponible");
-  const [avatar, setAvatar] = useState(null);
-  const [activeTab, setActiveTab] = useState("cuenta");
-  const [menuOpen, setMenuOpen] = useState(false);
+  // ... (Avatar options sin usar)
 
-  const [userPhone, setUserPhone] = useState("");
-  const [userAddress, setUserAddress] = useState("");
-  const [userCedula, setUserCedula] = useState("");
-  const [userDescription, setUserDescription] = useState("");
-  const [userUniversity, setUserUniversity] = useState("");
-  const [userCareer, setUserCareer] = useState("");
+  const [userPhone, setUserPhone] = useState("");
+  const [userAddress, setUserAddress] = useState("");
+  const [userCedula, setUserCedula] = useState("");
+  const [userDescription, setUserDescription] = useState("");
+  const [userUniversity, setUserUniversity] = useState("");
+  const [userCareer, setUserCareer] = useState("");
 
-  // Función para refrescar avatar
-  const getAvatarUrl = (url) => (url ? `${url}?t=${new Date().getTime()}` : null);
+  const getAvatarUrl = (url) => {
+    if (!url) return null;
+    return `${url}?t=${new Date().getTime()}`;
+  };
 
-  // 🔹 Cargar perfil al iniciar
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) return;
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) return;
 
-        // Llamada al endpoint correcto: /api/usuarios/perfil
-        const data = await fetchData(
-          `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/perfil`,
-          null,
-          "GET",
-          { Authorization: `Bearer ${token}` }
-        );
+        // ✅ CORRECCIÓN CLAVE: Se agrega el prefijo /api/usuarios a la ruta
+        const response = await axios.get(
+          `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/perfil`, 
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
 
-        // Cargar datos del usuario
-        setUserName(data.nombre || "Usuario");
-        setUserStatus(data.estado || "Disponible");
-        setAvatar(data.avatar || null);
-        setUserPhone(data.telefono || "");
-        setUserAddress(data.direccion || "");
-        setUserCedula(data.cedula || "");
-        setUserDescription(data.descripcion || "");
-        setUserUniversity(data.universidad || "");
-        setUserCareer(data.carrera || "");
+        // ... (Asignación de datos)
+        if (response.data?.nombre) setUserName(response.data.nombre);
+        if (response.data?.estado) setUserStatus(response.data.estado);
+        if (response.data?.avatar) setAvatar(response.data.avatar);
+        if (response.data?.telefono) setUserPhone(response.data.telefono);
+        if (response.data?.direccion) setUserAddress(response.data.direccion);
+        if (response.data?.cedula) setUserCedula(response.data.cedula);
+        if (response.data?.descripcion) setUserDescription(response.data.descripcion);
+        if (response.data?.universidad) setUserUniversity(response.data.universidad);
+        if (response.data?.carrera) setUserCareer(response.data.carrera);
 
-      } catch (err) {
-        console.error("Error al cargar perfil:", err);
-      }
-    };
+      } catch (error) {
+        console.error("Error al obtener el usuario:", error.response?.data || error);
+        // Opcional: mostrar un mensaje si la sesión expira
+        if (error.response?.status === 401) {
+             toast.error("Sesión expirada. Por favor, vuelve a iniciar sesión.");
+             // navigate('/login');
+        }
+      }
+    };
 
-    fetchUserInfo();
-  }, [fetchData]); // Se incluye fetchData como dependencia para cumplir las reglas de hooks
+    fetchUserInfo();
+  }, []);
 
-  // 🔹 Subir avatar
-  const handleFileClick = () => fileInputRef.current.click();
+  const handleFileClick = () => {
+    fileInputRef.current.click();
+  };
 
-  const handleFileChange = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", "VIBE-U");
-    formData.append("folder", "avatars");
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "VIBE-U");
+    formData.append("folder", "avatars");
 
-    try {
-      const resCloudinary = await fetchData(
-        "https://api.cloudinary.com/v1_1/dm5yhmz9a/image/upload",
-        formData,
-        "POST"
-      );
-      const newAvatarUrl = resCloudinary.secure_url;
-      setAvatar(newAvatarUrl);
+    let newAvatarUrl = null;
+    const token = localStorage.getItem('token');
+    if (!token) {
+        toast.error("Sesión expirada. Por favor, inicia sesión.");
+        return;
+    }
 
-      const token = localStorage.getItem("token");
-      if (token) {
-        // Llamada al endpoint correcto: /api/usuarios/actualizar
-        await fetchData(
-          `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/actualizar`,
-          { avatar: newAvatarUrl },
-          "PUT",
-          { Authorization: `Bearer ${token}` }
-        );
-        toast.success("Avatar actualizado correctamente.");
-      }
-    } catch (err) {
-      console.error(err);
-      toast.error("Error al actualizar avatar");
-    }
-  };
+    try {
+      // 1. Subir a Cloudinary
+      const resCloudinary = await axios.post(
+        "https://api.cloudinary.com/v1_1/dm5yhmz9a/image/upload",
+        formData
+      );
+      newAvatarUrl = resCloudinary.data.secure_url;
+      
+      setAvatar(newAvatarUrl);
+      
+      // 2. ✅ CORRECCIÓN CLAVE: Se agrega el prefijo /api/usuarios a la ruta
+      await axios.put(
+        `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/actualizar`, 
+        { avatar: newAvatarUrl },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
-  // 🔹 Logout
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
-  };
+      toast.success("Avatar actualizado y guardado correctamente.");
+      
+    } catch (err) {
+      console.error("Error al subir o guardar el avatar:", err.response?.data || err);
+      toast.error("Error al actualizar el avatar.");
+    }
+  };
 
-  // 🔹 Menu toggle
-  const handleMenuToggle = () => setMenuOpen(!menuOpen);
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/login');
+  };
 
-  // 🔹 Cerrar menú si clic afuera o Escape
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      const menu = document.querySelector(".side-menu");
-      const btn = document.querySelector(".hamburger-btn");
-      if (menuOpen && menu && !menu.contains(e.target) && btn && !btn.contains(e.target)) setMenuOpen(false);
-    };
-    const handleEscape = (e) => { if (e.key === "Escape") setMenuOpen(false); };
-    document.addEventListener("click", handleClickOutside);
-    document.addEventListener("keydown", handleEscape);
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-      document.removeEventListener("keydown", handleEscape);
-    };
-  }, [menuOpen]);
+  const handleMenuToggle = () => {
+    setMenuOpen(!menuOpen);
+  };
 
-  // 🔹 Render derecha según tab
-  const renderRightContent = () => {
-    switch (activeTab) {
-      case "cuenta":
-        return (
-          <div className="user-profile-section">
-            <h3>{userName}</h3>
-            <div className="avatar-circle-large" onClick={handleFileClick}>
-              {avatar ? <img src={getAvatarUrl(avatar)} alt="Avatar" /> : <span>👤</span>}
-            </div>
-            <div className="profile-info">
-              <div><strong>Teléfono:</strong> {userPhone || "No disponible"}</div>
-              <div><strong>Dirección:</strong> {userAddress || "No disponible"}</div>
-              <div><strong>Cédula:</strong> {userCedula || "No disponible"}</div>
-              <div><strong>Universidad:</strong> {userUniversity || "No disponible"}</div>
-              <div><strong>Carrera:</strong> {userCareer || "No disponible"}</div>
-              <div><strong>Descripción:</strong> {userDescription || "No disponible"}</div>
-            </div>
-          </div>
-        );
-      case "favoritos": return <div>Favoritos...</div>;
-      case "chats": return <div>Chats...</div>;
-      case "notificaciones": return <div>Notificaciones...</div>;
-      default: return null;
-    }
-  };
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      const menu = document.querySelector(".side-menu");
+      const hamburger = document.querySelector(".hamburger-btn");
 
-  return (
-    <div className="musuario-container">
-      <ToastContainer />
-      <button className={`hamburger-btn ${menuOpen ? "open" : ""}`} onClick={handleMenuToggle}><span></span><span></span><span></span></button>
+      if (menuOpen && menu && !menu.contains(event.target) && hamburger && !hamburger.contains(event.target)) {
+        setMenuOpen(false);
+      }
+    };
 
-      <nav className={`side-menu ${menuOpen ? "show" : ""}`}>
-        <div className="menu-header">
-          <h3>Menú</h3>
-          <div className="avatar-section" onClick={handleFileClick}>
-            {avatar ? <img src={getAvatarUrl(avatar)} alt="Avatar" /> : <span>👤</span>}
-            <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" className="input-file-hidden" />
-        </div>
-        </div>
-        <div className="menu-buttons">
-          <button onClick={() => navigate("/Dashboard")}>Inicio</button>
-          <button onClick={() => setActiveTab("cuenta")}>Mi cuenta</button>
-          <button onClick={() => setActiveTab("favoritos")}>Favoritos</button>
-          <button onClick={() => navigate("/Ajustes")}>Ajustes</button>
-          <button onClick={handleLogout}>Cerrar sesión</button>
-        </div>
-      </nav>
+    const handleEscape = (event) => {
+      if (event.key === "Escape" && menuOpen) {
+        setMenuOpen(false);
+      }
+    };
 
-      <div className="right-panel">
-        {renderRightContent()}
-      </div>
-    </div>
-  );
+    document.addEventListener("click", handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [menuOpen]);
+
+  const renderRightContent = () => {
+    switch (activeTab) {
+      case "cuenta":
+        return (
+          <div className="user-profile-section">
+            <h3 style={{ textAlign: "center", marginBottom: "15px", color: "#000" }}>
+              {userName || "Usuario"}
+            </h3>
+
+            <div className="profile-header" style={{ justifyContent: "center" }}>
+              <div className="avatar-circle-large" onClick={handleFileClick}>
+                {avatar ? (
+                  <img src={getAvatarUrl(avatar)} alt="Avatar" className="avatar-img-large" />
+                ) : (
+                  <span className="default-avatar-large">👤</span>
+                )}
+              </div>
+            </div>
+
+            <div className="profile-info">
+              <div className="info-row">
+                <strong>Descripción:</strong>
+                <span style={{ color: userDescription ? "#333" : "#000" }}>{userDescription || "No disponible"}</span>
+              </div>
+              <div className="info-row">
+                <strong>Teléfono:</strong>
+                <span style={{ color: userPhone ? "#333" : "#000" }}>{userPhone || "No disponible"}</span>
+              </div>
+              <div className="info-row">
+                <strong>Dirección:</strong>
+                <span style={{ color: userAddress ? "#333" : "#000" }}>{userAddress || "No disponible"}</span>
+              </div>
+              <div className="info-row">
+                <strong>Cédula:</strong>
+                <span style={{ color: userCedula ? "#333" : "#000" }}>{userCedula || "No disponible"}</span>
+              </div>
+
+              <div className="info-row">
+                <strong>Universidad:</strong>
+                <span style={{ color: userUniversity ? "#333" : "#000" }}>{userUniversity || "No disponible"}</span>
+              </div>
+              <div className="info-row">
+                <strong>Carrera:</strong>
+                <span style={{ color: userCareer ? "#333" : "#000" }}>{userCareer || "No disponible"}</span>
+              </div>
+            </div>
+          </div>
+        );
+
+      case "favoritos":
+        return <div><h3>Favoritos</h3><p>Información de tu cuenta...</p></div>;
+      case "chats":
+        return <div><h3>Chats</h3><p>Tus conversaciones...</p></div>;
+      case "notificaciones":
+        return <div><h3>Notificaciones</h3><p>Tus notificaciones...</p></div>;
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="musuario-container">
+      <ToastContainer />
+
+      {/* BOTÓN DE HAMBURGUESA */}
+      <button className={`hamburger-btn ${menuOpen ? "open" : ""}`} onClick={handleMenuToggle}>
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      {/* MENÚ DESLIZABLE */}
+      <nav className={`side-menu ${menuOpen ? "show" : ""}`}>
+
+        {/* SECCIÓN SUPERIOR */}
+        <div className="menu-header">
+          <h3 className="menu-title">Menú</h3>
+
+          <div className="avatar-section">
+            <div className="avatar-container" onClick={handleFileClick}>
+              {avatar ? (
+                <img src={getAvatarUrl(avatar)} alt="Avatar" className="avatar-img" />
+              ) : (
+                <span className="default-avatar">👤</span>
+              )}
+              <div className="avatar-overlay">
+                <i className="fa fa-camera"></i>
+              </div>
+            </div>
+
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              className="input-file-hidden"
+              accept="image/*"
+            />
+          </div>
+        </div>
+
+        <div className="menu-buttons">
+          <button onClick={() => navigate("/Dashboard")}>Inicio</button>
+          <button onClick={() => navigate("/MUsuario")}>Mi cuenta</button>
+          <button onClick={() => {}}>Favoritos</button>
+          <button onClick={() => navigate("/Ajustes")}>Ajustes</button>
+          <button onClick={handleLogout}>Cerrar sesión</button>
+        </div>
+      </nav>
+
+      <div className="main-nav-panel"> 
+        <div className="left-panel-content">
+
+          <div style={{ textAlign: "center", marginBottom: "20px" }}>
+            <div
+              style={{
+                width: "100px",
+                height: "100px",
+                borderRadius: "50%",
+                overflow: "hidden",
+                margin: "0 auto",
+                backgroundColor: "#ddd",
+              }}
+            >
+              {avatar ? (
+                <img src={getAvatarUrl(avatar)} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="Avatar" />
+              ) : (
+                <span style={{ fontSize: "50px", display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>👤</span>
+              )}
+            </div>
+
+            <h3 style={{ color: "white", marginTop: "10px"}}>{userName}</h3>
+            <p style={{ color: "#8bc34a", marginTop: "-5px" }}>{userStatus}</p>
+
+            <hr style={{ marginTop: "10px", marginBottom: "10px", borderTop: "1px solid rgba(255, 255, 255, 0.2)" }} />
+          </div>
+
+          <div className="menu-buttons">
+            <button className={activeTab === "cuenta" ? "active" : ""} onClick={() => setActiveTab("cuenta")}>Cuenta</button>
+            <button className={activeTab === "favoritos" ? "active" : ""} onClick={() => setActiveTab("favoritos")}>Favoritos</button>
+            <button className={activeTab === "chats" ? "active" : ""} onClick={() => setActiveTab("chats")}>Chats</button>
+            <button className={activeTab === "notificaciones" ? "active" : ""} onClick={() => setActiveTab("notificaciones")}>Notificaciones</button>
+          </div>
+        </div>
+      </div>
+
+      <div className="right-panel">
+        {renderRightContent()}
+      </div>
+    </div>
+  );
 };
 
 export default MUsuario;
