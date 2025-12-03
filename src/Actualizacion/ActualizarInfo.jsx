@@ -31,7 +31,12 @@ const ActualizarInfo = () => {
     "https://api.dicebear.com/6.x/bottts/svg?seed=Avatar5",
   ];
 
-  const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+  const BASE_URL = import.meta.env.VITE_BACKEND_URL; // ej: https://diverse-janeta-epn-a654e5e7.koyeb.app
+
+axios.get(`${BASE_URL}/api/usuarios/perfil`, {
+  headers: { Authorization: `Bearer ${token}` },
+});
+
 
   // 🔹 Traer datos del usuario
   useEffect(() => {
