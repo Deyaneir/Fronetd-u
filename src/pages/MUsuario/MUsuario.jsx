@@ -43,9 +43,12 @@ const MUsuario = () => {
       const token = localStorage.getItem('token');
       if (!token) return;
 
-      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/usuarios/perfil`, {
+     const BASE_URL = `${import.meta.env.VITE_BACKEND_URL}/api/usuarios`;
+
+const response = await axios.get(`${BASE_URL}/perfil`, {
   headers: { Authorization: `Bearer ${token}` }
 });
+
 
       setUserName(response.data.nombre || "Usuario");
       setUserStatus(response.data.estado || "Disponible");
