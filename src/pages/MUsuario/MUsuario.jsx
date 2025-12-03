@@ -41,10 +41,11 @@ const MUsuario = () => {
         const token = localStorage.getItem('token');
         if (!token) return;
 
-        const response = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/perfil`, 
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+       const response = await axios.get(
+  `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/perfil`,
+  { headers: { Authorization: `Bearer ${token}` } }
+);
+
 
         if (response.data?.nombre) setUserName(response.data.nombre);
         if (response.data?.estado) setUserStatus(response.data.estado);
