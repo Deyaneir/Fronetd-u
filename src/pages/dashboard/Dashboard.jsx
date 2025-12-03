@@ -22,6 +22,7 @@ const Dashboard = () => {
         storeAuth.getState().clearToken();
         navigate("/login");
     };
+console.log("Backend cargado:", import.meta.env.VITE_BACKEND_URL);
 
     useEffect(() => {
         const fetchUserInfo = async () => {
