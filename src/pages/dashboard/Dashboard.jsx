@@ -11,7 +11,7 @@ const Dashboard = () => {
     const [userName, setUserName] = useState("usuario");
     const [userRole, setUserRole] = useState("");
     const [isLoading, setIsLoading] = useState(true);
-    const [quote, setQuote] = useState("");
+    const [quote, setQuote] = useState(null);
     const [menuOpen, setMenuOpen] = useState(false);
     const [avatar, setAvatar] = useState(null);
 
@@ -24,24 +24,24 @@ const Dashboard = () => {
         navigate("/login");
     };
 
-    // 📌 CARGAR USUARIO + AVATAR + FRASE
+    // 📌 Cargar usuario + avatar + frase motivadora
     useEffect(() => {
         const fetchUserInfo = async () => {
             try {
-                const token = storeAuth.getState().token || localStorage.getItem("token");
+                const token = storeAuth.getState().token;
                 if (!token) return setIsLoading(false);
 
                 const res = await axios.get(
-                    `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/perfil`,
+                    `${import.meta.env.VITE_BACKEND_URL}/perfil`,
                     { headers: { Authorization: `Bearer ${token}` } }
                 );
 
-                if (res.data?.nombre) setUserName(res.data.nombre);
-                if (res.data?.rol) setUserRole(res.data.rol);
-                if (res.data?.avatar) setAvatar(res.data.avatar);
+                setUserName(res.data.nombre || "usuario");
+                setUserRole(res.data.rol || "");
+                setAvatar(res.data.avatar || null);
 
-            } catch (error) {
-                console.error("Error al obtener el usuario:", error);
+            } catch (err) {
+                console.error("Error al cargar usuario:", err.response?.data || err);
             } finally {
                 setIsLoading(false);
             }
@@ -49,31 +49,22 @@ const Dashboard = () => {
 
         const fetchQuote = async () => {
             try {
-                const response = await axios.get(
-                    `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/frase`
-                );
-
-                const { q: frase, a: autor } = response.data[0];
-
-                const traduccion = await axios.get(
-                    `https://api.mymemory.translated.net/get?q=${encodeURIComponent(frase)}&langpair=en|es`
-                );
-
-                setQuote({ texto: `"${traduccion.data.responseData.translatedText}"`, autor });
-
-            } catch (error) {
-                console.error("Error frase motivadora:", error);
+                const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/frase`);
+                const quoteData = res.data[0];
+                if (quoteData?.q && quoteData?.a) {
+                    setQuote({ texto: quoteData.q, autor: quoteData.a });
+                }
+            } catch (err) {
+                console.error("Error al cargar frase:", err.response?.data || err);
             }
         };
 
         fetchUserInfo();
         fetchQuote();
 
-        // 🟦 Toast solo al iniciar sesión
-        const token = storeAuth.getState().token || localStorage.getItem("token");
-        const toastShownBefore = localStorage.getItem("loginToastShown");
-
-        if (token && !toastShownBefore) {
+        // Toast solo al iniciar sesión
+        const token = storeAuth.getState().token;
+        if (token && !localStorage.getItem("loginToastShown")) {
             localStorage.setItem("loginToastShown", "true");
             setTimeout(() => {
                 toast.success("Inicio de sesión exitoso 🎉", {
@@ -82,48 +73,18 @@ const Dashboard = () => {
                 });
             }, 0);
         }
-
     }, []);
 
     // 📸 Abrir selector de archivo
     const handleFileClick = () => fileInputRef.current.click();
 
-    // 📸 Subida de avatar a Cloudinary y guardar en backend
-    const handleFileChange = async (e) => {
+    // 📸 Vista previa del avatar nuevo
+    const handleFileChange = (e) => {
         const file = e.target.files[0];
-        if (!file) return;
-
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("upload_preset", "VIBE-U");
-        formData.append("folder", "avatars");
-
-        const token = storeAuth.getState().token || localStorage.getItem("token");
-        if (!token) {
-            toast.error("Sesión expirada. Por favor, inicia sesión.");
-            return;
-        }
-
-        try {
-            // Subir a Cloudinary
-            const resCloudinary = await axios.post(
-                "https://api.cloudinary.com/v1_1/dm5yhmz9a/image/upload",
-                formData
-            );
-            const newAvatarUrl = resCloudinary.data.secure_url;
-            setAvatar(newAvatarUrl);
-
-            // Guardar en backend
-            await axios.put(
-                `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/actualizar`,
-                { avatar: newAvatarUrl },
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
-
-            toast.success("Avatar actualizado correctamente.");
-        } catch (err) {
-            console.error("Error al subir o guardar el avatar:", err.response?.data || err);
-            toast.error("Error al actualizar el avatar.");
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = () => setAvatar(reader.result);
+            reader.readAsDataURL(file);
         }
     };
 
@@ -131,7 +92,7 @@ const Dashboard = () => {
         <section className="dashboard-section">
             <ToastContainer />
 
-            {/* BOTÓN 3 LÍNEAS */}
+            {/* BOTÓN HAMBURGUESA */}
             <button
                 className={`hamburger-btn ${menuOpen ? "open" : ""}`}
                 onClick={() => setMenuOpen(!menuOpen)}
@@ -141,14 +102,10 @@ const Dashboard = () => {
                 <span></span>
             </button>
 
-            {/* MENÚ DESLIZABLE */}
+            {/* MENÚ LATERAL */}
             <nav className={`side-menu ${menuOpen ? "show" : ""}`}>
-
-                {/* TOP DEL MENÚ */}
                 <div className="menu-header">
                     <h3 className="menu-title">Menú</h3>
-
-                    {/* Avatar */}
                     <div className="avatar-section">
                         <div className="avatar-container" onClick={handleFileClick}>
                             {avatar ? (
@@ -160,7 +117,6 @@ const Dashboard = () => {
                                 <i className="fa fa-camera"></i>
                             </div>
                         </div>
-
                         <input
                             type="file"
                             ref={fileInputRef}
@@ -171,7 +127,6 @@ const Dashboard = () => {
                     </div>
                 </div>
 
-                {/* BOTONES DEL MENÚ */}
                 <div className="menu-buttons">
                     <button onClick={() => navigate("/Dashboard")}>Inicio</button>
                     <button onClick={() => navigate("/MUsuario")}>Mi cuenta</button>
@@ -194,12 +149,11 @@ const Dashboard = () => {
                 ) : (
                     <h2>¡Bienvenido de nuevo, {userName}!</h2>
                 )}
-
                 <p>Explora lo mejor de tu comunidad universitaria.</p>
 
                 {quote && (
                     <div className="motivational-quote">
-                        <p className="quote-text">{quote.texto}</p>
+                        <p className="quote-text">"{quote.texto}"</p>
                         <p className="quote-author">- {quote.autor}</p>
                     </div>
                 )}
