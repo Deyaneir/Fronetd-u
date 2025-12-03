@@ -44,8 +44,8 @@ const MUsuario = () => {
       if (!token) return;
 
       const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/usuarios/perfil`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+  headers: { Authorization: `Bearer ${token}` }
+});
 
       setUserName(response.data.nombre || "Usuario");
       setUserStatus(response.data.estado || "Disponible");
