@@ -31,7 +31,7 @@ const ActualizarInfo = () => {
     "https://api.dicebear.com/6.x/bottts/svg?seed=Avatar5",
   ];
 
-  const BASE_URL = import.meta.env.VITE_BACKEND_URL; // ej: https://diverse-janeta-epn-a654e5e7.koyeb.app
+  const BASE_URL = import.meta.env.VITE_BACKEND_URL; // Ej: https://diverse-janeta-epn-a654e5e7.koyeb.app
 
   // 🔹 Traer datos del usuario
   useEffect(() => {
@@ -54,12 +54,12 @@ const ActualizarInfo = () => {
         setUserCareer(res.data.carrera || "");
       } catch (err) {
         console.error("Error al cargar datos del usuario:", err.response?.data || err);
-        toast.error(err.response?.data?.msg || "No se pudo cargar la información del usuario");
+        toast.error(err.response?.data?.msg || "No se pudo cargar tu perfil");
       }
     };
 
     fetchUserInfo();
-  }, [BASE_URL]);
+  }, []);
 
   const handleFileClick = () => fileInputRef.current.click();
 
@@ -102,6 +102,7 @@ const ActualizarInfo = () => {
   const handleUpdate = async () => {
     try {
       const token = localStorage.getItem("token");
+      if (!token) return toast.error("No se encontró tu token, inicia sesión nuevamente");
 
       await axios.put(
         `${BASE_URL}/api/usuarios/actualizar`,
@@ -129,11 +130,16 @@ const ActualizarInfo = () => {
   return (
     <div className="actualizar-container">
       <ToastContainer />
+
       <h2 className="titulo">Actualizar información de cuenta</h2>
 
       <div className="avatar-wrapper">
         <div className="avatar-circle" onClick={handleFileClick}>
-          {avatar ? <img src={avatar} alt="Avatar" className="avatar-img-preview" /> : <span className="default-avatar">👤</span>}
+          {avatar ? (
+            <img src={avatar} alt="Avatar" className="avatar-img-preview" />
+          ) : (
+            <span className="default-avatar">👤</span>
+          )}
         </div>
 
         <div className="btns-avatar">
@@ -150,7 +156,13 @@ const ActualizarInfo = () => {
             <h3 className="modal-title">Seleccionar Avatar Predefinido</h3>
             <div className="avatar-options-grid">
               {avatarOptions.map((url, i) => (
-                <img key={i} src={url} className="avatar-option" onClick={() => { setAvatar(url); setAvatarModalOpen(false); }} alt={`avatar-${i}`} />
+                <img
+                  key={i}
+                  src={url}
+                  className="avatar-option"
+                  onClick={() => { setAvatar(url); setAvatarModalOpen(false); }}
+                  alt={`avatar-${i}`}
+                />
               ))}
             </div>
             <button className="modal-close-btn" onClick={() => setAvatarModalOpen(false)}>Cerrar</button>
