@@ -128,6 +128,7 @@
     border: none;
     cursor: pointer;
     z-index: 2000;
+    right: 20px; /* <--- Posicionado aquí */
 }
 
 .hamburger-btn span {
