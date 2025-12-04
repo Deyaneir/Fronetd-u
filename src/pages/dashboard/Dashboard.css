@@ -1,5 +1,5 @@
 /* ---------------------------- */
-/*      DASHBOARD GENERAL       */
+/* DASHBOARD GENERAL       */
 /* ---------------------------- */
 .dashboard-section {
     font-family: 'Poppins', sans-serif;
@@ -95,7 +95,7 @@
 .motivational-quote {
     margin-top: 20px;
     font-style: italic;
-    color: #0c0101;
+    color: #4a4e69; /* Color ajustado para mejor visibilidad */
     background: #E1BEE7;
     text-align: center;
 }
@@ -113,14 +113,16 @@
 }
 
 /* ---------------------------- */
-/*      MENÚ HAMBURGUESA       */
+/* MENÚ HAMBURGUESA        */
 /* ---------------------------- */
 .hamburger-btn {
+    /* CORRECCIÓN: Usa 'right' si quieres que el botón esté a la derecha
+       para que no se superponga con el menú al abrir. */
     position: fixed;
     top: 20px;
-    left: 20px;
+    right: 20px; /* POSICIONADO A LA DERECHA */
     width: 45px;
-    height: 40px;
+    height: 30px; /* Altura ajustada para 3 líneas */
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -128,33 +130,56 @@
     border: none;
     cursor: pointer;
     z-index: 2000;
+    /* Transición para la animación */
+    transition: all 0.3s ease; 
 }
 
 .hamburger-btn span {
     display: block;
     width: 100%;
     height: 4px;
-    background: #333;
+    background: #7663e0; /* Color del dashboard */
     border-radius: 4px;
+    transition: all 0.3s ease;
+    transform-origin: center; /* Punto de pivote para la rotación */
 }
 
+/* Animación de Apertura/Cierre */
+.hamburger-btn.open span:nth-child(1) {
+    transform: translateY(13px) rotate(45deg); /* Desplaza y rota la línea superior */
+}
+
+.hamburger-btn.open span:nth-child(2) {
+    opacity: 0; /* Oculta la línea del medio */
+}
+
+.hamburger-btn.open span:nth-child(3) {
+    transform: translateY(-13px) rotate(-45deg); /* Desplaza y rota la línea inferior */
+}
+
+
 /* ---------------------------- */
-/*      MENÚ LATERAL            */
+/* MENÚ LATERAL             */
 /* ---------------------------- */
 .side-menu {
     position: fixed;
     top: 0;
-    left: 0;
+    /* CORRECCIÓN: Si el botón está a la derecha, es más común que el menú
+       también se deslice desde la derecha, aunque tu implementación original
+       desde la izquierda es válida. Lo mantendré a la izquierda, pero ajusta 
+       si prefieres que venga desde la derecha. */
+    left: 0; 
     width: 260px;
     height: 100%;
     background: #760265;
     color: white;
     padding: 30px 20px;
-    transform: translateX(-100%);
+    transform: translateX(-100%); /* Oculto */
     transition: transform 0.45s ease;
     display: flex;
     flex-direction: column;
-    align-items: flex-start; /* Los botones quedarán a la izquierda */
+    align-items: flex-start;
+    z-index: 1500; /* Asegura que esté por debajo del botón (2000) */
 }
 
 /* Cuando el menú se muestra */
@@ -166,7 +191,7 @@
     position: fixed;
     top: 0; left: 0;
     width: 100%; height: 100%;
-    background: rgba(0,0,0,0.3);
+    background: rgba(0,0,0,0.5); /* Oscuridad ajustada */
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.45s ease;
@@ -181,27 +206,27 @@
 .menu-header {
     display: flex;
     flex-direction: column;
-    align-items: center; /* centra título y avatar */
+    align-items: center;
     width: 100%;
-    margin-top: 50px; /* <--- esto los baja */
-    margin-bottom: 30px; /* separa de los botones */
+    margin-top: 10px; /* MARGEN REDUCIDO */
+    margin-bottom: 30px;
 }
 .menu-title {
     text-align: center;
     font-size: 1.3rem;
     margin-bottom: 15px;
+    color: white;
 }
 
 /* ---------------------------- */
-/*      AVATAR                   */
+/* AVATAR                   */
 /* ---------------------------- */
 
 /* Contenedor principal del avatar */
 .avatar-section {
     display: flex;
     flex-direction: column;
-    align-items: center; /* Centra avatar y título */
-    margin-bottom: 30px;
+    align-items: center;
     width: 100%;
 }
 
@@ -212,6 +237,12 @@
     overflow: hidden;
     cursor: pointer;
     margin-bottom: 10px;
+    /* CORRECCIÓN: Necesitas position: relative para que el overlay 
+       de la cámara (position: absolute) se posicione correctamente 
+       dentro de este contenedor. */
+    position: relative; 
+    background-color: #f0f0f0; /* Fondo para el avatar por defecto */
+    border: 3px solid white;
 }
 
 .avatar-img {
@@ -220,39 +251,43 @@
     object-fit: cover;
 }
 
-.menu-title {
-    width: 100%;
-    text-align: center; /* Esto centra la palabra "Menú" */
-    margin: 0;
+/* CORRECCIÓN: Estilos para el overlay de la cámara */
+.avatar-overlay {
+    position: absolute;
+    bottom: 0px; /* Posicionamiento ajustado */
+    right: 0px; /* Posicionamiento ajustado */
+    background: rgba(0, 0, 0, 0.7); /* Fondo más oscuro */
     color: white;
-    font-size: 1.2rem;
-}
-.default-avatar {
-  font-size: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    border-radius: 50%;
+    width: 30px; /* Tamaño del overlay */
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    opacity: 0; /* Oculto por defecto */
+    transition: opacity 0.3s ease;
 }
 
-.avatar-overlay {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  background: rgba(0,0,0,0.5);
-  color: white;
-  border-radius: 50%;
-  padding: 5px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  cursor: pointer;
+.avatar-container:hover .avatar-overlay {
+    opacity: 1; /* Se muestra al hacer hover */
+}
+
+
+.default-avatar {
+    font-size: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    color: #7663e0; /* Color del icono por defecto */
 }
 
 /* Botones verticales debajo del avatar */
 .menu-buttons {
     display: flex;
-    flex-direction: column; /* vertical */
+    flex-direction: column; 
     gap: 10px;
     width: 100%;
     padding: 0;
@@ -260,77 +295,26 @@
 }
 
 .menu-buttons button {
-    width: 100%;          /* ocupa todo el ancho del contenedor */
-    text-align: left;     /* texto alineado a la izquierda */
+    width: 100%;
+    text-align: left;
     padding: 10px 15px;
     background: transparent;
     color: white;
     border: none;
-    border-radius: 5px;  /* opcional, para efecto suave */
+    border-radius: 5px;
     cursor: pointer;
     transition: background 0.2s;
 }
 
 .menu-buttons button:hover {
-    background: rgba(255, 255, 255, 0.1); /* efecto hover */
+    background: rgba(255, 255, 255, 0.1);
 }
 
 
-/* Emoji por defecto */
-.default-avatar {
-  font-size: 50px;          /* Ajusta según el tamaño del círculo */
-  margin: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+/* Código sobrante que no es necesario, lo he limpiado */
+/* .change-avatar-btn, .user-info, .right-panel no son necesarios */
 
-
-
-.change-avatar-btn {
-  margin-bottom: 5px;
-}
-
-.user-info {
-  text-align: center;
-  margin-bottom: 50px;
-}
-
-.menu-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-bottom: 30px;
-  width: 100%;
-  padding: 0;           /* Asegúrate de que no haya padding interno */
-  margin: 0;            /* Sin márgenes */
-}
-
-.menu-buttons button {
-  width: 100%;                /* Ocupa todo el ancho del contenedor */
-  padding: 10px 15px;         /* Ajusta a gusto */
-  background: transparent;
-  color: white;
-  border: none;
-  cursor: pointer;
-  text-align: left;
-  border-radius: 0;           /* Sin bordes redondeados para el hover */
-  box-sizing: border-box;     /* Incluye padding dentro del width */
-  position: relative;          /* Necesario para pseudo-elementos si quieres */
-  overflow: hidden;            /* Evita que el hover quede recortado */
-  transition: background 0.2s;
-}
-
-.menu-buttons button:hover {
-  background: rgba(255, 255, 255, 0.1); /* Gris semi-transparente */
-  width: 100%;                           /* Todo el ancho */
-}
-
-
-/* PANEL DERECHO */
-.right-panel {
-  flex: 1;
-  padding: 30px;
-  background-color: #f5f5f5;
-  overflow-y: auto;
+.input-file-hidden {
+    /* Estilo esencial para ocultar el input de tipo file */
+    display: none;
 }
