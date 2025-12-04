@@ -118,21 +118,21 @@
 /* ---------------------------------------------------- */
 
 .hamburger-btn {
-    position: fixed;
-    top: 20px;
-    right: 20px; /* <--- CORRECCIÓN CLAVE: Posicionado a la derecha */
+    position: fixed !important; /* Fuerza la posición fija */
+    top: 20px !important;
+    right: 20px !important; /* Fuerza la ubicación a la derecha */
     
-    width: 45px;
-    height: 30px; /* Altura ajustada para 3 líneas */
+    width: 45px !important;
+    height: 30px !important; 
     
-    display: flex; 
-    flex-direction: column;
-    justify-content: space-between;
+    display: flex !important; /* <<-- VITAL: Lo fuerza a ser visible */ 
+    flex-direction: column !important;
+    justify-content: space-between !important;
     
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    z-index: 9999; /* Prioridad máxima */
+    background: transparent !important;
+    border: none !important;
+    cursor: pointer !important;
+    z-index: 9999 !important; /* Fuerza la prioridad más alta */
     transition: all 0.3s ease;
 }
 
@@ -140,7 +140,7 @@
     display: block;
     width: 100%;
     height: 4px;
-    background: #7663e0; /* Color que combina con los botones */
+    background: #7663e0; 
     border-radius: 4px;
     transition: all 0.3s ease;
     transform-origin: center;
@@ -156,8 +156,6 @@
 .hamburger-btn.open span:nth-child(3) {
     transform: translateY(-13px) rotate(-45deg);
 }
-
-
 /* ---------------------------------------------------- */
 /* MENÚ LATERAL DESLIZABLE (side-menu) */
 /* ---------------------------------------------------- */
