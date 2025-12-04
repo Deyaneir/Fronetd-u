@@ -127,7 +127,7 @@
     background: transparent;
     border: none;
     cursor: pointer;
-    z-index: 2000;
+    z-index: 9999;
     right: 20px; /* <--- Posicionado aquí */
 }
 
