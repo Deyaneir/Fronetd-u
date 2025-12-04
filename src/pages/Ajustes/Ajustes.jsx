@@ -17,30 +17,32 @@ const Ajustes = () => {
   const navigate = useNavigate();
 
   // 📌 Cargar Avatar al iniciar el componente
-  useEffect(() => {
-    const fetchAvatar = async () => {
-      try {
-        const token = storeAuth.getState().token;
-        
-        // Verifica que la variable de entorno y el token existan
-        if (!token || !import.meta.env.VITE_BACKEND_URL) return;
+ useEffect(() => {
+  const fetchAvatar = async () => {
+    try {
+      const token = storeAuth.getState().token;
 
-        const res = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/perfil`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+      if (!token || !import.meta.env.VITE_BACKEND_URL) return;
 
-        // ✔ Cargar avatar desde backend
-        if (res.data?.avatar) {
-          setAvatar(res.data.avatar);
-        }
-      } catch (error) {
-        console.error("Error al obtener el avatar en Ajustes:", error);
+      const res = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/perfil`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      if (res.data?.avatar) {
+        // Construir URL completa
+        const fullURL = `${import.meta.env.VITE_BACKEND_URL}${res.data.avatar}`;
+        setAvatar(fullURL);
       }
-    };
 
-    fetchAvatar();
-  }, []); // El array vacío asegura que se ejecute solo una vez al inicio
+    } catch (error) {
+      console.error("Error al obtener el avatar en Ajustes:", error);
+    }
+  };
+
+  fetchAvatar();
+}, []);
+// El array vacío asegura que se ejecute solo una vez al inicio
 
   const handleFileClick = () => fileInputRef.current.click();
 
