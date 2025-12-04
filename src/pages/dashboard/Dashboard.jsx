@@ -69,10 +69,12 @@ const Dashboard = () => {
         const token = storeAuth.getState().token;
         if (token && !localStorage.getItem("loginToastShown")) {
             localStorage.setItem("loginToastShown", "true");
-            toast.success("Inicio de sesión exitoso 🎉", {
-                position: "top-right",
-                autoClose: 2000,
-            });
+            setTimeout(() => {
+                toast.success("Inicio de sesión exitoso 🎉", {
+                    position: "top-right",
+                    autoClose: 2000,
+                });
+            }, 0);
         }
     }, []);
 
