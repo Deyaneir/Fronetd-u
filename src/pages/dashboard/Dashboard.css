@@ -115,30 +115,28 @@
 /* ---------------------------- */
 /*      MENÚ HAMBURGUESA       */
 /* ---------------------------- */
-/* Garantiza que el botón siempre esté encima */
 .hamburger-btn {
     position: fixed;
     top: 20px;
     left: 20px;
     width: 45px;
     height: 40px;
-    z-index: 3000; /* más alto que todo */
-    background: transparent;
-    border: none;
-    cursor: pointer;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 2000;
 }
 
 .hamburger-btn span {
+    display: block;
     width: 100%;
     height: 4px;
     background: #333;
     border-radius: 4px;
-    transition: all 0.3s ease;
 }
-
 
 /* ---------------------------- */
 /*      MENÚ LATERAL            */
