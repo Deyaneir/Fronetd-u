@@ -51,12 +51,6 @@
     margin-bottom: 15px;
 }
 
-.dashboard-card p {
-    color: #6a6a6a;
-    font-size: 1em;
-    line-height: 1.6;
-}
-
 .dashboard-btn {
     background-color: #7663e0;
     color: white;
@@ -75,89 +69,32 @@
     transform: scale(1.05);
 }
 
-.events-card { border-left: 5px solid #ff7f50; }
-.groups-card { border-left: 5px solid #48c9b0; }
-.matches-card { border-left: 5px solid #e74c3c; }
-
-@media (max-width: 768px) {
-    .dashboard-header h2 {
-        font-size: 2em;
-    }
-}
-
-.dashboard-header {
-    position: relative;
-    width: 100%;
-    padding: 40px 20px 20px 20px;
-}
-
-/* Frase motivacional */
-.motivational-quote {
-    margin-top: 20px;
-    font-style: italic;
-    color: #0c0101;
-    background: #E1BEE7;
-    text-align: center;
-}
-
-.quote-text {
-    font-size: 1.2rem;
-    font-weight: 500;
-    margin-bottom: 5px;
-}
-
-.quote-author {
-    font-size: 1rem;
-    color: #555;
-    margin-top: 0;
-}
-
 /* ---------------------------- */
-/* MENÚ HAMBURGUESA        */
+/*      HAMBURGUESA Y MENÚ      */
 /* ---------------------------- */
 .hamburger-btn {
-    /* Mantenemos el 'fixed' y el 'z-index' alto */
     position: fixed;
     top: 20px;
-    right: 20px; /* 👈 POSICIÓN FINAL: Superior DERECHA */
-    
-    /* Elimina el left: 20px; que estaba en conflicto */
-    
+    right: 20px;
     width: 45px;
-    height: 30px; /* Ajuste para que las 3 líneas se vean mejor */
-    display: flex; /* 👈 Fundamental: debe estar visible en TODAS las resoluciones */
+    height: 40px;
+    display: flex;
     flex-direction: column;
     justify-content: space-between;
     background: transparent;
     border: none;
     cursor: pointer;
-    z-index: 9999; 
-    transition: all 0.3s ease; /* Para la animación de la X */
+    z-index: 9999;
 }
 
-/* Estilos para las líneas del botón */
 .hamburger-btn span {
     display: block;
     width: 100%;
     height: 4px;
-    background: #7663e0; /* Un color que contraste con el fondo */
+    background: #333;
     border-radius: 4px;
-    transition: all 0.3s ease;
 }
 
-/* Animación de Apertura/Cierre */
-.hamburger-btn.open span:nth-child(1) {
-    transform: translateY(13px) rotate(45deg);
-}
-.hamburger-btn.open span:nth-child(2) {
-    opacity: 0;
-}
-.hamburger-btn.open span:nth-child(3) {
-    transform: translateY(-13px) rotate(-45deg);
-}
-/* ---------------------------- */
-/*      MENÚ LATERAL            */
-/* ---------------------------- */
 .side-menu {
     position: fixed;
     top: 0;
@@ -168,13 +105,13 @@
     color: white;
     padding: 30px 20px;
     transform: translateX(-100%);
-    transition: transform 0.45s ease;
+    transition: transform 0.3s ease;
     display: flex;
     flex-direction: column;
-    align-items: flex-start; /* Los botones quedarán a la izquierda */
+    align-items: flex-start;
+    z-index: 9998;
 }
 
-/* Cuando el menú se muestra */
 .side-menu.show {
     transform: translateX(0);
 }
@@ -186,8 +123,8 @@
     background: rgba(0,0,0,0.3);
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.45s ease;
-    z-index: 1400;
+    transition: opacity 0.3s ease;
+    z-index: 9997;
 }
 
 .menu-overlay.show {
@@ -198,27 +135,22 @@
 .menu-header {
     display: flex;
     flex-direction: column;
-    align-items: center; /* centra título y avatar */
+    align-items: center;
+    margin-top: 50px;
+    margin-bottom: 30px;
     width: 100%;
-    margin-top: 50px; /* <--- esto los baja */
-    margin-bottom: 30px; /* separa de los botones */
 }
+
 .menu-title {
-    text-align: center;
+    color: white;
     font-size: 1.3rem;
     margin-bottom: 15px;
 }
 
-/* ---------------------------- */
-/*      AVATAR                   */
-/* ---------------------------- */
-
-/* Contenedor principal del avatar */
 .avatar-section {
     display: flex;
     flex-direction: column;
-    align-items: center; /* Centra avatar y título */
-    margin-bottom: 30px;
+    align-items: center;
     width: 100%;
 }
 
@@ -228,6 +160,7 @@
     border-radius: 50%;
     overflow: hidden;
     cursor: pointer;
+    position: relative;
     margin-bottom: 10px;
 }
 
@@ -237,117 +170,51 @@
     object-fit: cover;
 }
 
-.menu-title {
-    width: 100%;
-    text-align: center; /* Esto centra la palabra "Menú" */
-    margin: 0;
-    color: white;
-    font-size: 1.2rem;
-}
-.default-avatar {
-  font-size: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .avatar-overlay {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  background: rgba(0,0,0,0.5);
-  color: white;
-  border-radius: 50%;
-  padding: 5px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  cursor: pointer;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: rgba(0,0,0,0.5);
+    color: white;
+    border-radius: 50%;
+    padding: 5px;
+    font-size: 12px;
 }
 
-/* Botones verticales debajo del avatar */
+.default-avatar {
+    font-size: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .menu-buttons {
     display: flex;
-    flex-direction: column; /* vertical */
+    flex-direction: column;
     gap: 10px;
     width: 100%;
-    padding: 0;
-    margin: 0;
 }
 
 .menu-buttons button {
-    width: 100%;          /* ocupa todo el ancho del contenedor */
-    text-align: left;     /* texto alineado a la izquierda */
+    width: 100%;
+    text-align: left;
     padding: 10px 15px;
     background: transparent;
     color: white;
     border: none;
-    border-radius: 5px;  /* opcional, para efecto suave */
     cursor: pointer;
     transition: background 0.2s;
 }
 
 .menu-buttons button:hover {
-    background: rgba(255, 255, 255, 0.1); /* efecto hover */
+    background: rgba(255,255,255,0.1);
 }
 
-
-/* Emoji por defecto */
-.default-avatar {
-  font-size: 50px;          /* Ajusta según el tamaño del círculo */
-  margin: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-
-
-.change-avatar-btn {
-  margin-bottom: 5px;
-}
-
-.user-info {
-  text-align: center;
-  margin-bottom: 50px;
-}
-
-.menu-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-bottom: 30px;
-  width: 100%;
-  padding: 0;           /* Asegúrate de que no haya padding interno */
-  margin: 0;            /* Sin márgenes */
-}
-
-.menu-buttons button {
-  width: 100%;                /* Ocupa todo el ancho del contenedor */
-  padding: 10px 15px;         /* Ajusta a gusto */
-  background: transparent;
-  color: white;
-  border: none;
-  cursor: pointer;
-  text-align: left;
-  border-radius: 0;           /* Sin bordes redondeados para el hover */
-  box-sizing: border-box;     /* Incluye padding dentro del width */
-  position: relative;          /* Necesario para pseudo-elementos si quieres */
-  overflow: hidden;            /* Evita que el hover quede recortado */
-  transition: background 0.2s;
-}
-
-.menu-buttons button:hover {
-  background: rgba(255, 255, 255, 0.1); /* Gris semi-transparente */
-  width: 100%;                           /* Todo el ancho */
-}
-
-
-/* PANEL DERECHO */
+/* ---------------------------- */
+/* PANEL DERECHO (opcional) */
 .right-panel {
-  flex: 1;
-  padding: 30px;
-  background-color: #f5f5f5;
-  overflow-y: auto;
+    flex: 1;
+    padding: 30px;
+    background-color: #f5f5f5;
+    overflow-y: auto;
 }
