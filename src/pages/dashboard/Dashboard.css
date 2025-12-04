@@ -113,32 +113,48 @@
 }
 
 /* ---------------------------- */
-/*      MENÚ HAMBURGUESA       */
+/* MENÚ HAMBURGUESA        */
 /* ---------------------------- */
 .hamburger-btn {
+    /* Mantenemos el 'fixed' y el 'z-index' alto */
     position: fixed;
     top: 20px;
-    left: 20px;
+    right: 20px; /* 👈 POSICIÓN FINAL: Superior DERECHA */
+    
+    /* Elimina el left: 20px; que estaba en conflicto */
+    
     width: 45px;
-    height: 40px;
-    display: flex;
+    height: 30px; /* Ajuste para que las 3 líneas se vean mejor */
+    display: flex; /* 👈 Fundamental: debe estar visible en TODAS las resoluciones */
     flex-direction: column;
     justify-content: space-between;
     background: transparent;
     border: none;
     cursor: pointer;
-    z-index: 9999;
-    right: 20px; /* <--- Posicionado aquí */
+    z-index: 9999; 
+    transition: all 0.3s ease; /* Para la animación de la X */
 }
 
+/* Estilos para las líneas del botón */
 .hamburger-btn span {
     display: block;
     width: 100%;
     height: 4px;
-    background: #333;
+    background: #7663e0; /* Un color que contraste con el fondo */
     border-radius: 4px;
+    transition: all 0.3s ease;
 }
 
+/* Animación de Apertura/Cierre */
+.hamburger-btn.open span:nth-child(1) {
+    transform: translateY(13px) rotate(45deg);
+}
+.hamburger-btn.open span:nth-child(2) {
+    opacity: 0;
+}
+.hamburger-btn.open span:nth-child(3) {
+    transform: translateY(-13px) rotate(-45deg);
+}
 /* ---------------------------- */
 /*      MENÚ LATERAL            */
 /* ---------------------------- */
