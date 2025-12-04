@@ -112,22 +112,24 @@
     margin-top: 0;
 }
 
-/* ---------------------------- */
-/*      MENÚ HAMBURGUESA       */
-/* ---------------------------- */
+/* ---------------------------------------------------- */
+/* MENÚ HAMBURGUESA (Visible en Compu y Móvil)          */
+/* ---------------------------------------------------- */
+
 .hamburger-btn {
     position: fixed;
     top: 20px;
-    left: 20px;
+    left: 20px; 
+    
     width: 45px;
     height: 40px;
-    display: flex;
+    display: flex; 
     flex-direction: column;
     justify-content: space-between;
     background: transparent;
     border: none;
     cursor: pointer;
-    z-index: 2000;
+    z-index: 3500;
 }
 
 .hamburger-btn span {
@@ -138,69 +140,57 @@
     border-radius: 4px;
 }
 
-/* ---------------------------- */
-/*      MENÚ LATERAL            */
-/* ---------------------------- */
+/* ---------------------------------------------------- */
+/* MENÚ LATERAL DESLIZABLE (side-menu) con DEGRADADO    */
+/* ---------------------------------------------------- */
+
 .side-menu {
     position: fixed;
     top: 0;
     left: 0;
     width: 260px;
     height: 100%;
-    background: #760265;
+    
+    /* 🎨 FONDO DEGRADADO SOLICITADO */
+    background: linear-gradient(180deg, #920ae6 0%, #4a0142 100%);
+    
     color: white;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.4);
     padding: 30px 20px;
+    /* Inicia oculto */
     transform: translateX(-100%);
-    transition: transform 0.45s ease;
+    transition: transform 0.45s cubic-bezier(0.25, 0.8, 0.25, 1);
+    z-index: 3000;
+    /* Aseguramos que se muestre en mobile cuando se le agregue la clase .show */
     display: flex;
     flex-direction: column;
-    align-items: flex-start; /* Los botones quedarán a la izquierda */
+    align-items: flex-start;
 }
 
-/* Cuando el menú se muestra */
 .side-menu.show {
+    /* Se desliza para mostrarse */
     transform: translateX(0);
 }
 
-.menu-overlay {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0,0,0,0.3);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.45s ease;
-    z-index: 1400;
-}
-
-.menu-overlay.show {
-    opacity: 1;
-    pointer-events: all;
-}
-
 .menu-header {
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* centra título y avatar */
-    width: 100%;
-    margin-top: 50px; /* <--- esto los baja */
-    margin-bottom: 30px; /* separa de los botones */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-top: 50px;
+  margin-bottom: 30px;
 }
+
 .menu-title {
-    text-align: center;
-    font-size: 1.3rem;
-    margin-bottom: 15px;
+  font-size: 1.3rem;
+  margin-bottom: 15px;
+  text-align: center;
 }
 
-/* ---------------------------- */
-/*      AVATAR                   */
-/* ---------------------------- */
-
-/* Contenedor principal del avatar */
 .avatar-section {
     display: flex;
     flex-direction: column;
-    align-items: center; /* Centra avatar y título */
+    align-items: center;
     margin-bottom: 30px;
     width: 100%;
 }
@@ -212,26 +202,7 @@
     overflow: hidden;
     cursor: pointer;
     margin-bottom: 10px;
-}
-
-.avatar-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.menu-title {
-    width: 100%;
-    text-align: center; /* Esto centra la palabra "Menú" */
-    margin: 0;
-    color: white;
-    font-size: 1.2rem;
-}
-.default-avatar {
-  font-size: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    position: relative; /* Para el overlay */
 }
 
 .avatar-overlay {
@@ -249,88 +220,48 @@
   cursor: pointer;
 }
 
-/* Botones verticales debajo del avatar */
-.menu-buttons {
+.avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.default-avatar {
+  font-size: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+
+.input-file-hidden {
+    display: none;
+}
+
+/* Botones dentro del menú deslizable */
+.side-menu .menu-buttons {
     display: flex;
-    flex-direction: column; /* vertical */
+    flex-direction: column; 
     gap: 10px;
     width: 100%;
     padding: 0;
     margin: 0;
 }
 
-.menu-buttons button {
-    width: 100%;          /* ocupa todo el ancho del contenedor */
-    text-align: left;     /* texto alineado a la izquierda */
+.side-menu .menu-buttons button {
+    width: 100%;          
+    text-align: left;     
     padding: 10px 15px;
     background: transparent;
     color: white;
     border: none;
-    border-radius: 5px;  /* opcional, para efecto suave */
+    border-radius: 5px;
     cursor: pointer;
     transition: background 0.2s;
+    font-weight: 500;
 }
 
-.menu-buttons button:hover {
-    background: rgba(255, 255, 255, 0.1); /* efecto hover */
+.side-menu .menu-buttons button:hover {
+    background: rgba(255, 255, 255, 0.1); 
 }
 
-
-/* Emoji por defecto */
-.default-avatar {
-  font-size: 50px;          /* Ajusta según el tamaño del círculo */
-  margin: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-
-
-.change-avatar-btn {
-  margin-bottom: 5px;
-}
-
-.user-info {
-  text-align: center;
-  margin-bottom: 50px;
-}
-
-.menu-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-bottom: 30px;
-  width: 100%;
-  padding: 0;           /* Asegúrate de que no haya padding interno */
-  margin: 0;            /* Sin márgenes */
-}
-
-.menu-buttons button {
-  width: 100%;                /* Ocupa todo el ancho del contenedor */
-  padding: 10px 15px;         /* Ajusta a gusto */
-  background: transparent;
-  color: white;
-  border: none;
-  cursor: pointer;
-  text-align: left;
-  border-radius: 0;           /* Sin bordes redondeados para el hover */
-  box-sizing: border-box;     /* Incluye padding dentro del width */
-  position: relative;          /* Necesario para pseudo-elementos si quieres */
-  overflow: hidden;            /* Evita que el hover quede recortado */
-  transition: background 0.2s;
-}
-
-.menu-buttons button:hover {
-  background: rgba(255, 255, 255, 0.1); /* Gris semi-transparente */
-  width: 100%;                           /* Todo el ancho */
-}
-
-
-/* PANEL DERECHO */
-.right-panel {
-  flex: 1;
-  padding: 30px;
-  background-color: #f5f5f5;
-  overflow-y: auto;
-}
