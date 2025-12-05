@@ -96,13 +96,26 @@ const MenuHamburguesa = () => {
           </div>
 
           <h3 className="user-name">{userName}</h3>
-          <p className="user-status">{userStatus}</p>
+          <p
+  className="user-status"
+  style={{
+    color:
+      userStatus.toLowerCase() === "disponible"
+        ? "#4caf50" // VERDE
+        : userStatus.toLowerCase() === "no disponible"
+        ? "#f44336" // ROJO
+        : "#ffeb3b", // AMARILLO (otros estados)
+    fontWeight: "bold",
+  }}
+>
+  {userStatus}
+</p>
+
         </div>
 
         <div className="menu-buttons">
           <button onClick={() => navigate("/dashboard")}>Inicio</button>
           <button onClick={() => navigate("/MUsuario")}>Mi perfil</button>
-          <button onClick={() => navigate("/matches")}>Matches</button>
           <button onClick={() => navigate("/ajustes")}>Ajustes</button>
           <button onClick={handleLogout}>Cerrar sesión</button>
         </div>
