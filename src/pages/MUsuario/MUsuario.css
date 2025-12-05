@@ -17,7 +17,7 @@
     width: 25%;
     background-color: #760265;
     padding: 20px;
-    color: white;
+    color: white; /* SOLO AFECTA ESTE PANEL */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -126,16 +126,16 @@
 }
 
 /* ===================================== */
-/* 🔥 BOTONES DEL MENÚ (uno debajo del otro, sin gris feo) */
+/* 🔥 BOTONES PANEL IZQUIERDO (WITHOUT MENU HAMBURGUESA) */
 /* ===================================== */
-.menu-buttons {
+.menu-buttons-left {
     display: flex;
-    flex-direction: column !important; /* UNO BAJO OTRO */
+    flex-direction: column !important;
     width: 100%;
     margin-top: 20px;
 }
 
-.menu-buttons button {
+.menu-buttons-left button {
     width: 100%;
     padding: 12px;
     margin-bottom: 10px;
@@ -148,9 +148,14 @@
     transition: background-color 0.2s ease-in-out;
 }
 
-/* SIN HOVER GRIS FEÍSIMO */
-.menu-buttons button:hover {
-    background-color: #ffd6fc !important; /* rosa suave */
+/* HOVER SIN GRIS FEÍSIMO */
+.menu-buttons-left button:hover {
+    background-color: #ffd6fc !important;
+}
+
+.menu-buttons-left button.active {
+    background-color: #ffb3f7 !important;
+    font-weight: 900;
 }
 
 /* ===================================== */
