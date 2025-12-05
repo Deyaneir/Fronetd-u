@@ -1,276 +1,242 @@
-/* ---------------------------- */
-/* DASHBOARD GENERAL       */
-/* ---------------------------- */
-.dashboard-section {
+/* ===================================== */
+/* CONTENEDOR GENERAL */
+/* ===================================== */
+.user-page-container {
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+    width: 100%;
+    overflow-x: hidden;
     font-family: 'Poppins', sans-serif;
-    background-color: #E1BEE7;
-    padding: 20px 10px;
-    text-align: center;
-    min-height: 100vh;
 }
 
-.dashboard-header h2 {
-    font-size: 2.5em;
-    color: #4a4e69;
-    margin-bottom: 10px;
-}
-
-.dashboard-header p {
-    font-size: 1.1em;
-    color: #6a6a6a;
-    margin-bottom: 25px;
-}
-
-.dashboard-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 30px;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.dashboard-card {
-    background-color: white;
-    padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+/* ===================================== */
+/* PANEL IZQUIERDO */
+/* ===================================== */
+.main-nav-panel {
+    width: 25%;
+    background-color: #760265; /* Púrpura oscuro */
+    padding: 20px;
+    color: white;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box; /* Asegura que el padding no afecte el width del 25% */
+    /* Estilos para el contenido que se ve en el panel lateral */
 }
 
-.dashboard-card:hover {
-    transform: translateY(-10px) scale(1.02);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+/* Clases del perfil dentro del panel lateral */
+.user-welcome-text {
+    font-size: 1.8em;
+    font-weight: bold;
+    margin-bottom: 5px;
+    margin-top: 10px; /* Separación del avatar */
 }
 
-.card-title {
-    font-size: 1.6em;
-    color: #7663e0;
-    margin-bottom: 15px;
+/* Clases del avatar */
+.user-profile-image {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid white;
 }
 
-.dashboard-card p {
-    color: #6a6a6a;
-    font-size: 1em;
-    line-height: 1.6;
-}
-
-.dashboard-btn {
-    background-color: #7663e0;
-    color: white;
-    padding: 12px 25px;
+.upload-avatar-btn {
+    margin-top: 15px;
+    background-color: white;
+    color: #760265;
+    padding: 6px 12px;
+    border-radius: 10px;
     border: none;
-    border-radius: 25px;
-    font-size: 1em;
     font-weight: bold;
     cursor: pointer;
-    transition: all 0.3s ease;
-    margin-top: 25px;
+    margin-bottom: 10px; /* Espacio debajo del botón */
 }
 
-.dashboard-btn:hover {
-    background-color: #5d49c8;
-    transform: scale(1.05);
-}
-
-.events-card { border-left: 5px solid #ff7f50; }
-.groups-card { border-left: 5px solid #48c9b0; }
-.matches-card { border-left: 5px solid #e74c3c; }
-
-@media (max-width: 768px) {
-    .dashboard-header h2 {
-        font-size: 2em;
-    }
-}
-
-.dashboard-header {
-    position: relative;
-    width: 100%;
-    padding: 40px 20px 20px 20px;
-}
-
-/* Frase motivacional */
-.motivational-quote {
-    margin-top: 20px;
-    font-style: italic;
-    color: #0c0101;
-    background: #E1BEE7;
-    text-align: center;
-}
-
-.quote-text {
-    font-size: 1.2rem;
-    font-weight: 500;
-    margin-bottom: 5px;
-}
-
-.quote-author {
-    font-size: 1rem;
-    color: #555;
+.left-status {
+    font-size: 1em;
+    color: #f7f6f8;
     margin-top: 0;
 }
 
-/* ---------------------------- */
-/* MENÚ LATERAL            */
-/* ---------------------------- */
-.side-menu {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 260px;
-    height: 100%;
-    background: #760265;
-    color: white;
-    padding: 30px 20px;
-    transform: translateX(-100%);
-    transition: transform 0.45s ease;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start; /* Los botones quedarán a la izquierda */
+.left-divider {
+    width: 80%;
+    border-color: rgba(255, 255, 255, 0.3);
+    margin: 20px 0;
 }
 
-/* Cuando el menú se muestra */
-.side-menu.show {
-    transform: translateX(0);
+/* ===================================== */
+/* PANEL DERECHO */
+/* ===================================== */
+.right-panel {
+    width: 75%;
+    padding: 25px;
+    background-color: #f7f6f8;
+    overflow-y: auto;
+    box-sizing: border-box;
 }
 
-.menu-overlay {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0,0,0,0.3);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.45s ease;
-    z-index: 1400;
-}
-
-.menu-overlay.show {
-    opacity: 1;
-    pointer-events: all;
-}
-
-.menu-header {
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* centra título y avatar */
+/* ===================================== */
+/* TARJETA DE USUARIO EN PANEL DERECHO */
+/* ===================================== */
+.user-profile-section {
+    background-color: white;
+    padding: 30px;
+    border-radius: 15px;
     width: 100%;
-    margin-top: 50px; /* <--- esto los baja */
-    margin-bottom: 30px; /* separa de los botones */
+    max-width: 700px;
+    margin: 0 auto;
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.15);
 }
-.menu-title {
+
+/* Título */
+.profile-title {
+    font-size: 1.6em;
+    color: #000;
+    font-weight: bold;
     text-align: center;
-    font-size: 1.3rem;
-    margin-bottom: 15px;
-    width: 100%;
-    text-align: center; /* Esto centra la palabra "Menú" */
-    margin: 0;
-    color: white;
-    font-size: 1.2rem;
+    margin-bottom: 25px;
 }
 
-
-/* ---------------------------- */
-/* AVATAR                  */
-/* ---------------------------- */
-
-/* Contenedor principal del avatar */
-.avatar-section {
+/* INFORMACIÓN DEL USUARIO (Filas) */
+.info-group {
     display: flex;
     flex-direction: column;
-    align-items: center; /* Centra avatar y título */
-    margin-bottom: 30px;
-    width: 100%;
+    gap: 18px;
+    margin-bottom: 25px;
 }
 
-.avatar-container {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    overflow: hidden;
-    cursor: pointer;
-    margin-bottom: 10px;
-}
-
-.avatar-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.default-avatar {
-    font-size: 50px;
+.info-row {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    /* Ajusta según el tamaño del círculo */
-    margin: 0; 
+    justify-content: space-between;
+    padding: 10px 5px;
+    border-bottom: 1px solid #ddd;
 }
 
-.avatar-overlay {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    background: rgba(0,0,0,0.5);
-    color: white;
-    border-radius: 50%;
-    padding: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    cursor: pointer;
+.info-label {
+    font-weight: bold;
+    color: #000;
 }
 
-.change-avatar-btn {
-    margin-bottom: 5px;
+.info-value {
+    color: #000;
 }
 
-.user-info {
+/* BOTÓN EDITAR */
+.edit-btn {
+    margin-top: 25px;
+    display: block;
+    width: 180px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 12px;
     text-align: center;
-    margin-bottom: 50px;
+    background-color: #760265;
+    color: white;
+    font-weight: bold;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s;
 }
 
-/* ---------------------------- */
-/* BOTONES VERTICALES DEL MENÚ  */
-/* ---------------------------- */
+.edit-btn:hover {
+    background-color: #5a014d;
+}
+
+/* ===================================== */
+/* BOTONES DEL MENÚ IZQUIERDO */
+/* ===================================== */
 .menu-buttons {
     display: flex;
-    flex-direction: column; /* vertical */
-    gap: 10px;
-    margin-bottom: 30px;
+    flex-direction: column; /* uno debajo del otro */
     width: 100%;
-    padding: 0; /* Asegúrate de que no haya padding interno */
-    margin: 0; /* Sin márgenes */
+    margin-top: 20px;
 }
 
 .menu-buttons button {
-    width: 100%; /* Ocupa todo el ancho del contenedor */
-    padding: 10px 15px; /* Ajusta a gusto */
-    background: transparent;
-    color: white;
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 10px;
     border: none;
+    border-radius: 8px;
+    background-color: #ffffff;
+    color: #760265;
+    font-weight: bold;
     cursor: pointer;
-    text-align: left;
-    border-radius: 0; /* Sin bordes redondeados para el hover */
-    box-sizing: border-box; /* Incluye padding dentro del width */
-    position: relative;
-    overflow: hidden;
-    transition: background 0.2s;
+    transition: background-color 0.2s ease-in-out;
 }
 
 .menu-buttons button:hover {
-    background: rgba(255, 255, 255, 0.1); /* Gris semi-transparente */
-    width: 100%; /* Todo el ancho */
+    background-color: #ffd6fc;
 }
 
+.menu-buttons button.active {
+    background-color: #ffd6fc; /* Color para el botón activo */
+    border: 2px solid #5a014d;
+}
 
-/* PANEL DERECHO */
-.right-panel {
-    flex: 1;
-    padding: 30px;
-    background-color: #f5f5f5;
-    overflow-y: auto;
+/* ===================================== */
+/* SOLO LA CARTILLA USUARIO EN NEGRO */
+/* Esto asegura que el texto de la tarjeta de perfil sea siempre negro */
+/* ===================================== */
+.user-profile-section * {
+    color: #000 !important;
+}
+
+/* ===================================== */
+/* ESTILOS DE ADAPTABILIDAD (RESPONSIVE) */
+/* ===================================== */
+/* Aplicar para pantallas pequeñas (móviles) */
+@media (max-width: 992px) {
+    /* Deshabilita el diseño de dos columnas */
+    .user-page-container {
+        flex-direction: column;
+        height: auto; /* Permite que el contenido determine la altura */
+        min-height: 100vh;
+    }
+
+    /* El panel de navegación ahora ocupa todo el ancho */
+    .main-nav-panel {
+        width: 100%;
+        height: auto;
+        padding: 20px 0; /* Padding vertical */
+        /* Eliminamos el padding para el menú de botones */
+    }
+    
+    .left-panel-content {
+        padding: 0 20px; /* Padding para el contenido del panel */
+    }
+
+    /* El panel de contenido derecho ocupa todo el ancho */
+    .right-panel {
+        width: 100%;
+        padding: 20px;
+    }
+
+    /* Cambiamos los botones de menú a un diseño horizontal para móvil */
+    .menu-buttons {
+        flex-direction: row; 
+        flex-wrap: wrap; /* Permite que los botones salten de línea */
+        justify-content: center;
+        margin-top: 15px;
+    }
+
+    .menu-buttons button {
+        width: 45%; /* Dos botones por fila */
+        margin: 5px;
+    }
+    
+    /* Ocultamos elementos grandes en móvil si es necesario */
+    .left-divider, .user-welcome-text, .left-status {
+        /* Opcional: ocultar o reducir información en móvil */
+    }
+}
+
+/* Ajustes menores para pantallas muy pequeñas */
+@media (max-width: 576px) {
+     .menu-buttons button {
+        width: 100%; /* Un botón por fila en pantallas muy pequeñas */
+    }
 }
