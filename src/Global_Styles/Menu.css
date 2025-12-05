@@ -1,33 +1,32 @@
-/* ---------------------------- */
-/*      BOTÓN HAMBURGUESA      */
-/* ---------------------------- */
+/* Botón hamburguesa */
 .hamburger-btn {
   position: fixed;
   top: 20px;
   left: 20px;
   width: 35px;
   height: 30px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
   background: transparent;
   border: none;
   cursor: pointer;
-  z-index: 2000;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 0;
 }
 
 .hamburger-btn span {
   display: block;
   width: 100%;
   height: 4px;
-  background: #333;
-  border-radius: 2px;
-  transition: 0.3s;
+  background: #6a0dad;
+  border-radius: 4px;
+  transition: 0.3s ease;
 }
 
 /* Animación del botón al abrir */
 .hamburger-btn.open span:nth-child(1) {
-  transform: translateY(13px) rotate(45deg);
+  transform: rotate(45deg) translate(6px, 6px);
 }
 
 .hamburger-btn.open span:nth-child(2) {
@@ -35,51 +34,43 @@
 }
 
 .hamburger-btn.open span:nth-child(3) {
-  transform: translateY(-13px) rotate(-45deg);
+  transform: rotate(-45deg) translate(7px, -7px);
 }
 
-/* ---------------------------- */
-/*         MENÚ LATERAL         */
-/* ---------------------------- */
+/* Menú lateral */
 .side-menu {
   position: fixed;
   top: 0;
   left: -260px;
   width: 260px;
   height: 100vh;
-  background: #ffffff;
-  box-shadow: 3px 0 10px rgba(0, 0, 0, 0.2);
-  padding: 20px;
-  transition: 0.35s ease;
-  z-index: 1500;
+  background: #fff;
+  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.1);
+  padding: 25px;
+  transition: left 0.3s ease;
+  z-index: 999;
 }
 
 .side-menu.show {
   left: 0;
 }
 
-/* ---------------------------- */
-/*        HEADER DEL MENÚ       */
-/* ---------------------------- */
 .menu-header {
+  margin-bottom: 25px;
   text-align: center;
-  margin-bottom: 20px;
 }
 
 .menu-title {
-  font-size: 1.7rem;
-  color: #333;
-  font-weight: 700;
+  font-size: 1.6rem;
+  color: #6a0dad;
+  font-weight: 600;
 }
 
-/* ---------------------------- */
-/*        AVATAR USUARIO        */
-/* ---------------------------- */
+/* Contenedor del avatar */
 .menu-avatar-container {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 25px;
+  justify-content: center;
+  margin-bottom: 20px;
 }
 
 .menu-avatar {
@@ -87,19 +78,10 @@
   height: 90px;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid #9c27b0;
+  border: 3px solid #6a0dad;
 }
 
-.menu-username {
-  margin-top: 8px;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #444;
-}
-
-/* ---------------------------- */
-/*         BOTONES MENÚ         */
-/* ---------------------------- */
+/* Botones del menú */
 .menu-buttons {
   display: flex;
   flex-direction: column;
@@ -107,17 +89,25 @@
 }
 
 .menu-buttons button {
-  padding: 12px;
-  width: 100%;
-  background: #e1bee7;
+  background: #6a0dad;
+  color: #fff;
   border: none;
+  padding: 10px;
   border-radius: 8px;
   font-size: 1rem;
-  font-weight: 600;
   cursor: pointer;
-  transition: 0.25s;
+  transition: background 0.2s ease;
 }
 
 .menu-buttons button:hover {
-  background: #d48eda;
+  background: #5a0bb5;
+}
+
+/* Nombre del usuario */
+.menu-username {
+  text-align: center;
+  color: #333;
+  font-size: 1.1rem;
+  margin-top: -10px;
+  margin-bottom: 20px;
 }
