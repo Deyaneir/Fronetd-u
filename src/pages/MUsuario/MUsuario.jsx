@@ -61,7 +61,7 @@ const MUsuario = () => {
       case "cuenta":
         return (
           <div className="user-profile-section">
-            <h3 className="title-profile">{userName}</h3>
+            <h3 className="profile-title">{userName}</h3> {/* Clase corregida */}
 
             <div className="profile-header">
               <div className="avatar-circle-large">
@@ -77,37 +77,40 @@ const MUsuario = () => {
               </div>
             </div>
 
-            <div className="profile-info">
+            <div className="info-group"> {/* Clase para agrupar */}
               <div className="info-row">
-                <strong>Descripción:</strong>
-                <span>{userDescription || "No disponible"}</span>
+                <span className="info-label">Descripción:</span>
+                <span className="info-value">{userDescription || "No disponible"}</span>
               </div>
 
               <div className="info-row">
-                <strong>Teléfono:</strong>
-                <span>{userPhone || "No disponible"}</span>
+                <span className="info-label">Teléfono:</span>
+                <span className="info-value">{userPhone || "No disponible"}</span>
               </div>
 
               <div className="info-row">
-                <strong>Dirección:</strong>
-                <span>{userAddress || "No disponible"}</span>
+                <span className="info-label">Dirección:</span>
+                <span className="info-value">{userAddress || "No disponible"}</span>
               </div>
 
               <div className="info-row">
-                <strong>Cédula:</strong>
-                <span>{userCedula || "No disponible"}</span>
+                <span className="info-label">Cédula:</span>
+                <span className="info-value">{userCedula || "No disponible"}</span>
               </div>
 
               <div className="info-row">
-                <strong>Universidad:</strong>
-                <span>{userUniversity || "No disponible"}</span>
+                <span className="info-label">Universidad:</span>
+                <span className="info-value">{userUniversity || "No disponible"}</span>
               </div>
 
               <div className="info-row">
-                <strong>Carrera:</strong>
-                <span>{userCareer || "No disponible"}</span>
+                <span className="info-label">Carrera:</span>
+                <span className="info-value">{userCareer || "No disponible"}</span>
               </div>
             </div>
+            
+             <button className="edit-btn">Editar Perfil</button> {/* Botón de ejemplo */}
+             
           </div>
         );
 
@@ -126,7 +129,7 @@ const MUsuario = () => {
   };
 
   return (
-    <div className="musuario-container">
+    <div className="user-page-container"> {/* <--- CLASE PRINCIPAL CORREGIDA */}
       <ToastContainer />
 
       {/* Aquí se inserta el menú hamburguesa */}
@@ -137,19 +140,22 @@ const MUsuario = () => {
           <div style={{ textAlign: "center", marginBottom: "20px" }}>
             <div className="avatar-left-wrap">
               {avatar ? (
-                <img src={getAvatarUrl(avatar)} className="avatar-left" />
+                // Usando user-profile-image del CSS original
+                <img src={getAvatarUrl(avatar)} className="user-profile-image" alt="Avatar"/> 
               ) : (
                 <span className="avatar-left-default">👤</span>
               )}
             </div>
+            
+            <button className="upload-avatar-btn">Cambiar Avatar</button>
 
-            <h3 className="left-name">{userName}</h3>
+            <h3 className="user-welcome-text">{userName}</h3> {/* Clase corregida */}
             <p className="left-status">{userStatus}</p>
 
             <hr className="left-divider" />
           </div>
 
-          <div className="menu-buttons-left">
+          <div className="menu-buttons"> {/* Clase corregida */}
             <button
               className={activeTab === "cuenta" ? "active" : ""}
               onClick={() => setActiveTab("cuenta")}
