@@ -1,12 +1,172 @@
-/* ---------------------------- */
-/*      DASHBOARD GENERAL       */
-/* ---------------------------- */
+/* ===================================== */
+/* FUENTES Y BASE */
+/* ===================================== */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+}
+
+
+/* ---------------------------------------------------- */
+/* MENÚ HAMBURGUESA (Revisado para consistencia) */
+/* ---------------------------------------------------- */
+
+.hamburger-btn {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 45px;
+    height: 40px; /* Ajuste a 40px para consistencia con el móvil */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Espaciado entre las líneas */
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 3500; /* Alto z-index para que esté siempre encima */
+}
+
+.hamburger-btn span {
+    display: block;
+    width: 100%;
+    height: 4px; /* Grosor de la línea */
+    background: #333;
+    border-radius: 4px;
+}
+
+
+/* ---------------------------------------------------- */
+/* MENÚ LATERAL DESLIZABLE (side-menu) con DEGRADADO */
+/* ---------------------------------------------------- */
+
+.side-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 260px;
+    height: 100%;
+    
+    /* 🎨 FONDO DEGRADADO (del ejercicio anterior) */
+    background: linear-gradient(180deg, #920ae6 0%, #4a0142 100%);
+    
+    color: white;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.4);
+    padding: 30px 20px;
+    /* Inicia oculto */
+    transform: translateX(-100%);
+    transition: transform 0.45s cubic-bezier(0.25, 0.8, 0.25, 1);
+    z-index: 3000;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.side-menu.show {
+    transform: translateX(0);
+}
+
+.menu-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.3);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.45s ease;
+    z-index: 2999; /* Justo debajo del side-menu */
+}
+
+.menu-overlay.show {
+    opacity: 1;
+    pointer-events: all;
+}
+
+
+/* ---------------------------------------------------- */
+/* ESTRUCTURA Y CONTENIDO DEL MENÚ LATERAL */
+/* ---------------------------------------------------- */
+.menu-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    width: 100%;
+    margin-top: 50px; 
+    margin-bottom: 30px; 
+}
+
+.menu-title {
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+    text-align: center;
+    color: white;
+    width: 100%;
+}
+
+.avatar-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    margin-bottom: 30px;
+    width: 100%;
+}
+
+.default-avatar {
+    font-size: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    width: 100px; /* Asegura el tamaño dentro del contenedor */
+    height: 100px;
+}
+
+/* ---------------------------------------------------- */
+/* BOTONES DEL MENÚ (Uno debajo del otro) */
+/* ---------------------------------------------------- */
+.menu-buttons {
+    display: flex;
+    flex-direction: column; /* ⬅️ ESTO LOS PONE UNO DEBAJO DEL OTRO */
+    gap: 10px;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    margin-bottom: 30px;
+}
+
+.menu-buttons button {
+    width: 100%;
+    text-align: left;
+    padding: 10px 15px;
+    background: transparent;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-weight: 500;
+}
+
+.menu-buttons button:hover {
+    background: rgba(255, 255, 255, 0.1); /* Efecto hover */
+}
+
+
+/* ---------------------------------------------------- */
+/* DASHBOARD GENERAL */
+/* ---------------------------------------------------- */
 .dashboard-section {
     font-family: 'Poppins', sans-serif;
     background-color: #E1BEE7;
     padding: 20px 10px;
     text-align: center;
     min-height: 100vh;
+}
+
+.dashboard-header {
+    position: relative;
+    width: 100%;
+    padding: 40px 20px 20px 20px;
 }
 
 .dashboard-header h2 {
@@ -19,6 +179,26 @@
     font-size: 1.1em;
     color: #6a6a6a;
     margin-bottom: 25px;
+}
+
+.motivational-quote {
+    margin-top: 20px;
+    font-style: italic;
+    color: #0c0101;
+    background: #E1BEE7;
+    text-align: center;
+}
+
+.quote-text {
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.quote-author {
+    font-size: 1rem;
+    color: #555;
+    margin-top: 0;
 }
 
 .dashboard-grid {
@@ -79,261 +259,10 @@
 .groups-card { border-left: 5px solid #48c9b0; }
 .matches-card { border-left: 5px solid #e74c3c; }
 
+
+/* Media Query para móvil */
 @media (max-width: 768px) {
     .dashboard-header h2 {
         font-size: 2em;
     }
 }
-
-.dashboard-header {
-    position: relative;
-    width: 100%;
-    padding: 40px 20px 20px 20px;
-}
-
-/* Frase motivacional */
-.motivational-quote {
-    margin-top: 20px;
-    font-style: italic;
-    color: #0c0101;
-    background: #E1BEE7;
-    text-align: center;
-}
-
-.quote-text {
-    font-size: 1.2rem;
-    font-weight: 500;
-    margin-bottom: 5px;
-}
-
-.quote-author {
-    font-size: 1rem;
-    color: #555;
-    margin-top: 0;
-}
-
-/* ---------------------------- */
-/*      MENÚ HAMBURGUESA       */
-/* ---------------------------- */
-.hamburger-btn {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    width: 45px;
-    height: 60px; /* más alto para separar rayas */
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around; /* separa rayas */
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    z-index: 2000;
-}
-
-.hamburger-btn span {
-    display: block;
-    width: 100%;
-    height: 5px; /* grosor de la raya */
-    background: #333;
-    border-radius: 4px;
-}
-
-/* Elimina cualquier transformación para que no se animen */
-
-
-/* ---------------------------- */
-/*      MENÚ LATERAL            */
-/* ---------------------------- */
-.side-menu {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 260px;
-    height: 100%;
-    background: #760265;
-    color: white;
-    padding: 30px 20px;
-    transform: translateX(-100%);
-    transition: transform 0.45s ease;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start; /* Los botones quedarán a la izquierda */
-}
-
-/* Cuando el menú se muestra */
-.side-menu.show {
-    transform: translateX(0);
-}
-
-.menu-overlay {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0,0,0,0.3);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.45s ease;
-    z-index: 1400;
-}
-
-.menu-overlay.show {
-    opacity: 1;
-    pointer-events: all;
-}
-
-.menu-header {
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* centra título y avatar */
-    width: 100%;
-    margin-top: 50px; /* <--- esto los baja */
-    margin-bottom: 30px; /* separa de los botones */
-}
-.menu-title {
-    text-align: center;
-    font-size: 1.3rem;
-    margin-bottom: 15px;
-}
-
-/* ---------------------------- */
-/*      AVATAR                   */
-/* ---------------------------- */
-
-/* Contenedor principal del avatar */
-.avatar-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Centra avatar y título */
-    margin-bottom: 30px;
-    width: 100%;
-}
-
-.avatar-container {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    overflow: hidden;
-    cursor: pointer;
-    margin-bottom: 10px;
-}
-
-.avatar-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.menu-title {
-    width: 100%;
-    text-align: center; /* Esto centra la palabra "Menú" */
-    margin: 0;
-    color: white;
-    font-size: 1.2rem;
-}
-.default-avatar {
-  font-size: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.avatar-overlay {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  background: rgba(0,0,0,0.5);
-  color: white;
-  border-radius: 50%;
-  padding: 5px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-/* Botones verticales debajo del avatar */
-.menu-buttons {
-    display: flex;
-    flex-direction: column; /* vertical */
-    gap: 10px;
-    width: 100%;
-    padding: 0;
-    margin: 0;
-}
-
-.menu-buttons button {
-    width: 100%;          /* ocupa todo el ancho del contenedor */
-    text-align: left;     /* texto alineado a la izquierda */
-    padding: 10px 15px;
-    background: transparent;
-    color: white;
-    border: none;
-    border-radius: 5px;  /* opcional, para efecto suave */
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.menu-buttons button:hover {
-    background: rgba(255, 255, 255, 0.1); /* efecto hover */
-}
-
-
-/* Emoji por defecto */
-.default-avatar {
-  font-size: 50px;          /* Ajusta según el tamaño del círculo */
-  margin: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-
-
-.change-avatar-btn {
-  margin-bottom: 5px;
-}
-
-.user-info {
-  text-align: center;
-  margin-bottom: 50px;
-}
-
-.menu-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-bottom: 30px;
-  width: 100%;
-  padding: 0;           /* Asegúrate de que no haya padding interno */
-  margin: 0;            /* Sin márgenes */
-}
-
-.menu-buttons button {
-  width: 100%;                /* Ocupa todo el ancho del contenedor */
-  padding: 10px 15px;         /* Ajusta a gusto */
-  background: transparent;
-  color: white;
-  border: none;
-  cursor: pointer;
-  text-align: left;
-  border-radius: 0;           /* Sin bordes redondeados para el hover */
-  box-sizing: border-box;     /* Incluye padding dentro del width */
-  position: relative;          /* Necesario para pseudo-elementos si quieres */
-  overflow: hidden;            /* Evita que el hover quede recortado */
-  transition: background 0.2s;
-}
-
-.menu-buttons button:hover {
-  background: rgba(255, 255, 255, 0.1); /* Gris semi-transparente */
-  width: 100%;                           /* Todo el ancho */
-}
-
-
-/* PANEL DERECHO */
-.right-panel {
-  flex: 1;
-  padding: 30px;
-  background-color: #f5f5f5;
-  overflow-y: auto;
-}estraeme de aqui 
