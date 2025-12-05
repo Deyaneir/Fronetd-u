@@ -1,250 +1,162 @@
-/* =================================== */
-/* === BASE: LAYOUT PRINCIPAL Y GENERAL === */
-/* =================================== */
-
-.musuario-container {
-  display: flex;
-  min-height: 100vh; /* Usamos min-height para permitir que crezca */
-  font-family: 'Inter', sans-serif; 
-  
-  /* 🔄 AJUSTE CLAVE: Fondo gris claro que se mezcla con un color más oscuro en el fondo */
-  background-color: #f5f5f5; 
-  
-  /* Agregamos una sombra morada/púrpura en el fondo para simular el borde inferior de la captura */
-  /* El color morado oscuro #4a0142 coincide con el degradado del menú lateral */
-  box-shadow: inset 0 -300px 100px -100px #4a0142, inset 0 0 0 100vh #f5f5f5;
-  
-  /* Nota: Esta técnica con box-shadow es una simulación. Si se desea un pie de página real, se necesitaría un elemento HTML adicional. */
-}
-
-/* ================================================= */
-/* === PANEL DE NAVEGACIÓN PRINCIPAL (main-nav-panel) === */
-/* ================================================= */
-
-.main-nav-panel {
-  width: 250px;
-  background-color: #760265; /* Color Morado/Púrpura sólido */
-  color: white;
-  padding: 60px 20px 20px;
-  display: flex; 
-  flex-direction: column;
-  align-items: center;
-  flex-shrink: 0;
-  box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-  position: sticky; /* Asegura que el panel fijo se mantenga */
-  top: 0;
-  height: 100vh; /* Ocupa toda la altura */
-}
-
-.left-panel-content {
-  margin-top: 20px; 
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* Estilos de botones dentro del panel principal */
-.main-nav-panel .menu-buttons {
+/* ===================================== */
+/* CONTENEDOR GENERAL */
+/* ===================================== */
+.user-page-container {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
+    flex-direction: row;
+    height: 100vh;
     width: 100%;
-    padding: 0;
-    margin: 0;
+    overflow-x: hidden;
+    font-family: 'Poppins', sans-serif;
 }
 
-.main-nav-panel .menu-buttons button {
-    width: 100%;
-    padding: 10px 15px;
-    background: transparent;
+/* ===================================== */
+/* PANEL IZQUIERDO */
+/* ===================================== */
+.main-nav-panel {
+    width: 25%;
+    background-color: #760265;
+    padding: 20px;
     color: white;
-    border: none;
-    cursor: pointer;
-    text-align: left;
-    border-radius: 8px;
-    transition: background 0.2s;
-    font-weight: 500;
-}
-
-.main-nav-panel .menu-buttons button:hover,
-.main-nav-panel .menu-buttons button.active {
-    background: rgba(255, 255, 255, 0.2);
-    font-weight: 700;
-}
-
-/* ---------------------------------------------------- */
-/* AJUSTES FALTANTES DEL AVATAR DE PC (Visto en la imagen) */
-/* Asegura que el contenido del panel fijo (main-nav-panel) se vea igual que en PC */
-/* ---------------------------------------------------- */
-
-.desktop-avatar-section {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 25px; 
-    width: 100%;
 }
 
-.desktop-avatar-container {
-    width: 100px;
-    height: 100px;
+.user-welcome-text {
+    font-size: 1.8em;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.user-profile-image {
+    width: 130px;
+    height: 130px;
     border-radius: 50%;
-    overflow: hidden;
-    margin-bottom: 10px;
-    border: 3px solid white; 
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-}
-
-.desktop-avatar-container img {
-    width: 100%;
-    height: 100%;
     object-fit: cover;
+    border: 5px solid white;
 }
 
-.desktop-status {
-    background-color: #03a800; /* Verde para "Disponible" */
-    color: white;
-    font-size: 0.75rem;
-    padding: 3px 10px;
-    border-radius: 9999px;
-    margin-top: 5px;
-    font-weight: 600;
+.upload-avatar-btn {
+    margin-top: 15px;
+    background-color: white;
+    color: #760265;
+    padding: 6px 12px;
+    border-radius: 10px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
 }
 
-/* =================================== */
-/* === PANEL DERECHO (Right-Panel) === */
-/* =================================== */
-
+/* ===================================== */
+/* PANEL DERECHO */
+/* ===================================== */
 .right-panel {
-  flex: 1; 
-  padding: 30px;
-  /* 🔄 AJUSTE CLAVE: Asegura que el panel de contenido sea blanco (por encima del fondo gris/morado) */
-  background-color: #ffffff;
-  min-height: 100vh; /* Importante para que el blanco cubra toda la altura */
-  overflow-y: auto;
+    width: 75%;
+    padding: 25px;
+    background-color: #f7f6f8;
+    overflow-y: auto;
 }
 
-
-
-/* =================================== */
-/* === ESTILOS DE CARTILLA DE PERFIL === */
-/* =================================== */
-
+/* ===================================== */
+/* TARJETA DE USUARIO */
+/* ===================================== */
 .user-profile-section {
-  max-width: 400px;
-  margin: 30px auto;
-  background: #ffffff;
-  border-radius: 15px;
-  padding: 25px 20px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
-  font-family: 'Inter', sans-serif;
-  border: 2px solid #920ae6; 
-}
-
-.avatar-circle-large {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  overflow: hidden;
-  background-color: #ffffff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0 auto 15px;
-  border: 2px solid #760265; /* Borde al avatar grande */
-}
-
-.avatar-img-large {
+    background-color: white;
+    padding: 20px;
+    border-radius: 15px;
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    max-width: 700px;
+    margin: 0 auto;
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.15);
 }
 
-.default-avatar-large {
-  font-size: 80px;
-  color: #920ae6;
+/* Título */
+.profile-title {
+    font-size: 1.6em;
+    color: #000;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 25px;
 }
 
-.profile-info {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+/* INFORMACIÓN DEL USUARIO */
+.info-group {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
 }
 
 .info-row {
-  display: flex;
-  justify-content: space-between;
-  background: #f3f3f3;
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  font-size: 14px;
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 5px;
+    border-bottom: 1px solid #ddd;
 }
 
-.info-row strong {
-  color: #760265; /* Morado más oscuro */
-  font-weight: 600;
+.info-label {
+    font-weight: bold;
+    color: #000;
 }
 
-/* ---------------------------------------------------- */
-/* RESPONSIVE MEDIA QUERIES (Ajustes para Móvil)        */
-/* Hacemos visibles el panel principal (inline), el botón de hamburguesa y el menú deslizable (off-screen) */
-/* ---------------------------------------------------- */
-
-@media (max-width: 768px) {
-    /* 1. Apilar los paneles verticalmente */
-    .musuario-container {
-        flex-direction: column; 
-    }
-
-    /* 2. MOSTRAR el panel principal (púrpura) y hacerlo ocupar el 100% */
-    .main-nav-panel {
-        display: flex; /* Asegura que se vea */
-        width: 100%; /* Ocupa todo el ancho del celular */
-        height: auto; /* Permite que el contenido determine la altura */
-        position: relative; /* Fluye con el scroll */
-        padding-top: 20px; /* Ajuste de padding para móvil */
-        padding-bottom: 20px;
-    }
-    
-    /* 3. El contenido principal (right-panel) ocupa todo el ancho */
-    .right-panel {
-        width: 100%;
-        /* No necesitamos padding extra arriba si el panel principal ya está ahí */
-        padding-top: 30px; 
-        padding-left: 15px;
-        padding-right: 15px;
-        flex-shrink: 0;
-        min-height: auto; /* Lo dejamos en auto para que fluya con el contenido */
-    }
-
-    /* 4. El menú desplegable (side-menu) permanece accesible (flotará sobre todo al activarse) */
-    .side-menu {
-        display: flex; /* Asegura que la capa esté presente */
-    }
-    
-    /* 5. AJUSTAR la visibilidad y apariencia del botón de hamburguesa en móvil */
-    .hamburger-btn {
-        display: flex; /* Asegura que se vea */
-        /* Eliminamos el fondo blanco y la sombra para que sea transparente */
-        background-color: transparent; 
-        border-radius: 0;
-        padding: 5px;
-        top: 10px;
-        left: 10px;
-        box-shadow: none;
-    }
-    
-    /* 6. La cartilla de perfil ocupa todo el ancho disponible */
-    .user-profile-section {
-        width: 100%;
-        max-width: 100%;
-        margin: 0 auto;
-    }
+.info-value {
+    color: #000;
 }
 
-/* 🔥 NEGRITA SOLO PARA "Menú" DEL MENÚ HAMBURGUESA */
-.side-menu .menu-title {
-    font-weight: 800 !important;
+/* BOTÓN EDITAR */
+.edit-btn {
+    margin-top: 25px;
+    display: block;
+    width: 180px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 12px;
+    text-align: center;
+    background-color: #760265;
+    color: white;
+    font-weight: bold;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.edit-btn:hover {
+    background-color: #5a014d;
+}
+
+/* ===================================== */
+/* 🔥 BOTONES DEL MENÚ (uno debajo del otro, sin gris feo) */
+/* ===================================== */
+.menu-buttons {
+    display: flex;
+    flex-direction: column !important; /* UNO BAJO OTRO */
+    width: 100%;
+    margin-top: 20px;
+}
+
+.menu-buttons button {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 8px;
+    background-color: #ffffff;
+    color: #760265;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+/* SIN HOVER GRIS FEÍSIMO */
+.menu-buttons button:hover {
+    background-color: #ffd6fc !important; /* rosa suave */
+}
+
+/* ===================================== */
+/* TODAS LAS LETRAS DEL PANEL DERECHO EN NEGRO */
+/* ===================================== */
+.right-panel,
+.right-panel * {
+    color: #000 !important;
 }
