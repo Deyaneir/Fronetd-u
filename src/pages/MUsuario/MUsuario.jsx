@@ -9,6 +9,7 @@ const MUsuario = () => {
   const navigate = useNavigate();
   const [userName, setUserName] = useState("Usuario");
   const [userStatus, setUserStatus] = useState("Disponible");
+  const [userRole, setUserRole] = useState(""); // Rol del usuario
   const [avatar, setAvatar] = useState(null);
   const [activeTab, setActiveTab] = useState("cuenta");
   const [menuOpen, setMenuOpen] = useState(false);
@@ -26,7 +27,6 @@ const MUsuario = () => {
     return `${url}?t=${new Date().getTime()}`;
   };
 
-  // 🔥 RUTA DEL BACKEND CORREGIDA
   const fetchUserInfo = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -41,6 +41,7 @@ const MUsuario = () => {
 
       setUserName(u.nombre || "Usuario");
       setUserStatus(u.estado || "Disponible");
+      setUserRole(u.rol || ""); // Guardar rol
       setAvatar(u.avatar || null);
       setUserPhone(u.telefono || "");
       setUserAddress(u.direccion || "");
@@ -87,7 +88,6 @@ const MUsuario = () => {
 
       setAvatar(newAvatarUrl);
 
-      // 🔥 Actualizar avatar en backend (usa plural)
       await axios.put(
         `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/actualizar`,
         { avatar: newAvatarUrl },
@@ -236,6 +236,11 @@ const MUsuario = () => {
 
             <h3 style={{ color: "white", marginTop: "10px" }}>{userName}</h3>
             <p style={{ color: "#8bc34a", marginTop: "-5px" }}>{userStatus}</p>
+            {userRole && (
+              <p style={{ color: "white", fontSize: "0.9rem", marginTop: "-3px" }}>
+                {userRole}
+              </p>
+            )}
 
             <hr style={{ marginTop: "10px", marginBottom: "10px", borderTop: "1px solid rgba(255, 255, 255, 0.2)" }} />
           </div>
