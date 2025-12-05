@@ -1,21 +1,21 @@
 /* ---------------------------------------------------- */
-/* MENÚ HAMBURGUESA (Visible en Compu y Móvil)          */
+/* MENÚ HAMBURGUESA (Visible en Compu y Móvil)          */
 /* ---------------------------------------------------- */
 
 .hamburger-btn {
     position: fixed;
     top: 20px;
-    left: 20px; 
-    
+    left: 20px; 
     width: 45px;
     height: 40px;
-    display: flex; 
+    display: flex; 
     flex-direction: column;
     justify-content: space-between;
     background: transparent;
     border: none;
     cursor: pointer;
     z-index: 3500;
+    outline: none; /* Mejora de accesibilidad (control del foco en JS) */
 }
 
 .hamburger-btn span {
@@ -27,7 +27,7 @@
 }
 
 /* ---------------------------------------------------- */
-/* MENÚ LATERAL DESLIZABLE (side-menu) con DEGRADADO    */
+/* MENÚ LATERAL DESLIZABLE (side-menu) con DEGRADADO    */
 /* ---------------------------------------------------- */
 
 .side-menu {
@@ -36,18 +36,16 @@
     left: 0;
     width: 260px;
     height: 100%;
-    
     /* 🎨 FONDO DEGRADADO SOLICITADO */
     background: linear-gradient(180deg, #920ae6 0%, #4a0142 100%);
-    
     color: white;
     box-shadow: 2px 0 10px rgba(0,0,0,0.4);
     padding: 30px 20px;
     /* Inicia oculto */
     transform: translateX(-100%);
-    transition: transform 0.45s cubic-bezier(0.25, 0.8, 0.25, 1);
+    /* Mejora de la transición */
+    transition: transform 0.45s ease-in-out; 
     z-index: 3000;
-    /* Aseguramos que se muestre en mobile cuando se le agregue la clase .show */
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -59,18 +57,18 @@
 }
 
 .menu-header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  margin-top: 50px;
-  margin-bottom: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-top: 50px;
+    margin-bottom: 30px;
 }
 
 .menu-title {
-  font-size: 1.3rem;
-  margin-bottom: 15px;
-  text-align: center;
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+    text-align: center;
 }
 
 .avatar-section {
@@ -92,18 +90,19 @@
 }
 
 .avatar-overlay {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  background: rgba(0,0,0,0.5);
-  color: white;
-  border-radius: 50%;
-  padding: 5px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  cursor: pointer;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    /* Fondo más oscuro para mejor contraste */
+    background: rgba(0,0,0,0.65); 
+    color: white;
+    border-radius: 50%;
+    padding: 3px; /* Padding ajustado */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    cursor: pointer;
 }
 
 .avatar-img {
@@ -113,11 +112,15 @@
 }
 
 .default-avatar {
-  font-size: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
+    font-size: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    /* Fondo sólido por defecto */
+    background-color: #5d0f55; 
+    width: 100%;
+    height: 100%;
 }
 
 .input-file-hidden {
@@ -127,7 +130,7 @@
 /* Botones dentro del menú deslizable */
 .side-menu .menu-buttons {
     display: flex;
-    flex-direction: column; 
+    flex-direction: column; 
     gap: 10px;
     width: 100%;
     padding: 0;
@@ -135,9 +138,9 @@
 }
 
 .side-menu .menu-buttons button {
-    width: 100%;          
-    text-align: left;     
-    padding: 10px 15px;
+    width: 100%;          
+    text-align: left;     
+    padding: 12px 15px; /* Padding mejorado */
     background: transparent;
     color: white;
     border: none;
@@ -148,5 +151,11 @@
 }
 
 .side-menu .menu-buttons button:hover {
-    background: rgba(255, 255, 255, 0.1); 
+    background: rgba(255, 255, 255, 0.15); /* Opacidad un poco mayor en hover */
+}
+
+/* 🏆 ESTADO ACTIVO/SELECCIONADO */
+.side-menu .menu-buttons button.active {
+    background: rgba(255, 255, 255, 0.25);
+    font-weight: 700;
 }
