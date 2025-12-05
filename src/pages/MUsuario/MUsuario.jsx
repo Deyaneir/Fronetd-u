@@ -5,13 +5,11 @@ import "react-toastify/dist/ReactToastify.css";
 import "./MUsuario.css";
 import MenuHamburguesa from "../../Global_Styles/Menu.jsx";
 
-
 const MUsuario = () => {
   const [userName, setUserName] = useState("Usuario");
   const [userStatus, setUserStatus] = useState("Disponible");
   const [avatar, setAvatar] = useState(null);
   const [activeTab, setActiveTab] = useState("cuenta");
-  const fileInputRef = useRef(null);
 
   const [userPhone, setUserPhone] = useState("");
   const [userAddress, setUserAddress] = useState("");
@@ -22,7 +20,7 @@ const MUsuario = () => {
 
   const getAvatarUrl = (url) => {
     if (!url) return null;
-    return `${url}?t=${new Date().getTime()}`; 
+    return `${url}?t=${new Date().getTime()}`;
   };
 
   useEffect(() => {
@@ -36,16 +34,17 @@ const MUsuario = () => {
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
-        if (response.data?.nombre) setUserName(response.data.nombre);
-        if (response.data?.estado) setUserStatus(response.data.estado);
-        if (response.data?.avatar) setAvatar(response.data.avatar);
-        if (response.data?.telefono) setUserPhone(response.data.telefono);
-        if (response.data?.direccion) setUserAddress(response.data.direccion);
-        if (response.data?.cedula) setUserCedula(response.data.cedula);
-        if (response.data?.descripcion) setUserDescription(response.data.descripcion);
-        if (response.data?.universidad) setUserUniversity(response.data.universidad);
-        if (response.data?.carrera) setUserCareer(response.data.carrera);
+        const data = response.data;
 
+        if (data.nombre) setUserName(data.nombre);
+        if (data.estado) setUserStatus(data.estado);
+        if (data.avatar) setAvatar(data.avatar);
+        if (data.telefono) setUserPhone(data.telefono);
+        if (data.direccion) setUserAddress(data.direccion);
+        if (data.cedula) setUserCedula(data.cedula);
+        if (data.descripcion) setUserDescription(data.descripcion);
+        if (data.universidad) setUserUniversity(data.universidad);
+        if (data.carrera) setUserCareer(data.carrera);
       } catch (error) {
         console.error("Error al obtener el usuario:", error);
         if (error.response?.status === 401) {
@@ -62,11 +61,9 @@ const MUsuario = () => {
       case "cuenta":
         return (
           <div className="user-profile-section">
-            <h3 style={{ textAlign: "center", marginBottom: "15px", color: "#000" }}>
-              {userName || "Usuario"}
-            </h3>
+            <h3 className="title-profile">{userName}</h3>
 
-            <div className="profile-header" style={{ justifyContent: "center" }}>
+            <div className="profile-header">
               <div className="avatar-circle-large">
                 {avatar ? (
                   <img
@@ -85,22 +82,27 @@ const MUsuario = () => {
                 <strong>Descripción:</strong>
                 <span>{userDescription || "No disponible"}</span>
               </div>
+
               <div className="info-row">
                 <strong>Teléfono:</strong>
                 <span>{userPhone || "No disponible"}</span>
               </div>
+
               <div className="info-row">
                 <strong>Dirección:</strong>
                 <span>{userAddress || "No disponible"}</span>
               </div>
+
               <div className="info-row">
                 <strong>Cédula:</strong>
                 <span>{userCedula || "No disponible"}</span>
               </div>
+
               <div className="info-row">
                 <strong>Universidad:</strong>
                 <span>{userUniversity || "No disponible"}</span>
               </div>
+
               <div className="info-row">
                 <strong>Carrera:</strong>
                 <span>{userCareer || "No disponible"}</span>
@@ -126,56 +128,49 @@ const MUsuario = () => {
   return (
     <div className="musuario-container">
       <ToastContainer />
-       <MenuHamburguesa />
+
+      {/* Aquí se inserta el menú hamburguesa */}
+      <MenuHamburguesa />
 
       <div className="main-nav-panel">
         <div className="left-panel-content">
           <div style={{ textAlign: "center", marginBottom: "20px" }}>
-            <div
-              style={{
-                width: "100px",
-                height: "100px",
-                borderRadius: "50%",
-                overflow: "hidden",
-                margin: "0 auto",
-                backgroundColor: "#ddd",
-              }}
-            >
+            <div className="avatar-left-wrap">
               {avatar ? (
-                <img
-                  src={getAvatarUrl(avatar)}
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                />
+                <img src={getAvatarUrl(avatar)} className="avatar-left" />
               ) : (
-                <span style={{ fontSize: "50px" }}>👤</span>
+                <span className="avatar-left-default">👤</span>
               )}
             </div>
 
-            <h3 style={{ color: "white", marginTop: "10px" }}>{userName}</h3>
-            <p style={{ color: "#8bc34a", marginTop: "-5px" }}>{userStatus}</p>
+            <h3 className="left-name">{userName}</h3>
+            <p className="left-status">{userStatus}</p>
 
-            <hr style={{ opacity: 0.3 }} />
+            <hr className="left-divider" />
           </div>
 
-          <div className="menu-buttons">
+          <div className="menu-buttons-left">
             <button
               className={activeTab === "cuenta" ? "active" : ""}
               onClick={() => setActiveTab("cuenta")}
             >
               Cuenta
             </button>
+
             <button
               className={activeTab === "favoritos" ? "active" : ""}
               onClick={() => setActiveTab("favoritos")}
             >
               Favoritos
             </button>
+
             <button
               className={activeTab === "chats" ? "active" : ""}
               onClick={() => setActiveTab("chats")}
             >
               Chats
             </button>
+
             <button
               className={activeTab === "notificaciones" ? "active" : ""}
               onClick={() => setActiveTab("notificaciones")}
