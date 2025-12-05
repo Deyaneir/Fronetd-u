@@ -19,7 +19,13 @@ const MenuHamburguesa = () => {
       const menu = document.querySelector(".side-menu");
       const hamburger = document.querySelector(".hamburger-btn");
 
-      if (menuOpen && menu && !menu.contains(event.target) && hamburger && !hamburger.contains(event.target)) {
+      if (
+        menuOpen &&
+        menu &&
+        !menu.contains(event.target) &&
+        hamburger &&
+        !hamburger.contains(event.target)
+      ) {
         setMenuOpen(false);
       }
     };
@@ -31,7 +37,10 @@ const MenuHamburguesa = () => {
   return (
     <>
       {/* BOTÓN */}
-      <button className={`hamburger-btn ${menuOpen ? "open" : ""}`} onClick={toggleMenu}>
+      <button
+        className={`hamburger-btn ${menuOpen ? "open" : ""}`}
+        onClick={toggleMenu}
+      >
         <span></span>
         <span></span>
         <span></span>
@@ -39,6 +48,18 @@ const MenuHamburguesa = () => {
 
       {/* MENÚ */}
       <nav className={`side-menu ${menuOpen ? "show" : ""}`}>
+        
+        {/* 🔥 SECCIÓN DEL AVATAR (RESTAURADA) */}
+        <div className="menu-avatar-section">
+          <div className="menu-avatar-container">
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+              alt="Avatar"
+            />
+          </div>
+          <p className="menu-avatar-status">Disponible</p>
+        </div>
+
         <div className="menu-header">
           <h3 className="menu-title">Menú</h3>
         </div>
