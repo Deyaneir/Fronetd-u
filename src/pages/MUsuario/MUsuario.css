@@ -17,7 +17,7 @@
 .main-nav-panel {
   width: 250px;
   background-color: #760265;
-  color: white; /* Mantener blanco solo en panel lateral */
+  color: white;
   padding: 60px 20px 20px;
   display: flex; 
   flex-direction: column;
@@ -110,6 +110,7 @@
   background-color: #ffffff;
   min-height: 100vh;
   overflow-y: auto;
+  color: #000000;
 }
 
 /* Menú hamburguesa */
@@ -265,8 +266,6 @@
   box-shadow: 0 8px 20px rgba(0,0,0,0.25);
   font-family: 'Inter', sans-serif;
   border: 2px solid #920ae6;
-
-  /* 🔑 Todo el texto negro */
   color: #000000;
 }
 
@@ -308,13 +307,11 @@
   border-radius: 8px;
   border: 1px solid #ddd;
   font-size: 14px;
-
-  /* 🔑 texto negro */
   color: #000000;
 }
 
 .info-row strong {
-  color: #760265; /* Morado oscuro permanece */
+  color: #760265;
   font-weight: 600;
 }
 
