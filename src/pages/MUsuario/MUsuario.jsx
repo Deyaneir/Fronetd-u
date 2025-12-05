@@ -1,20 +1,17 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import './MUsuario.css';
+import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import "./MUsuario.css";
+import MenuHamburguesa from "../../components/Menu/MenuHamburguesa";
+
 
 const MUsuario = () => {
-  const navigate = useNavigate();
   const [userName, setUserName] = useState("Usuario");
   const [userStatus, setUserStatus] = useState("Disponible");
   const [avatar, setAvatar] = useState(null);
   const [activeTab, setActiveTab] = useState("cuenta");
-  const [menuOpen, setMenuOpen] = useState(false);
   const fileInputRef = useRef(null);
-
-  // ... (Avatar options sin usar)
 
   const [userPhone, setUserPhone] = useState("");
   const [userAddress, setUserAddress] = useState("");
@@ -25,22 +22,20 @@ const MUsuario = () => {
 
   const getAvatarUrl = (url) => {
     if (!url) return null;
-    return `${url}?t=${new Date().getTime()}`;
+    return `${url}?t=${new Date().getTime()}`; 
   };
 
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem("token");
         if (!token) return;
 
-        // ✅ CORRECCIÓN CLAVE: Se agrega el prefijo /api/usuarios a la ruta
         const response = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/perfil`, 
+          `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/perfil`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
-        // ... (Asignación de datos)
         if (response.data?.nombre) setUserName(response.data.nombre);
         if (response.data?.estado) setUserStatus(response.data.estado);
         if (response.data?.avatar) setAvatar(response.data.avatar);
@@ -52,96 +47,15 @@ const MUsuario = () => {
         if (response.data?.carrera) setUserCareer(response.data.carrera);
 
       } catch (error) {
-        console.error("Error al obtener el usuario:", error.response?.data || error);
-        // Opcional: mostrar un mensaje si la sesión expira
+        console.error("Error al obtener el usuario:", error);
         if (error.response?.status === 401) {
-             toast.error("Sesión expirada. Por favor, vuelve a iniciar sesión.");
-             // navigate('/login');
+          toast.error("Sesión expirada. Vuelve a iniciar sesión.");
         }
       }
     };
 
     fetchUserInfo();
   }, []);
-
-  const handleFileClick = () => {
-    fileInputRef.current.click();
-  };
-
-  const handleFileChange = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", "VIBE-U");
-    formData.append("folder", "avatars");
-
-    let newAvatarUrl = null;
-    const token = localStorage.getItem('token');
-    if (!token) {
-        toast.error("Sesión expirada. Por favor, inicia sesión.");
-        return;
-    }
-
-    try {
-      // 1. Subir a Cloudinary
-      const resCloudinary = await axios.post(
-        "https://api.cloudinary.com/v1_1/dm5yhmz9a/image/upload",
-        formData
-      );
-      newAvatarUrl = resCloudinary.data.secure_url;
-      
-      setAvatar(newAvatarUrl);
-      
-      // 2. ✅ CORRECCIÓN CLAVE: Se agrega el prefijo /api/usuarios a la ruta
-      await axios.put(
-        `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/actualizar`, 
-        { avatar: newAvatarUrl },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      toast.success("Avatar actualizado y guardado correctamente.");
-      
-    } catch (err) {
-      console.error("Error al subir o guardar el avatar:", err.response?.data || err);
-      toast.error("Error al actualizar el avatar.");
-    }
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    navigate('/login');
-  };
-
-  const handleMenuToggle = () => {
-    setMenuOpen(!menuOpen);
-  };
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      const menu = document.querySelector(".side-menu");
-      const hamburger = document.querySelector(".hamburger-btn");
-
-      if (menuOpen && menu && !menu.contains(event.target) && hamburger && !hamburger.contains(event.target)) {
-        setMenuOpen(false);
-      }
-    };
-
-    const handleEscape = (event) => {
-      if (event.key === "Escape" && menuOpen) {
-        setMenuOpen(false);
-      }
-    };
-
-    document.addEventListener("click", handleClickOutside);
-    document.addEventListener("keydown", handleEscape);
-
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-      document.removeEventListener("keydown", handleEscape);
-    };
-  }, [menuOpen]);
 
   const renderRightContent = () => {
     switch (activeTab) {
@@ -153,9 +67,13 @@ const MUsuario = () => {
             </h3>
 
             <div className="profile-header" style={{ justifyContent: "center" }}>
-              <div className="avatar-circle-large" onClick={handleFileClick}>
+              <div className="avatar-circle-large">
                 {avatar ? (
-                  <img src={getAvatarUrl(avatar)} alt="Avatar" className="avatar-img-large" />
+                  <img
+                    src={getAvatarUrl(avatar)}
+                    alt="Avatar"
+                    className="avatar-img-large"
+                  />
                 ) : (
                   <span className="default-avatar-large">👤</span>
                 )}
@@ -165,39 +83,41 @@ const MUsuario = () => {
             <div className="profile-info">
               <div className="info-row">
                 <strong>Descripción:</strong>
-                <span style={{ color: userDescription ? "#333" : "#000" }}>{userDescription || "No disponible"}</span>
+                <span>{userDescription || "No disponible"}</span>
               </div>
               <div className="info-row">
                 <strong>Teléfono:</strong>
-                <span style={{ color: userPhone ? "#333" : "#000" }}>{userPhone || "No disponible"}</span>
+                <span>{userPhone || "No disponible"}</span>
               </div>
               <div className="info-row">
                 <strong>Dirección:</strong>
-                <span style={{ color: userAddress ? "#333" : "#000" }}>{userAddress || "No disponible"}</span>
+                <span>{userAddress || "No disponible"}</span>
               </div>
               <div className="info-row">
                 <strong>Cédula:</strong>
-                <span style={{ color: userCedula ? "#333" : "#000" }}>{userCedula || "No disponible"}</span>
+                <span>{userCedula || "No disponible"}</span>
               </div>
-
               <div className="info-row">
                 <strong>Universidad:</strong>
-                <span style={{ color: userUniversity ? "#333" : "#000" }}>{userUniversity || "No disponible"}</span>
+                <span>{userUniversity || "No disponible"}</span>
               </div>
               <div className="info-row">
                 <strong>Carrera:</strong>
-                <span style={{ color: userCareer ? "#333" : "#000" }}>{userCareer || "No disponible"}</span>
+                <span>{userCareer || "No disponible"}</span>
               </div>
             </div>
           </div>
         );
 
       case "favoritos":
-        return <div><h3>Favoritos</h3><p>Información de tu cuenta...</p></div>;
+        return <h3>Favoritos</h3>;
+
       case "chats":
-        return <div><h3>Chats</h3><p>Tus conversaciones...</p></div>;
+        return <h3>Chats</h3>;
+
       case "notificaciones":
-        return <div><h3>Notificaciones</h3><p>Tus notificaciones...</p></div>;
+        return <h3>Notificaciones</h3>;
+
       default:
         return null;
     }
@@ -206,55 +126,10 @@ const MUsuario = () => {
   return (
     <div className="musuario-container">
       <ToastContainer />
+       <MenuHamburguesa />
 
-      {/* BOTÓN DE HAMBURGUESA */}
-      <button className={`hamburger-btn ${menuOpen ? "open" : ""}`} onClick={handleMenuToggle}>
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
-
-      {/* MENÚ DESLIZABLE */}
-      <nav className={`side-menu ${menuOpen ? "show" : ""}`}>
-
-        {/* SECCIÓN SUPERIOR */}
-        <div className="menu-header">
-          <h3 className="menu-title">Menú</h3>
-
-          <div className="avatar-section">
-            <div className="avatar-container" onClick={handleFileClick}>
-              {avatar ? (
-                <img src={getAvatarUrl(avatar)} alt="Avatar" className="avatar-img" />
-              ) : (
-                <span className="default-avatar">👤</span>
-              )}
-              <div className="avatar-overlay">
-                <i className="fa fa-camera"></i>
-              </div>
-            </div>
-
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleFileChange}
-              className="input-file-hidden"
-              accept="image/*"
-            />
-          </div>
-        </div>
-
-        <div className="menu-buttons">
-          <button onClick={() => navigate("/Dashboard")}>Inicio</button>
-          <button onClick={() => navigate("/MUsuario")}>Mi cuenta</button>
-          <button onClick={() => {}}>Favoritos</button>
-          <button onClick={() => navigate("/Ajustes")}>Ajustes</button>
-          <button onClick={handleLogout}>Cerrar sesión</button>
-        </div>
-      </nav>
-
-      <div className="main-nav-panel"> 
+      <div className="main-nav-panel">
         <div className="left-panel-content">
-
           <div style={{ textAlign: "center", marginBottom: "20px" }}>
             <div
               style={{
@@ -267,30 +142,51 @@ const MUsuario = () => {
               }}
             >
               {avatar ? (
-                <img src={getAvatarUrl(avatar)} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="Avatar" />
+                <img
+                  src={getAvatarUrl(avatar)}
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
               ) : (
-                <span style={{ fontSize: "50px", display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>👤</span>
+                <span style={{ fontSize: "50px" }}>👤</span>
               )}
             </div>
 
-            <h3 style={{ color: "white", marginTop: "10px"}}>{userName}</h3>
+            <h3 style={{ color: "white", marginTop: "10px" }}>{userName}</h3>
             <p style={{ color: "#8bc34a", marginTop: "-5px" }}>{userStatus}</p>
 
-            <hr style={{ marginTop: "10px", marginBottom: "10px", borderTop: "1px solid rgba(255, 255, 255, 0.2)" }} />
+            <hr style={{ opacity: 0.3 }} />
           </div>
 
           <div className="menu-buttons">
-            <button className={activeTab === "cuenta" ? "active" : ""} onClick={() => setActiveTab("cuenta")}>Cuenta</button>
-            <button className={activeTab === "favoritos" ? "active" : ""} onClick={() => setActiveTab("favoritos")}>Favoritos</button>
-            <button className={activeTab === "chats" ? "active" : ""} onClick={() => setActiveTab("chats")}>Chats</button>
-            <button className={activeTab === "notificaciones" ? "active" : ""} onClick={() => setActiveTab("notificaciones")}>Notificaciones</button>
+            <button
+              className={activeTab === "cuenta" ? "active" : ""}
+              onClick={() => setActiveTab("cuenta")}
+            >
+              Cuenta
+            </button>
+            <button
+              className={activeTab === "favoritos" ? "active" : ""}
+              onClick={() => setActiveTab("favoritos")}
+            >
+              Favoritos
+            </button>
+            <button
+              className={activeTab === "chats" ? "active" : ""}
+              onClick={() => setActiveTab("chats")}
+            >
+              Chats
+            </button>
+            <button
+              className={activeTab === "notificaciones" ? "active" : ""}
+              onClick={() => setActiveTab("notificaciones")}
+            >
+              Notificaciones
+            </button>
           </div>
         </div>
       </div>
 
-      <div className="right-panel">
-        {renderRightContent()}
-      </div>
+      <div className="right-panel">{renderRightContent()}</div>
     </div>
   );
 };
