@@ -29,7 +29,76 @@
   height: 100vh;
 }
 
-/* ... resto de tu CSS del panel izquierdo ... */
+.left-panel-content {
+  margin-top: 20px; 
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.main-nav-panel .menu-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+.main-nav-panel .menu-buttons button {
+  width: 100%;
+  padding: 10px 15px;
+  background: transparent;
+  color: white;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  border-radius: 8px;
+  transition: background 0.2s;
+  font-weight: 500;
+}
+
+.main-nav-panel .menu-buttons button:hover,
+.main-nav-panel .menu-buttons button.active {
+  background: rgba(255, 255, 255, 0.2);
+  font-weight: 700;
+}
+
+/* Avatar PC */
+.desktop-avatar-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 25px; 
+  width: 100%;
+}
+
+.desktop-avatar-container {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-bottom: 10px;
+  border: 3px solid white; 
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.desktop-avatar-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.desktop-status {
+  background-color: #03a800;
+  color: white;
+  font-size: 0.75rem;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  margin-top: 5px;
+  font-weight: 600;
+}
 
 /* =================================== */
 /* === PANEL DERECHO (Right-Panel) === */
@@ -41,7 +110,146 @@
   background-color: #ffffff;
   min-height: 100vh;
   overflow-y: auto;
-  color: #000000; /* 🔑 Aseguramos texto negro en el contenido principal */
+}
+
+/* Menú hamburguesa */
+.hamburger-btn {
+  position: fixed;
+  top: 20px;
+  left: 20px; 
+  width: 45px;
+  height: 40px;
+  display: flex; 
+  flex-direction: column;
+  justify-content: space-between;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 3500;
+}
+
+.hamburger-btn span {
+  display: block;
+  width: 100%;
+  height: 4px;
+  background: #333;
+  border-radius: 4px;
+}
+
+/* Menú lateral */
+.side-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 260px;
+  height: 100%;
+  background: linear-gradient(180deg, #920ae6 0%, #4a0142 100%);
+  color: white;
+  box-shadow: 2px 0 10px rgba(0,0,0,0.4);
+  padding: 30px 20px;
+  transform: translateX(-100%);
+  transition: transform 0.45s cubic-bezier(0.25, 0.8, 0.25, 1);
+  z-index: 3000;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.side-menu.show {
+  transform: translateX(0);
+}
+
+.menu-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-top: 50px;
+  margin-bottom: 30px;
+}
+
+.menu-title {
+  font-size: 1.3rem;
+  margin-bottom: 15px;
+  text-align: center;
+  font-weight: 800 !important;
+}
+
+.avatar-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30px;
+  width: 100%;
+}
+
+.avatar-container {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+  margin-bottom: 10px;
+  position: relative;
+}
+
+.avatar-overlay {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: rgba(0,0,0,0.5);
+  color: white;
+  border-radius: 50%;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.default-avatar {
+  font-size: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+
+.input-file-hidden {
+  display: none;
+}
+
+.side-menu .menu-buttons {
+  display: flex;
+  flex-direction: column; 
+  gap: 10px;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+.side-menu .menu-buttons button {
+  width: 100%;          
+  text-align: left;     
+  padding: 10px 15px;
+  background: transparent;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-weight: 500;
+}
+
+.side-menu .menu-buttons button:hover {
+  background: rgba(255, 255, 255, 0.1); 
 }
 
 /* =================================== */
@@ -58,7 +266,7 @@
   font-family: 'Inter', sans-serif;
   border: 2px solid #920ae6;
 
-  /* 🔑 Texto negro para toda la cartilla */
+  /* 🔑 Todo el texto negro */
   color: #000000;
 }
 
@@ -76,9 +284,9 @@
 }
 
 .avatar-img-large {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .default-avatar-large {
@@ -101,12 +309,12 @@
   border: 1px solid #ddd;
   font-size: 14px;
 
-  /* 🔑 Forzar color negro en el texto de info-row */
+  /* 🔑 texto negro */
   color: #000000;
 }
 
 .info-row strong {
-  color: #760265; /* Morado más oscuro */
+  color: #760265; /* Morado oscuro permanece */
   font-weight: 600;
 }
 
@@ -115,38 +323,43 @@
 /* =================================== */
 
 @media (max-width: 768px) {
-    .musuario-container {
-        flex-direction: column; 
-    }
+  .musuario-container {
+    flex-direction: column; 
+  }
 
-    .main-nav-panel {
-        display: flex;
-        width: 100%;
-        height: auto;
-        position: relative;
-        padding-top: 20px;
-        padding-bottom: 20px;
-    }
+  .main-nav-panel {
+    display: flex;
+    width: 100%;
+    height: auto;
+    position: relative;
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
 
-    .right-panel {
-        width: 100%;
-        padding-top: 30px; 
-        padding-left: 15px;
-        padding-right: 15px;
-        flex-shrink: 0;
-        min-height: auto;
-        color: #000000; /* 🔑 Texto negro en móvil */
-    }
+  .right-panel {
+    width: 100%;
+    padding-top: 30px; 
+    padding-left: 15px;
+    padding-right: 15px;
+    flex-shrink: 0;
+    min-height: auto;
+    color: #000000;
+  }
 
-    .user-profile-section {
-        width: 100%;
-        max-width: 100%;
-        margin: 0 auto;
-        color: #000000; /* 🔑 asegurar negro */
-    }
-}
+  .user-profile-section {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    color: #000000;
+  }
 
-/* 🔥 NEGRITA SOLO PARA "Menú" DEL MENÚ HAMBURGUESA */
-.side-menu .menu-title {
-    font-weight: 800 !important;
+  .hamburger-btn {
+    display: flex;
+    background-color: transparent; 
+    border-radius: 0;
+    padding: 5px;
+    top: 10px;
+    left: 10px;
+    box-shadow: none;
+  }
 }
