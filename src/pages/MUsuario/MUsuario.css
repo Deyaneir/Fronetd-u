@@ -58,19 +58,6 @@
     overflow-y: auto;
 }
 
-/* SOLO TEXTOS EN NEGRO, NO BOTONES */
-.right-panel p,
-.right-panel span,
-.right-panel h1,
-.right-panel h2,
-.right-panel h3,
-.right-panel h4,
-.right-panel h5,
-.right-panel h6,
-.right-panel label {
-    color: #000 !important;
-}
-
 /* ===================================== */
 /* TARJETA DE USUARIO */
 /* ===================================== */
@@ -84,6 +71,7 @@
     box-shadow: 0px 4px 12px rgba(0,0,0,0.15);
 }
 
+/* Título */
 .profile-title {
     font-size: 1.6em;
     color: #000;
@@ -92,6 +80,7 @@
     margin-bottom: 25px;
 }
 
+/* INFORMACIÓN DEL USUARIO */
 .info-group {
     display: flex;
     flex-direction: column;
@@ -137,11 +126,11 @@
 }
 
 /* ===================================== */
-/* BOTONES DEL MENÚ */
+/* 🔥 BOTONES DEL MENÚ: UNO DEBAJO DEL OTRO */
 /* ===================================== */
 .menu-buttons {
     display: flex;
-    flex-direction: column !important;
+    flex-direction: column !important; /* UNO BAJO OTRO */
     width: 100%;
     margin-top: 20px;
 }
@@ -159,7 +148,15 @@
     transition: background-color 0.2s ease-in-out;
 }
 
-/* Hover rosado suave */
+/* SIN HOVER GRIS FEÍSIMO */
 .menu-buttons button:hover {
-    background-color: #ffd6fc !important;
+    background-color: #ffd6fc !important; /* rosa suave */
+}
+
+/* ===================================== */
+/* TODAS LAS LETRAS DEL PANEL DERECHO EN NEGRO */
+/* ===================================== */
+.right-panel,
+.right-panel * {
+    color: #000 !important;
 }
