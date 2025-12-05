@@ -234,13 +234,15 @@ const MUsuario = () => {
               )}
             </div>
 
-            <h3 style={{ color: "white", marginTop: "10px" }}>{userName}</h3>
-            <p style={{ color: "#8bc34a", marginTop: "-5px" }}>{userStatus}</p>
+            {/* Rol arriba de Disponible */}
             {userRole && (
-              <p style={{ color: "white", fontSize: "0.9rem", marginTop: "-3px" }}>
+              <p style={{ color: "white", fontSize: "0.9rem", marginBottom: "3px", textTransform: "capitalize" }}>
                 {userRole}
               </p>
             )}
+
+            <h3 style={{ color: "white", marginTop: "10px" }}>{userName}</h3>
+            <p style={{ color: "#8bc34a", marginTop: "-5px" }}>{userStatus}</p>
 
             <hr style={{ marginTop: "10px", marginBottom: "10px", borderTop: "1px solid rgba(255, 255, 255, 0.2)" }} />
           </div>
