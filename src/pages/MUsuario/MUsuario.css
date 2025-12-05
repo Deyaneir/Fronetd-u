@@ -399,3 +399,13 @@
 .side-menu .menu-title {
     font-weight: 800 !important;
 }
+/* Cambiar color de texto de toda la info del perfil a blanco */
+.user-profile-section .info-row {
+    color: white;          /* Texto general blanco */
+    background-color: #760265; /* Opcional: fondo morado para contraste */
+    border: none;           /* Opcional: quitar borde si queda feo */
+}
+
+.user-profile-section .info-row strong {
+    color: #fff;            /* Negrita blanca */
+}
