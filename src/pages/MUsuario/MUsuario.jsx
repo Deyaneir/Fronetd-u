@@ -3,7 +3,7 @@ import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./MUsuario.css";
-import MenuHamburguesa from "../../components/Menu/MenuHamburguesa";
+import MenuHamburguesa from "../../Global_Styles/Menu.jsx";
 
 
 const MUsuario = () => {
