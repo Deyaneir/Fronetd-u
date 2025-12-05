@@ -1,162 +1,152 @@
-/* ===================================== */
-/* CONTENEDOR GENERAL */
-/* ===================================== */
-.user-page-container {
-    display: flex;
-    flex-direction: row;
-    height: 100vh;
-    width: 100%;
-    overflow-x: hidden;
-    font-family: 'Poppins', sans-serif;
+ese es el resumen te paso mi css /* ---------------------------------------------------- */
+/* MENÚ HAMBURGUESA (Visible en Compu y Móvil)          */
+/* ---------------------------------------------------- */
+
+.hamburger-btn {
+    position: fixed;
+    top: 20px;
+    left: 20px; 
+    
+    width: 45px;
+    height: 40px;
+    display: flex; 
+    flex-direction: column;
+    justify-content: space-between;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 3500;
 }
 
-/* ===================================== */
-/* PANEL IZQUIERDO */
-/* ===================================== */
-.main-nav-panel {
-    width: 25%;
-    background-color: #760265;
-    padding: 20px;
-    color: white;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.hamburger-btn span {
+    display: block;
+    width: 100%;
+    height: 4px;
+    background: #333;
+    border-radius: 4px;
 }
 
-.user-welcome-text {
-    font-size: 1.8em;
-    font-weight: bold;
-    margin-bottom: 20px;
+/* ---------------------------------------------------- */
+/* MENÚ LATERAL DESLIZABLE (side-menu) con DEGRADADO    */
+/* ---------------------------------------------------- */
+
+.side-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 260px;
+    height: 100%;
+    
+    /* 🎨 FONDO DEGRADADO SOLICITADO */
+    background: linear-gradient(180deg, #920ae6 0%, #4a0142 100%);
+    
+    color: white;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.4);
+    padding: 30px 20px;
+    /* Inicia oculto */
+    transform: translateX(-100%);
+    transition: transform 0.45s cubic-bezier(0.25, 0.8, 0.25, 1);
+    z-index: 3000;
+    /* Aseguramos que se muestre en mobile cuando se le agregue la clase .show */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
-.user-profile-image {
-    width: 130px;
-    height: 130px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 5px solid white;
+.side-menu.show {
+    /* Se desliza para mostrarse */
+    transform: translateX(0);
 }
 
-.upload-avatar-btn {
-    margin-top: 15px;
-    background-color: white;
-    color: #760265;
-    padding: 6px 12px;
-    border-radius: 10px;
-    border: none;
-    font-weight: bold;
-    cursor: pointer;
+.menu-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-top: 50px;
+  margin-bottom: 30px;
 }
 
-/* ===================================== */
-/* PANEL DERECHO */
-/* ===================================== */
-.right-panel {
-    width: 75%;
-    padding: 25px;
-    background-color: #f7f6f8;
-    overflow-y: auto;
+.menu-title {
+  font-size: 1.3rem;
+  margin-bottom: 15px;
+  text-align: center;
 }
 
-/* ===================================== */
-/* TARJETA DE USUARIO */
-/* ===================================== */
-.user-profile-section {
-    background-color: white;
-    padding: 20px;
-    border-radius: 15px;
-    width: 100%;
-    max-width: 700px;
-    margin: 0 auto;
-    box-shadow: 0px 4px 12px rgba(0,0,0,0.15);
+.avatar-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 30px;
+    width: 100%;
 }
 
-/* Título */
-.profile-title {
-    font-size: 1.6em;
-    color: #000;
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 25px;
+.avatar-container {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+    margin-bottom: 10px;
+    position: relative; /* Para el overlay */
 }
 
-/* INFORMACIÓN DEL USUARIO */
-.info-group {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
+.avatar-overlay {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: rgba(0,0,0,0.5);
+  color: white;
+  border-radius: 50%;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  cursor: pointer;
 }
 
-.info-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px 5px;
-    border-bottom: 1px solid #ddd;
+.avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
-.info-label {
-    font-weight: bold;
-    color: #000;
+.default-avatar {
+  font-size: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
 }
 
-.info-value {
-    color: #000;
+.input-file-hidden {
+    display: none;
 }
 
-/* BOTÓN EDITAR */
-.edit-btn {
-    margin-top: 25px;
-    display: block;
-    width: 180px;
-    margin-left: auto;
-    margin-right: auto;
-    padding: 12px;
-    text-align: center;
-    background-color: #760265;
-    color: white;
-    font-weight: bold;
-    border-radius: 12px;
-    border: none;
-    cursor: pointer;
-    transition: 0.2s;
+/* Botones dentro del menú deslizable */
+.side-menu .menu-buttons {
+    display: flex;
+    flex-direction: column; 
+    gap: 10px;
+    width: 100%;
+    padding: 0;
+    margin: 0;
 }
 
-.edit-btn:hover {
-    background-color: #5a014d;
+.side-menu .menu-buttons button {
+    width: 100%;          
+    text-align: left;     
+    padding: 10px 15px;
+    background: transparent;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-weight: 500;
 }
 
-/* ===================================== */
-/* 🔥 BOTONES DEL MENÚ: UNO DEBAJO DEL OTRO */
-/* ===================================== */
-.menu-buttons {
-    display: flex;
-    flex-direction: column !important; /* UNO BAJO OTRO */
-    width: 100%;
-    margin-top: 20px;
-}
-
-.menu-buttons button {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 10px;
-    border: none;
-    border-radius: 8px;
-    background-color: #ffffff;
-    color: #760265;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.2s ease-in-out;
-}
-
-/* SIN HOVER GRIS FEÍSIMO */
-.menu-buttons button:hover {
-    background-color: #ffd6fc !important; /* rosa suave */
-}
-
-/* ===================================== */
-/* TODAS LAS LETRAS DEL PANEL DERECHO EN NEGRO */
-/* ===================================== */
-.right-panel,
-.right-panel * {
-    color: #000 !important;
+.side-menu .menu-buttons button:hover {
+    background: rgba(255, 255, 255, 0.1); 
 }
