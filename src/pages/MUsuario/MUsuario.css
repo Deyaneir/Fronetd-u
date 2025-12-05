@@ -2,159 +2,161 @@
 /* CONTENEDOR GENERAL */
 /* ===================================== */
 .user-page-container {
-    display: flex;
-    flex-direction: row;
-    height: 100vh;
-    width: 100%;
-    overflow-x: hidden;
-    font-family: 'Poppins', sans-serif;
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+    width: 100%;
+    overflow-x: hidden;
+    font-family: 'Poppins', sans-serif;
 }
 
 /* ===================================== */
 /* PANEL IZQUIERDO */
 /* ===================================== */
 .main-nav-panel {
-    width: 25%;
-    background-color: #760265;
-    padding: 20px;
-    color: white;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    width: 25%;
+    background-color: #760265;
+    padding: 20px;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .user-welcome-text {
-    font-size: 1.8em;
-    font-weight: bold;
-    margin-bottom: 20px;
+    font-size: 1.8em;
+    font-weight: bold;
+    margin-bottom: 20px;
 }
 
 .user-profile-image {
-    width: 130px;
-    height: 130px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 5px solid white;
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid white;
 }
 
 .upload-avatar-btn {
-    margin-top: 15px;
-    background-color: white;
-    color: #760265;
-    padding: 6px 12px;
-    border-radius: 10px;
-    border: none;
-    font-weight: bold;
-    cursor: pointer;
+    margin-top: 15px;
+    background-color: white;
+    color: #760265;
+    padding: 6px 12px;
+    border-radius: 10px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
 }
 
 /* ===================================== */
 /* PANEL DERECHO */
 /* ===================================== */
 .right-panel {
-    width: 75%;
-    padding: 25px;
-    background-color: #f7f6f8;
-    overflow-y: auto;
+    width: 75%;
+    padding: 25px;
+    background-color: #f7f6f8;
+    overflow-y: auto;
 }
 
 /* ===================================== */
 /* TARJETA DE USUARIO */
 /* ===================================== */
 .user-profile-section {
-    background-color: white;
-    padding: 20px;
-    border-radius: 15px;
-    width: 100%;
-    max-width: 700px;
-    margin: 0 auto;
-    box-shadow: 0px 4px 12px rgba(0,0,0,0.15);
+    background-color: white;
+    padding: 20px;
+    border-radius: 15px;
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.15);
 }
 
 /* Título */
 .profile-title {
-    font-size: 1.6em;
-    color: #000;
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 25px;
+    font-size: 1.6em;
+    color: #000;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 25px;
 }
 
 /* INFORMACIÓN DEL USUARIO */
 .info-group {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
 }
 
 .info-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px 5px;
-    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 5px;
+    border-bottom: 1px solid #ddd;
 }
 
 .info-label {
-    font-weight: bold;
-    color: #000;
+    font-weight: bold;
+    color: #000;
 }
 
 .info-value {
-    color: #000;
+    color: #000;
 }
 
 /* BOTÓN EDITAR */
 .edit-btn {
-    margin-top: 25px;
-    display: block;
-    width: 180px;
-    margin-left: auto;
-    margin-right: auto;
-    padding: 12px;
-    text-align: center;
-    background-color: #760265;
-    color: white;
-    font-weight: bold;
-    border-radius: 12px;
-    border: none;
-    cursor: pointer;
-    transition: 0.2s;
+    margin-top: 25px;
+    display: block;
+    width: 180px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 12px;
+    text-align: center;
+    background-color: #760265;
+    color: white;
+    font-weight: bold;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s;
 }
 
 .edit-btn:hover {
-    background-color: #5a014d;
+    background-color: #5a014d;
 }
 
 /* ===================================== */
-/* BOTONES DEL MENÚ IZQUIERDO */
+/* 🔥 BOTONES DEL MENÚ (uno debajo del otro, sin gris feo) */
 /* ===================================== */
 .menu-buttons {
-    display: flex;
-    flex-direction: column; /* uno debajo del otro */
-    width: 100%;
-    margin-top: 20px;
+    display: flex;
+    flex-direction: column !important; /* UNO BAJO OTRO */
+    width: 100%;
+    margin-top: 20px;
 }
 
 .menu-buttons button {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 10px;
-    border: none;
-    border-radius: 8px;
-    background-color: #ffffff;
-    color: #760265;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.2s ease-in-out;
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 8px;
+    background-color: #ffffff;
+    color: #760265;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
 }
 
+/* SIN HOVER GRIS FEÍSIMO */
 .menu-buttons button:hover {
-    background-color: #ffd6fc;
+    background-color: #ffd6fc !important; /* rosa suave */
 }
 
 /* ===================================== */
-/* SOLO LA CARTILLA USUARIO EN NEGRO */
+/* TODAS LAS LETRAS DEL PANEL DERECHO EN NEGRO */
 /* ===================================== */
-.user-profile-section * {
-    color: #000 !important;
-}
+.right-panel,
+.right-panel * {
+    color: #000 !important;
+} mi css necesito los botones uno debajo de otro y las letras de la cartilla de color negro solo los botones de CuentaFavoritosChatsNotificaciones asomen uno debajo de otro
