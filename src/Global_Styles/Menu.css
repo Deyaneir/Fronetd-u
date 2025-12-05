@@ -1,113 +1,167 @@
-/* Botón hamburguesa */
+/* ---------------------------- */
+/*      MENÚ HAMBURGUESA       */
+/* ---------------------------- */
 .hamburger-btn {
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  width: 35px;
-  height: 30px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 0;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 45px;
+    height: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 2000;
 }
 
 .hamburger-btn span {
-  display: block;
-  width: 100%;
-  height: 4px;
-  background: #6a0dad;
-  border-radius: 4px;
-  transition: 0.3s ease;
+    display: block;
+    width: 100%;
+    height: 5px;
+    background: #333;
+    border-radius: 4px;
 }
 
-/* Animación del botón al abrir */
-.hamburger-btn.open span:nth-child(1) {
-  transform: rotate(45deg) translate(6px, 6px);
-}
-
-.hamburger-btn.open span:nth-child(2) {
-  opacity: 0;
-}
-
-.hamburger-btn.open span:nth-child(3) {
-  transform: rotate(-45deg) translate(7px, -7px);
-}
-
-/* Menú lateral */
+/* ---------------------------- */
+/*         MENÚ LATERAL         */
+/* ---------------------------- */
 .side-menu {
-  position: fixed;
-  top: 0;
-  left: -260px;
-  width: 260px;
-  height: 100vh;
-  background: #fff;
-  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.1);
-  padding: 25px;
-  transition: left 0.3s ease;
-  z-index: 999;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 260px;
+    height: 100%;
+    background: #760265;
+    color: white;
+    padding: 30px 20px;
+    transform: translateX(-100%);
+    transition: transform 0.45s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    z-index: 1500;
 }
 
 .side-menu.show {
-  left: 0;
+    transform: translateX(0);
 }
 
+/* Sombra detrás del menú */
+.menu-overlay {
+    position: fixed;
+    top: 0; 
+    left: 0;
+    width: 100%; 
+    height: 100%;
+    background: rgba(0,0,0,0.3);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.45s ease;
+    z-index: 1400;
+}
+
+.menu-overlay.show {
+    opacity: 1;
+    pointer-events: all;
+}
+
+/* ---------------------------- */
+/*          ENCABEZADO         */
+/* ---------------------------- */
 .menu-header {
-  margin-bottom: 25px;
-  text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-top: 50px;
+    margin-bottom: 30px;
 }
 
 .menu-title {
-  font-size: 1.6rem;
-  color: #6a0dad;
-  font-weight: 600;
+    width: 100%;
+    text-align: center;
+    color: white;
+    font-size: 1.3rem;
+    margin-bottom: 15px;
 }
 
-/* Contenedor del avatar */
-.menu-avatar-container {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
+/* ---------------------------- */
+/*            AVATAR            */
+/* ---------------------------- */
+.avatar-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 30px;
 }
 
-.menu-avatar {
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid #6a0dad;
+.avatar-container {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+    margin-bottom: 10px;
 }
 
-/* Botones del menú */
+.avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.default-avatar {
+    font-size: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.avatar-overlay {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: rgba(0,0,0,0.5);
+    color: white;
+    border-radius: 50%;
+    padding: 5px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+/* Nombre u otros datos */
+.user-info {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+/* ---------------------------- */
+/*        BOTONES MENÚ          */
+/* ---------------------------- */
 .menu-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    padding: 0;
+    margin: 0;
 }
 
 .menu-buttons button {
-  background: #6a0dad;
-  color: #fff;
-  border: none;
-  padding: 10px;
-  border-radius: 8px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background 0.2s ease;
+    width: 100%;
+    text-align: left;
+    padding: 10px 15px;
+    background: transparent;
+    color: white;
+    border: none;
+    border-radius: 0;
+    cursor: pointer;
+    transition: background 0.2s;
 }
 
 .menu-buttons button:hover {
-  background: #5a0bb5;
-}
-
-/* Nombre del usuario */
-.menu-username {
-  text-align: center;
-  color: #333;
-  font-size: 1.1rem;
-  margin-top: -10px;
-  margin-bottom: 20px;
+    background: rgba(255, 255, 255, 0.1);
 }
