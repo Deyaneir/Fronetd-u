@@ -35,34 +35,42 @@ const MUsuario = () => {
     return `${url}?t=${new Date().getTime()}`;
   };
 
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        if (!token) return;
-
-        const response = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/api/usuario/perfil`, 
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-
-        if (response.data?.nombre) setUserName(response.data.nombre);
-        if (response.data?.estado) setUserStatus(response.data.estado);
-        if (response.data?.avatar) setAvatar(response.data.avatar);
-        if (response.data?.telefono) setUserPhone(response.data.telefono);
-        if (response.data?.direccion) setUserAddress(response.data.direccion);
-        if (response.data?.cedula) setUserCedula(response.data.cedula);
-        if (response.data?.descripcion) setUserDescription(response.data.descripcion);
-        if (response.data?.universidad) setUserUniversity(response.data.universidad);
-        if (response.data?.carrera) setUserCareer(response.data.carrera);
-
-      } catch (error) {
-        console.error("Error al obtener el usuario:", error);
+ useEffect(() => {
+  const fetchUserInfo = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.log("No hay token");
+        return;
       }
-    };
 
-    fetchUserInfo();
-  }, []);
+      const response = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/api/usuario/perfil`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      console.log("Perfil recibido:", response.data);
+
+      const u = response.data;
+
+      setUserName(u.nombre || "Usuario");
+      setUserStatus(u.estado || "Disponible");
+      setAvatar(u.avatar || null);
+      setUserPhone(u.telefono || "");
+      setUserAddress(u.direccion || "");
+      setUserCedula(u.cedula || "");
+      setUserDescription(u.descripcion || "");
+      setUserUniversity(u.universidad || "");
+      setUserCareer(u.carrera || "");
+
+    } catch (error) {
+      console.error("Error al obtener el usuario:", error.response?.data || error);
+    }
+  };
+
+  fetchUserInfo();
+}, []);
+
 
   const handleFileClick = () => {
     fileInputRef.current.click();
