@@ -1,101 +1,84 @@
-/* ---------------------------- */
-/*      MENÚ HAMBURGUESA       */
-/* ---------------------------- */
+/* ---------------------------------------------------- */
+/* MENÚ HAMBURGUESA (Visible en Compu y Móvil)          */
+/* ---------------------------------------------------- */
+
 .hamburger-btn {
     position: fixed;
     top: 20px;
-    left: 20px;
+    left: 20px; 
+    
     width: 45px;
-    height: 60px;
-    display: flex;
+    height: 40px;
+    display: flex; 
     flex-direction: column;
-    justify-content: space-around;
+    justify-content: space-between;
     background: transparent;
     border: none;
     cursor: pointer;
-    z-index: 2000;
+    z-index: 3500;
 }
 
 .hamburger-btn span {
     display: block;
     width: 100%;
-    height: 5px;
+    height: 4px;
     background: #333;
     border-radius: 4px;
 }
 
-/* ---------------------------- */
-/*         MENÚ LATERAL         */
-/* ---------------------------- */
+/* ---------------------------------------------------- */
+/* MENÚ LATERAL DESLIZABLE (side-menu) con DEGRADADO    */
+/* ---------------------------------------------------- */
+
 .side-menu {
     position: fixed;
     top: 0;
     left: 0;
     width: 260px;
     height: 100%;
-    background: #760265;
+    
+    /* 🎨 FONDO DEGRADADO SOLICITADO */
+    background: linear-gradient(180deg, #920ae6 0%, #4a0142 100%);
+    
     color: white;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.4);
     padding: 30px 20px;
+    /* Inicia oculto */
     transform: translateX(-100%);
-    transition: transform 0.45s ease;
+    transition: transform 0.45s cubic-bezier(0.25, 0.8, 0.25, 1);
+    z-index: 3000;
+    /* Aseguramos que se muestre en mobile cuando se le agregue la clase .show */
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    z-index: 1500;
 }
 
 .side-menu.show {
+    /* Se desliza para mostrarse */
     transform: translateX(0);
 }
 
-/* Sombra detrás del menú */
-.menu-overlay {
-    position: fixed;
-    top: 0; 
-    left: 0;
-    width: 100%; 
-    height: 100%;
-    background: rgba(0,0,0,0.3);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.45s ease;
-    z-index: 1400;
-}
-
-.menu-overlay.show {
-    opacity: 1;
-    pointer-events: all;
-}
-
-/* ---------------------------- */
-/*          ENCABEZADO         */
-/* ---------------------------- */
 .menu-header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    margin-top: 50px;
-    margin-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-top: 50px;
+  margin-bottom: 30px;
 }
 
 .menu-title {
-    width: 100%;
-    text-align: center;
-    color: white;
-    font-size: 1.3rem;
-    margin-bottom: 15px;
+  font-size: 1.3rem;
+  margin-bottom: 15px;
+  text-align: center;
 }
 
-/* ---------------------------- */
-/*            AVATAR            */
-/* ---------------------------- */
 .avatar-section {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 100%;
     margin-bottom: 30px;
+    width: 100%;
 }
 
 .avatar-container {
@@ -105,6 +88,22 @@
     overflow: hidden;
     cursor: pointer;
     margin-bottom: 10px;
+    position: relative; /* Para el overlay */
+}
+
+.avatar-overlay {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: rgba(0,0,0,0.5);
+  color: white;
+  border-radius: 50%;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  cursor: pointer;
 }
 
 .avatar-img {
@@ -114,54 +113,40 @@
 }
 
 .default-avatar {
-    font-size: 50px;
+  font-size: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+
+.input-file-hidden {
+    display: none;
+}
+
+/* Botones dentro del menú deslizable */
+.side-menu .menu-buttons {
     display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.avatar-overlay {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    background: rgba(0,0,0,0.5);
-    color: white;
-    border-radius: 50%;
-    padding: 5px;
-    font-size: 12px;
-    cursor: pointer;
-}
-
-/* Nombre u otros datos */
-.user-info {
-    text-align: center;
-    margin-bottom: 50px;
-}
-
-/* ---------------------------- */
-/*        BOTONES MENÚ          */
-/* ---------------------------- */
-.menu-buttons {
-    display: flex;
-    flex-direction: column;
+    flex-direction: column; 
     gap: 10px;
     width: 100%;
     padding: 0;
     margin: 0;
 }
 
-.menu-buttons button {
-    width: 100%;
-    text-align: left;
+.side-menu .menu-buttons button {
+    width: 100%;          
+    text-align: left;     
     padding: 10px 15px;
     background: transparent;
     color: white;
     border: none;
-    border-radius: 0;
+    border-radius: 5px;
     cursor: pointer;
     transition: background 0.2s;
+    font-weight: 500;
 }
 
-.menu-buttons button:hover {
-    background: rgba(255, 255, 255, 0.1);
+.side-menu .menu-buttons button:hover {
+    background: rgba(255, 255, 255, 0.1); 
 }
