@@ -11,26 +11,24 @@ import "./Login.css";
 
 // --- SVG OJITOS KAWAII ---
 const KawaiiEyeIcon = () => (
-    <svg 
-        xmlns="http://www.w3.org/2000/svg" 
-        width="22" 
-        height="22" 
-        viewBox="0 0 24 24" 
-        fill="none" 
-        stroke="currentColor" 
-        strokeWidth="2.5" 
-        strokeLinecap="round" 
-        strokeLinejoin="round"
-        className="icon-eye-kawaii"
-    >
-        <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z" />
-        {/* ESCLEROTICA BLANCA */}
-        <circle cx="12" cy="12" r="3.5" fill="white"/>
-        {/* PUPILA NEGRA */}
-        <circle cx="12" cy="12" r="1.5" fill="black"/>
-        {/* REFLEJO KAWAII */}
-        <circle cx="13.5" cy="10.5" r="0.5" fill="white"/>
-    </svg>
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    width="22" 
+    height="22" 
+    viewBox="0 0 24 24" 
+    fill="none"
+    stroke="none"
+    className="icon-eye-kawaii"
+  >
+    {/* Contorno del ojo */}
+    <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z" stroke="#000" strokeWidth="2.5"/>
+    {/* Esclerótica */}
+    <circle cx="12" cy="12" r="3.5" fill="white"/>
+    {/* Pupila */}
+    <circle cx="12" cy="12" r="1.5" fill="black"/>
+    {/* Reflejo kawaii */}
+    <circle cx="13.5" cy="10.5" r="0.5" fill="white"/>
+  </svg>
 );
 
 
