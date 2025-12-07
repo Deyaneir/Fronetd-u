@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import storeAuth from "../../context/storeAuth";
 import "./Ajustes.css";
 
 const Ajustes = () => {
@@ -13,26 +14,19 @@ const Ajustes = () => {
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
 
-  // 🔹 Cargar avatar (REMOTO)
+  // 🔹 Cargar avatar
   useEffect(() => {
     const fetchAvatar = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const token = storeAuth.getState().token;
         if (!token || !import.meta.env.VITE_BACKEND_URL) return;
 
         const res = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/perfil`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          }
+          `${import.meta.env.VITE_BACKEND_URL}/perfil`,
+          { headers: { Authorization: `Bearer ${token}` } }
         );
 
-        if (res.data?.avatar) {
-          setAvatar(res.data.avatar);
-        }
-
+        if (res.data?.avatar) setAvatar(res.data.avatar);
       } catch (error) {
         console.error("Error al obtener avatar:", error);
       }
@@ -87,6 +81,7 @@ const Ajustes = () => {
       {/* TÍTULO */}
       <h2 className="ajustes-title">Ajustes</h2>
 
+      {/* ✅ CONTENEDOR QUE LIMITA EL ANCHO */}
       <div className="ajustes-container">
 
         {/* CUENTA */}
