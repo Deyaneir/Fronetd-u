@@ -159,6 +159,19 @@
 .select-rol:focus {
   border-color: #4d73ff;
 }
+.icon-eye-kawaii,
+.icon-eye-off-kawaii {
+    width: 22px;
+    height: 22px;
+    display: block; /* importante para que se vea */
+    color: #555; /* o el color que quieras */
+}
+
+.eye-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
 
 /* Ajustes responsivos */
