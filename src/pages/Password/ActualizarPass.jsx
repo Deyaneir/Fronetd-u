@@ -115,6 +115,7 @@ const KawaiiEyeClosed = () => (
   </svg>
 );
 
+
   const KawaiiEye = ({ isOpen }) => (isOpen ? <KawaiiEyeOpen /> : <KawaiiEyeClosed />);
 
   return (
