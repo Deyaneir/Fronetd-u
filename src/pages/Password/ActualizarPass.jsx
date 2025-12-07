@@ -83,26 +83,28 @@ const ChangePasswordForm = () => {
     navigate("/ajustes");
   };
 
-  // 🔹 Ojos kawaii completos con pupila más grande
+  // 🔹 Ojos kawaii completos
+  // Ojo abierto con pupila grande
   const KawaiiEyeOpen = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="none">
+    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="none">
       {/* Esclerótica */}
-      <circle cx="12" cy="12" r="3.5" fill="white"/>
-      {/* Pupila más grande */}
-      <circle cx="12" cy="12" r="3.2" fill="black"/>
+      <ellipse cx="12" cy="12" rx="7" ry="4" fill="white"/>
+      {/* Pupila grande */}
+      <circle cx="12" cy="12" r="2.5" fill="black"/>
       {/* Reflejo */}
-      <circle cx="13.5" cy="10.5" r="0.5" fill="white"/>
+      <circle cx="13.5" cy="10.5" r="0.8" fill="white"/>
       {/* Contorno del ojo */}
       <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z" stroke="#000" strokeWidth="2" fill="none"/>
     </svg>
   );
 
+  // Ojo cerrado
   const KawaiiEyeClosed = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="none">
+    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="none">
       {/* Esclerótica */}
       <circle cx="12" cy="12" r="3.5" fill="white"/>
-      {/* Pupila más grande */}
-      <circle cx="12" cy="12" r="3.2" fill="black"/>
+      {/* Pupila */}
+      <circle cx="12" cy="12" r="2.5" fill="black"/>
       {/* Reflejo */}
       <circle cx="13.5" cy="10.5" r="0.5" fill="white"/>
       {/* Líneas de ojo cerrado */}
