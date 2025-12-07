@@ -13,7 +13,9 @@ const ChangePasswordForm = () => {
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
 
   const [username, setUsername] = useState('Usuario');
-  const [avatarUrl, setAvatarUrl] = useState('https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg');
+  const [avatarUrl, setAvatarUrl] = useState(
+    'https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg'
+  );
 
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
@@ -25,12 +27,18 @@ const ChangePasswordForm = () => {
         const token = storeAuth.getState().token;
         if (!token) return;
 
-        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/perfil`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        const res = await axios.get(
+          `${import.meta.env.VITE_BACKEND_URL}/perfil`,
+          {
+            headers: { Authorization: `Bearer ${token}` }
+          }
+        );
 
         setUsername(res.data?.nombre || "Usuario");
-        setAvatarUrl(res.data?.avatar || "https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg");
+        setAvatarUrl(
+          res.data?.avatar ||
+          "https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg"
+        );
 
       } catch (error) {
         console.error("Error al cargar usuario:", error);
@@ -72,7 +80,9 @@ const ChangePasswordForm = () => {
 
     } catch (error) {
       console.error(error);
-      toast.error(error.response?.data?.msg || "Error al actualizar la contraseña");
+      toast.error(
+        error.response?.data?.msg || "Error al actualizar la contraseña"
+      );
     }
   };
 
@@ -83,64 +93,124 @@ const ChangePasswordForm = () => {
     navigate("/ajustes");
   };
 
-  const EyeIcon = ({ isOpen }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
-      <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
-      <path fillRule="evenodd" d={isOpen
-        ? "M1.323 11.447L2.49 12.385a8.25 8.25 0 0 0 14.114 0l1.166-.938A9.75 9.75 0 0 0 12 18c-3.678 0-6.891-1.86-10.677-5.447ZM22.677 11.447 21.51 12.385a8.25 8.25 0 0 1-14.114 0l-1.166-.938A9.75 9.75 0 0 1 12 6c3.678 0 6.891 1.86 10.677 5.447Z"
-        : "M1.323 11.447L2.49 12.385a8.25 8.25 0 0 0 14.114 0l-1.166-.938M1.323 11.447 12 22.5c3.678 0 6.891-1.86 10.677-5.447M12 6C8.322 6 5.109 7.86 1.323 11.447M22.677 11.447L12 22.5c-3.678 0-6.891-1.86-10.677-5.447"}
-        clipRule="evenodd"
-      />
+  /* 👁️ OJO KAWAII (IGUAL AL LOCAL) */
+  const KawaiiEye = ({ isOpen }) => (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={isOpen ? "#ff77ff" : "#aaa"}
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      {isOpen ? (
+        <>
+          <ellipse cx="12" cy="12" rx="7" ry="4" fill="#ffccff" />
+          <circle cx="12" cy="12" r="2.5" fill="#ff77ff" />
+          <circle cx="13.5" cy="10.5" r="0.5" fill="white" />
+        </>
+      ) : (
+        <>
+          <path d="M2 12c2.5 3 11.5 3 14 0" />
+          <line x1="1" y1="1" x2="23" y2="23" />
+        </>
+      )}
     </svg>
   );
 
   return (
     <div className="password-change-container">
       <ToastContainer />
-      <div className="password-change-card">
 
-        <div style={{ cursor: 'pointer', textAlign: 'left', marginBottom: '15px' }} onClick={() => navigate("/ajustes")}>
+      <div className="password-change-card">
+        <div
+          style={{
+            cursor: 'pointer',
+            textAlign: 'left',
+            marginBottom: '15px'
+          }}
+          onClick={() => navigate("/ajustes")}
+        >
           ← Volver a Ajustes
         </div>
 
         <h2 className="main-username-title">{username}</h2>
+
         <div className="icon-circle">
-          <img src={avatarUrl} alt="Avatar de usuario" className="user-avatar-image" />
+          <img
+            src={avatarUrl}
+            alt="Avatar de usuario"
+            className="user-avatar-image"
+          />
         </div>
+
         <h2 className="title">Cambiar contraseña</h2>
 
         <form onSubmit={handleSubmit} className="form-content">
-          
-          <div className="input-with-icon">
-            <input type={showOldPassword ? 'text' : 'password'} className="input-field"
-              placeholder="Contraseña anterior" value={oldPassword}
-              onChange={(e) => setOldPassword(e.target.value)} required />
-            <div className="eye-icon" onClick={() => setShowOldPassword(!showOldPassword)}>
-              <EyeIcon isOpen={showOldPassword} />
-            </div>
+
+          {/* CONTRASEÑA ANTERIOR */}
+          <div className="input-with-eye">
+            <input
+              type={showOldPassword ? 'text' : 'password'}
+              className="input-field"
+              placeholder="Contraseña anterior"
+              value={oldPassword}
+              onChange={(e) => setOldPassword(e.target.value)}
+              required
+            />
+            <span
+              className="eye-icon"
+              onClick={() => setShowOldPassword(!showOldPassword)}
+            >
+              <KawaiiEye isOpen={showOldPassword} />
+            </span>
           </div>
 
-          <div className="input-with-icon">
-            <input type={showNewPassword ? 'text' : 'password'} className="input-field"
-              placeholder="Contraseña nueva" value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)} required />
-            <div className="eye-icon" onClick={() => setShowNewPassword(!showNewPassword)}>
-              <EyeIcon isOpen={showNewPassword} />
-            </div>
+          {/* CONTRASEÑA NUEVA */}
+          <div className="input-with-eye">
+            <input
+              type={showNewPassword ? 'text' : 'password'}
+              className="input-field"
+              placeholder="Contraseña nueva"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              required
+            />
+            <span
+              className="eye-icon"
+              onClick={() => setShowNewPassword(!showNewPassword)}
+            >
+              <KawaiiEye isOpen={showNewPassword} />
+            </span>
           </div>
 
-          <div className="input-with-icon">
-            <input type={showConfirmPassword ? 'text' : 'password'} className="input-field"
-              placeholder="Confirmar contraseña nueva" value={confirmNewPassword}
-              onChange={(e) => setConfirmNewPassword(e.target.value)} required />
-            <div className="eye-icon" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
-              <EyeIcon isOpen={showConfirmPassword} />
-            </div>
+          {/* CONFIRMAR CONTRASEÑA */}
+          <div className="input-with-eye">
+            <input
+              type={showConfirmPassword ? 'text' : 'password'}
+              className="input-field"
+              placeholder="Confirmar contraseña nueva"
+              value={confirmNewPassword}
+              onChange={(e) => setConfirmNewPassword(e.target.value)}
+              required
+            />
+            <span
+              className="eye-icon"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+            >
+              <KawaiiEye isOpen={showConfirmPassword} />
+            </span>
           </div>
 
-          {/* FILA DE BOTONES */}
+          {/* BOTONES */}
           <div className="btn-row">
-            <button type="button" className="cancel-btn" onClick={handleCancel}>
+            <button
+              type="button"
+              className="cancel-btn"
+              onClick={handleCancel}
+            >
               Cancelar
             </button>
 
