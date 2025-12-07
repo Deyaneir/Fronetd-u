@@ -31,9 +31,8 @@ const ActualizarInfo = () => {
     "https://api.dicebear.com/6.x/bottts/svg?seed=Avatar5",
   ];
 
-  const BASE_URL = import.meta.env.VITE_BACKEND_URL; // Asegúrate de que termina sin "/"
+  const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
-  // 🔹 Traer datos del usuario
   useEffect(() => {
     const fetchUserInfo = async () => {
       const token = localStorage.getItem("token");
@@ -53,8 +52,8 @@ const ActualizarInfo = () => {
         setUserUniversity(res.data.universidad || "");
         setUserCareer(res.data.carrera || "");
       } catch (err) {
-        console.error("Error al cargar datos del usuario:", err.response?.data || err);
-        toast.error("No se pudo obtener el perfil. Revisa tu sesión o backend.");
+        console.error("Error al cargar datos:", err.response?.data || err);
+        toast.error("No se pudo obtener el perfil.");
       }
     };
 
@@ -80,14 +79,19 @@ const ActualizarInfo = () => {
     setImageToCrop(null);
 
     if (!croppedImageBlob) {
-      toast.error("No se pudo obtener la imagen recortada.");
+      toast.error("No se pudo obtener la imagen recortada");
       return;
     }
+
+    const safeUserName = userName?.trim()
+      ? userName.replace(/\s+/g, "_")
+      : "usuario_sin_nombre";
 
     const formData = new FormData();
     formData.append("file", croppedImageBlob);
     formData.append("upload_preset", "VIBE-U");
-    formData.append("folder", "avatars");
+    formData.append("folder", `usuarios/${safeUserName}`);
+    formData.append("public_id", "avatar");
 
     try {
       const res = await axios.post(
@@ -97,7 +101,7 @@ const ActualizarInfo = () => {
       setAvatar(res.data.secure_url);
       toast.success("Avatar subido correctamente");
     } catch (err) {
-      console.error("Error al subir avatar:", err.response?.data || err);
+      console.error("Cloudinary error:", err.response?.data || err);
       toast.error("Error al subir avatar");
     }
   };
@@ -124,7 +128,7 @@ const ActualizarInfo = () => {
       toast.success("Información actualizada");
       setTimeout(() => navigate("/ajustes"), 1200);
     } catch (err) {
-      console.error("Error al actualizar la información:", err.response?.data || err);
+      console.error("Error actualizar:", err.response?.data || err);
       toast.error(err.response?.data?.msg || "Error al actualizar la información");
     }
   };
@@ -137,15 +141,32 @@ const ActualizarInfo = () => {
 
       <div className="avatar-wrapper">
         <div className="avatar-circle" onClick={handleFileClick}>
-          {avatar ? <img src={avatar} alt="Avatar" className="avatar-img-preview" /> : <span className="default-avatar">👤</span>}
+          {avatar ? (
+            <img src={avatar} alt="Avatar" className="avatar-img-preview" />
+          ) : (
+            <span className="default-avatar">👤</span>
+          )}
         </div>
 
         <div className="btns-avatar">
-          <button className="btn-upload" onClick={handleFileClick}>Subir foto</button>
-          <button className="btn-select" onClick={() => setAvatarModalOpen(!avatarModalOpen)}>Elegir avatar</button>
+          <button className="btn-upload" onClick={handleFileClick}>
+            Subir foto
+          </button>
+          <button
+            className="btn-select"
+            onClick={() => setAvatarModalOpen(!avatarModalOpen)}
+          >
+            Elegir avatar
+          </button>
         </div>
 
-        <input ref={fileInputRef} type="file" className="input-file-hidden" accept="image/*" onChange={handleFileChange} />
+        <input
+          ref={fileInputRef}
+          type="file"
+          className="input-file-hidden"
+          accept="image/*"
+          onChange={handleFileChange}
+        />
       </div>
 
       {avatarModalOpen && (
@@ -154,57 +175,108 @@ const ActualizarInfo = () => {
             <h3 className="modal-title">Seleccionar Avatar Predefinido</h3>
             <div className="avatar-options-grid">
               {avatarOptions.map((url, i) => (
-                <img key={i} src={url} className="avatar-option" onClick={() => { setAvatar(url); setAvatarModalOpen(false); }} alt={`avatar-${i}`} />
+                <img
+                  key={i}
+                  src={url}
+                  className="avatar-option"
+                  onClick={() => {
+                    setAvatar(url);
+                    setAvatarModalOpen(false);
+                  }}
+                  alt={`avatar-${i}`}
+                />
               ))}
             </div>
-            <button className="modal-close-btn" onClick={() => setAvatarModalOpen(false)}>Cerrar</button>
+            <button
+              className="modal-close-btn"
+              onClick={() => setAvatarModalOpen(false)}
+            >
+              Cerrar
+            </button>
           </div>
         </div>
       )}
 
       {cropperModalOpen && imageToCrop && (
-        <AvatarCropperModal imageSrc={imageToCrop} open={cropperModalOpen} onClose={() => setCropperModalOpen(false)} onCropComplete={handleCroppedAvatar} />
+        <AvatarCropperModal
+          imageSrc={imageToCrop}
+          open={cropperModalOpen}
+          onClose={() => setCropperModalOpen(false)}
+          onCropComplete={handleCroppedAvatar}
+        />
       )}
 
       <div className="form-section">
         <div className="field-row">
           <label className="field-label">Usuario</label>
-          <input className="field-input" value={userName} onChange={(e) => setUserName(e.target.value)} placeholder="Nombre de usuario" />
+          <input
+            className="field-input"
+            value={userName}
+            onChange={(e) => setUserName(e.target.value)}
+          />
         </div>
 
         <div className="field-row">
           <label className="field-label">Descripción</label>
-          <textarea className="field-input textarea-input" value={userDescription} onChange={(e) => setUserDescription(e.target.value)} placeholder="Breve descripción" />
+          <textarea
+            className="field-input textarea-input"
+            value={userDescription}
+            onChange={(e) => setUserDescription(e.target.value)}
+          />
         </div>
 
         <div className="field-row">
           <label className="field-label">Teléfono</label>
-          <input className="field-input" value={userPhone} onChange={(e) => setUserPhone(e.target.value)} placeholder="Ej: +593 9..." />
+          <input
+            className="field-input"
+            value={userPhone}
+            onChange={(e) => setUserPhone(e.target.value)}
+          />
         </div>
 
         <div className="field-row">
           <label className="field-label">Dirección</label>
-          <input className="field-input" value={userAddress} onChange={(e) => setUserAddress(e.target.value)} placeholder="Dirección" />
+          <input
+            className="field-input"
+            value={userAddress}
+            onChange={(e) => setUserAddress(e.target.value)}
+          />
         </div>
 
         <div className="field-row">
           <label className="field-label">Cédula</label>
-          <input className="field-input" value={userCedula} onChange={(e) => setUserCedula(e.target.value)} placeholder="No. de cédula" />
+          <input
+            className="field-input"
+            value={userCedula}
+            onChange={(e) => setUserCedula(e.target.value)}
+          />
         </div>
 
         <div className="field-row">
           <label className="field-label">Universidad</label>
-          <input className="field-input" value={userUniversity} onChange={(e) => setUserUniversity(e.target.value)} placeholder="Nombre de la universidad" />
+          <input
+            className="field-input"
+            value={userUniversity}
+            onChange={(e) => setUserUniversity(e.target.value)}
+          />
         </div>
 
         <div className="field-row">
           <label className="field-label">Carrera</label>
-          <input className="field-input" value={userCareer} onChange={(e) => setUserCareer(e.target.value)} placeholder="Tu carrera" />
+          <input
+            className="field-input"
+            value={userCareer}
+            onChange={(e) => setUserCareer(e.target.value)}
+          />
         </div>
 
         <div className="btn-row">
-          <button className="cancel-btn" onClick={() => navigate("/ajustes")}>Cancelar</button>
-          <button className="save-btn" onClick={handleUpdate}>Guardar cambios</button>
+          <button className="cancel-btn" onClick={() => navigate("/ajustes")}>
+            Cancelar
+          </button>
+          <button className="save-btn" onClick={handleUpdate}>
+            Guardar cambios
+          </button>
         </div>
       </div>
     </div>
