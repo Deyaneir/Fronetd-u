@@ -16,7 +16,7 @@ const KawaiiEyeIcon = () => (
         width="22" 
         height="22" 
         viewBox="0 0 24 24" 
-        fill="currentColor"   // aseguramos que tenga color
+        fill="none" 
         stroke="currentColor" 
         strokeWidth="2.5" 
         strokeLinecap="round" 
@@ -24,10 +24,15 @@ const KawaiiEyeIcon = () => (
         className="icon-eye-kawaii"
     >
         <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z" />
-        <circle cx="12" cy="12" r="3.5" fill="currentColor"/>
+        {/* ESCLEROTICA BLANCA */}
+        <circle cx="12" cy="12" r="3.5" fill="white"/>
+        {/* PUPILA NEGRA */}
+        <circle cx="12" cy="12" r="1.5" fill="black"/>
+        {/* REFLEJO KAWAII */}
         <circle cx="13.5" cy="10.5" r="0.5" fill="white"/>
     </svg>
 );
+
 
 const KawaiiEyeOffIcon = () => (
     <svg 
