@@ -90,7 +90,7 @@ const KawaiiEyeOpen = () => (
     {/* Esclerótica */}
     <circle cx="12" cy="12" r="3.5" fill="white"/>
     {/* Pupila más grande */}
-    <circle cx="12" cy="12" r="2.5" fill="black"/>
+    <circle cx="12" cy="12" r="5" fill="black"/>
     {/* Reflejo */}
     <circle cx="13.5" cy="10.5" r="0.5" fill="white"/>
     {/* Contorno del ojo */}
