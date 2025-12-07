@@ -83,38 +83,35 @@ const ChangePasswordForm = () => {
     navigate("/ajustes");
   };
 
-  // 🔹 Ojos kawaii completos
-// Ojo abierto
-const KawaiiEyeOpen = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="none">
-    {/* Esclerótica */}
-    <circle cx="12" cy="12" r="3.5" fill="white"/>
-    {/* Pupila más grande */}
-    <circle cx="12" cy="12" r="5" fill="black"/>
-    {/* Reflejo */}
-    <circle cx="13.5" cy="10.5" r="0.5" fill="white"/>
-    {/* Contorno del ojo */}
-    <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z" stroke="#000" strokeWidth="2" fill="none"/>
-  </svg>
-);
+  // 🔹 Ojos kawaii completos con pupila más grande
+  const KawaiiEyeOpen = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="none">
+      {/* Esclerótica */}
+      <circle cx="12" cy="12" r="3.5" fill="white"/>
+      {/* Pupila más grande */}
+      <circle cx="12" cy="12" r="3.2" fill="black"/>
+      {/* Reflejo */}
+      <circle cx="13.5" cy="10.5" r="0.5" fill="white"/>
+      {/* Contorno del ojo */}
+      <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z" stroke="#000" strokeWidth="2" fill="none"/>
+    </svg>
+  );
 
-// Ojo cerrado
-const KawaiiEyeClosed = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="none">
-    {/* Esclerótica */}
-    <circle cx="12" cy="12" r="3.5" fill="white"/>
-    {/* Pupila más grande */}
-    <circle cx="12" cy="12" r="2.5" fill="black"/>
-    {/* Reflejo */}
-    <circle cx="13.5" cy="10.5" r="0.5" fill="white"/>
-    {/* Líneas de ojo cerrado */}
-    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.49M2 2l20 20" 
-      stroke="#000" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-    <path d="M21.94 12c-3.1-4.81-6.57-7.25-9.44-8a18.45 18.45 0 0 0-3.04.57" 
-      stroke="#000" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-  </svg>
-);
-
+  const KawaiiEyeClosed = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="none">
+      {/* Esclerótica */}
+      <circle cx="12" cy="12" r="3.5" fill="white"/>
+      {/* Pupila más grande */}
+      <circle cx="12" cy="12" r="3.2" fill="black"/>
+      {/* Reflejo */}
+      <circle cx="13.5" cy="10.5" r="0.5" fill="white"/>
+      {/* Líneas de ojo cerrado */}
+      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.49M2 2l20 20" 
+        stroke="#000" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+      <path d="M21.94 12c-3.1-4.81-6.57-7.25-9.44-8a18.45 18.45 0 0 0-3.04.57" 
+        stroke="#000" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+    </svg>
+  );
 
   const KawaiiEye = ({ isOpen }) => (isOpen ? <KawaiiEyeOpen /> : <KawaiiEyeClosed />);
 
@@ -134,7 +131,6 @@ const KawaiiEyeClosed = () => (
         <h2 className="title">Cambiar contraseña</h2>
 
         <form onSubmit={handleSubmit} className="form-content">
-          
           <div className="input-with-eye">
             <input
               type={showOldPassword ? 'text' : 'password'}
@@ -181,7 +177,6 @@ const KawaiiEyeClosed = () => (
             <button type="button" className="cancel-btn" onClick={handleCancel}>
               Cancelar
             </button>
-
             <button type="submit" className="save-btn">
               Cambiar Contraseña
             </button>
