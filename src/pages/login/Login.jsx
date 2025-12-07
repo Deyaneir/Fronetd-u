@@ -60,7 +60,7 @@ const Login = () => {
 
         try {
             const res = await axios.post(
-                `${import.meta.env.VITE_BACKEND_URL}/login`, // Mantener ruta remota
+                `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/login`,
                 {
                     correoInstitucional: data.email,
                     password: data.password,
@@ -93,7 +93,6 @@ const Login = () => {
                 isLoading: false,
                 autoClose: 4000
             });
-            console.error(error);
         }
     };
 
