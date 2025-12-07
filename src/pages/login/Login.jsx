@@ -16,7 +16,7 @@ const KawaiiEyeIcon = () => (
         width="22" 
         height="22" 
         viewBox="0 0 24 24" 
-        fill="none" 
+        fill="currentColor"   // aseguramos que tenga color
         stroke="currentColor" 
         strokeWidth="2.5" 
         strokeLinecap="round" 
@@ -35,7 +35,7 @@ const KawaiiEyeOffIcon = () => (
         width="22" 
         height="22" 
         viewBox="0 0 24 24" 
-        fill="none" 
+        fill="currentColor"   // aseguramos que tenga color
         stroke="currentColor" 
         strokeWidth="2.5" 
         strokeLinecap="round" 
@@ -60,7 +60,7 @@ const Login = () => {
 
         try {
             const res = await axios.post(
-                `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/login`,
+                `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/login`, // ruta de tu backend
                 {
                     correoInstitucional: data.email,
                     password: data.password,
@@ -125,6 +125,7 @@ const Login = () => {
                                 type={showPassword ? "text" : "password"}
                                 placeholder="Contraseña"
                                 {...register("password", { required: "La contraseña es obligatoria" })}
+                                style={{ color: "#333" }} // forzamos color visible
                             />
                             <span
                                 className="eye-icon"
@@ -134,7 +135,8 @@ const Login = () => {
                                     right: "10px",
                                     top: "50%",
                                     transform: "translateY(-50%)",
-                                    cursor: "pointer"
+                                    cursor: "pointer",
+                                    color: "#333" // ojito visible
                                 }}
                             >
                                 {showPassword ? <KawaiiEyeIcon /> : <KawaiiEyeOffIcon />}
