@@ -13,27 +13,46 @@ const ChangePasswordForm = () => {
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
 
   const [username, setUsername] = useState('Usuario');
-  const [avatarUrl, setAvatarUrl] = useState('https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg');
+  const [avatarUrl, setAvatarUrl] = useState(
+    'https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg'
+  );
 
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  // 🔹 Traer datos del usuario con manejo de errores más claro
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const token = storeAuth.getState().token;
         if (!token) return;
 
-        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/usuarios/perfil`, {
+        const url = `${import.meta.env.VITE_BACKEND_URL}/perfil`;
+        console.log("Intentando cargar usuario desde URL:", url);
+
+        const res = await axios.get(url, {
           headers: { Authorization: `Bearer ${token}` }
         });
 
         setUsername(res.data?.nombre || "Usuario");
-        setAvatarUrl(res.data?.avatar || "https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg");
+        setAvatarUrl(
+          res.data?.avatar ||
+          "https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg"
+        );
 
       } catch (error) {
-        console.error("Error al cargar usuario:", error);
+        if (error.response) {
+          console.error(
+            "Error al cargar usuario:",
+            "Status:", error.response.status,
+            "Data:", error.response.data
+          );
+        } else if (error.request) {
+          console.error("No hubo respuesta del servidor:", error.request);
+        } else {
+          console.error("Error inesperado:", error.message);
+        }
       }
     };
     fetchUser();
@@ -55,7 +74,7 @@ const ChangePasswordForm = () => {
       }
 
       const res = await axios.put(
-        `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/actualizar/password`,
+        `${import.meta.env.VITE_BACKEND_URL}/actualizar/password`,
         { oldPassword, newPassword },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -83,14 +102,23 @@ const ChangePasswordForm = () => {
     navigate("/ajustes");
   };
 
-  // 🔹 Ojo kawaii para dentro del input
+  // 🔹 Ojo kawaii
   const KawaiiEye = ({ isOpen }) => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={isOpen ? "#ff77ff" : "#aaa"} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={isOpen ? "#ff77ff" : "#aaa"}
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       {isOpen ? (
         <>
           <ellipse cx="12" cy="12" rx="7" ry="4" fill="#ffccff" />
           <circle cx="12" cy="12" r="2.5" fill="#ff77ff" />
-          <circle cx="13.5" cy="10.5" r="0.5" fill="white"/>
+          <circle cx="13.5" cy="10.5" r="0.5" fill="white" />
         </>
       ) : (
         <>
@@ -104,20 +132,29 @@ const ChangePasswordForm = () => {
   return (
     <div className="password-change-container">
       <ToastContainer />
-      <div className="password-change-card">
 
-        <div style={{ cursor: 'pointer', textAlign: 'left', marginBottom: '15px' }} onClick={() => navigate("/ajustes")}>
+      <div className="password-change-card">
+        <div
+          style={{ cursor: 'pointer', textAlign: 'left', marginBottom: '15px' }}
+          onClick={() => navigate("/ajustes")}
+        >
           ← Volver a Ajustes
         </div>
 
         <h2 className="main-username-title">{username}</h2>
+
         <div className="icon-circle">
-          <img src={avatarUrl} alt="Avatar de usuario" className="user-avatar-image" />
+          <img
+            src={avatarUrl}
+            alt="Avatar de usuario"
+            className="user-avatar-image"
+          />
         </div>
+
         <h2 className="title">Cambiar contraseña</h2>
 
         <form onSubmit={handleSubmit} className="form-content">
-          
+
           <div className="input-with-eye">
             <input
               type={showOldPassword ? 'text' : 'password'}
@@ -127,7 +164,10 @@ const ChangePasswordForm = () => {
               onChange={(e) => setOldPassword(e.target.value)}
               required
             />
-            <span className="eye-icon" onClick={() => setShowOldPassword(!showOldPassword)}>
+            <span
+              className="eye-icon"
+              onClick={() => setShowOldPassword(!showOldPassword)}
+            >
               <KawaiiEye isOpen={showOldPassword} />
             </span>
           </div>
@@ -141,7 +181,10 @@ const ChangePasswordForm = () => {
               onChange={(e) => setNewPassword(e.target.value)}
               required
             />
-            <span className="eye-icon" onClick={() => setShowNewPassword(!showNewPassword)}>
+            <span
+              className="eye-icon"
+              onClick={() => setShowNewPassword(!showNewPassword)}
+            >
               <KawaiiEye isOpen={showNewPassword} />
             </span>
           </div>
@@ -155,13 +198,20 @@ const ChangePasswordForm = () => {
               onChange={(e) => setConfirmNewPassword(e.target.value)}
               required
             />
-            <span className="eye-icon" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
+            <span
+              className="eye-icon"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+            >
               <KawaiiEye isOpen={showConfirmPassword} />
             </span>
           </div>
 
           <div className="btn-row">
-            <button type="button" className="cancel-btn" onClick={handleCancel}>
+            <button
+              type="button"
+              className="cancel-btn"
+              onClick={handleCancel}
+            >
               Cancelar
             </button>
 
