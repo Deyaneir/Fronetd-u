@@ -13,6 +13,7 @@ const ActualizarInfo = () => {
 
   const [avatar, setAvatar] = useState(null);
   const [avatarModalOpen, setAvatarModalOpen] = useState(false);
+
   const [imageToCrop, setImageToCrop] = useState(null);
   const [cropperModalOpen, setCropperModalOpen] = useState(false);
 
@@ -25,29 +26,27 @@ const ActualizarInfo = () => {
   const [userCareer, setUserCareer] = useState("");
 
   /* ================================
-     AVATARES MULTIAVATAR (FIJOS)
+     AVATARES KAWAII (DICEBEAR)
      ================================ */
-  const AVATAR_COUNT = 80;
+  const AVATAR_COUNT = 40;
 
   const avatarOptions = Array.from({ length: AVATAR_COUNT }, (_, i) => {
-    const seed = encodeURIComponent(`usuario_${i + 1}`);
-    return `https://api.multiavatar.com/${seed}.png`;
+    const seed = `kawaii_${i + 1}`;
+    return `https://api.dicebear.com/7.x/adventurer/svg?seed=${seed}&radius=50`;
   });
 
   /* ================================
      CARGAR PERFIL
      ================================ */
   useEffect(() => {
-    const fetchUserInfo = async () => {
-      const token = localStorage.getItem("token");
-      if (!token) return;
+    const token = localStorage.getItem("token");
+    if (!token) return;
 
-      try {
-        const res = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/perfil`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-
+    axios
+      .get(`${import.meta.env.VITE_BACKEND_URL}/api/usuarios/perfil`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => {
         const u = res.data.usuario || res.data;
 
         setUserName(u.nombre || "");
@@ -58,16 +57,12 @@ const ActualizarInfo = () => {
         setUserDescription(u.descripcion || "");
         setUserUniversity(u.universidad || "");
         setUserCareer(u.carrera || "");
-      } catch (err) {
-        console.error("Perfil:", err);
-      }
-    };
-
-    fetchUserInfo();
+      })
+      .catch(() => toast.error("Error al cargar perfil"));
   }, []);
 
   /* ================================
-     SUBIR FOTO PROPIA
+     SUBIR FOTO
      ================================ */
   const handleFileClick = () => fileInputRef.current.click();
 
@@ -85,13 +80,11 @@ const ActualizarInfo = () => {
 
   const handleCroppedAvatar = async (blob) => {
     setCropperModalOpen(false);
-    setImageToCrop(null);
     if (!blob) return;
 
     const formData = new FormData();
     formData.append("file", blob);
     formData.append("upload_preset", "VIBE-U");
-    formData.append("folder", "usuarios/avatars");
 
     try {
       const res = await axios.post(
@@ -106,16 +99,15 @@ const ActualizarInfo = () => {
   };
 
   /* ================================
-     SELECCIONAR AVATAR (NO ALEATORIO)
+     SELECCIONAR AVATAR
      ================================ */
   const selectAvatar = (url) => {
     setAvatar(url);
     setAvatarModalOpen(false);
-    toast.success("Avatar seleccionado ✅");
   };
 
   /* ================================
-     GUARDAR INFO
+     GUARDAR
      ================================ */
   const handleUpdate = async () => {
     try {
@@ -138,8 +130,7 @@ const ActualizarInfo = () => {
 
       toast.success("Información actualizada ✅");
       setTimeout(() => navigate("/ajustes"), 1200);
-    } catch (err) {
-      console.error("Guardar:", err);
+    } catch {
       toast.error("Error al guardar");
     }
   };
@@ -148,16 +139,12 @@ const ActualizarInfo = () => {
     <div className="actualizar-container">
       <ToastContainer />
 
-      <h2 className="titulo">Actualizar información de cuenta</h2>
+      <h2 className="titulo">Actualizar información</h2>
 
       {/* AVATAR */}
       <div className="avatar-wrapper">
         <div className="avatar-circle" onClick={handleFileClick}>
-          {avatar ? (
-            <img src={avatar} alt="Avatar" />
-          ) : (
-            <span className="default-avatar">👤</span>
-          )}
+          {avatar ? <img src={avatar} alt="avatar" /> : <span>👤</span>}
         </div>
 
         <div className="btns-avatar">
@@ -185,7 +172,7 @@ const ActualizarInfo = () => {
       {avatarModalOpen && (
         <div className="avatar-modal-overlay">
           <div className="avatar-modal-content">
-            <h3 className="modal-title">Seleccionar Avatar</h3>
+            <h3>Selecciona un avatar kawaii</h3>
 
             <div className="avatar-modal">
               {avatarOptions.map((url, i) => (
@@ -193,7 +180,6 @@ const ActualizarInfo = () => {
                   key={i}
                   src={url}
                   className="avatar-option"
-                  alt={`avatar-${i}`}
                   onClick={() => selectAvatar(url)}
                 />
               ))}
