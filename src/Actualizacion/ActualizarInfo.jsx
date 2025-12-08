@@ -24,30 +24,20 @@ const ActualizarInfo = () => {
   const [userUniversity, setUserUniversity] = useState("");
   const [userCareer, setUserCareer] = useState("");
 
-  /* =====================================================
-     AVATARES KAWAII AUMENTADOS ✅ (DICEBEAR v7)
-     ===================================================== */
-  const AVATAR_COUNT = 150; // 🔥 AUMENTADO (cambia a 300 si quieres)
+  /* ================= AVATARES KAWAII ================= */
+  const AVATAR_COUNT = 150;
+  const avatarStyles = ["fun-emoji", "lorelei", "pixel-art"];
 
-  const avatarStyles = [
-    "fun-emoji",   // kawaii emoji
-    "lorelei",     // cute cartoon
-    "pixel-art",   // retro kawaii
-  ];
-
-  const generateKawaiiAvatars = () => {
-    return Array.from({ length: AVATAR_COUNT }, (_, i) => {
+  const generateKawaiiAvatars = () =>
+    Array.from({ length: AVATAR_COUNT }, (_, i) => {
       const seed = `kawaii_${i + 1}`;
       const style = avatarStyles[i % avatarStyles.length];
       return `https://api.dicebear.com/7.x/${style}/svg?seed=${seed}`;
     });
-  };
 
   const avatarOptions = generateKawaiiAvatars();
 
-  /* =====================================================
-     CARGAR PERFIL
-     ===================================================== */
+  /* ================= PERFIL ================= */
   useEffect(() => {
     const fetchUserInfo = async () => {
       const token = localStorage.getItem("token");
@@ -89,9 +79,7 @@ const ActualizarInfo = () => {
     reader.readAsDataURL(file);
   };
 
-  /* =====================================================
-     SUBIR AVATAR CORTADO (CLOUDINARY)
-     ===================================================== */
+  /* ================= CLOUDINARY ================= */
   const handleCroppedAvatar = async (croppedImageBlob) => {
     setCropperModalOpen(false);
     setImageToCrop(null);
@@ -115,20 +103,17 @@ const ActualizarInfo = () => {
       setAvatar(res.data.secure_url);
       toast.success("Avatar actualizado ✅");
     } catch (err) {
-      console.error(err);
       toast.error("Error al subir avatar");
     }
   };
 
-  /* =====================================================
-     ACTUALIZAR INFO
-     ===================================================== */
+  /* ================= ACTUALIZAR ================= */
   const handleUpdate = async () => {
     try {
       const token = localStorage.getItem("token");
 
       await axios.put(
-        `${import.meta.env.VITE_BACKEND_URL}/actualizar`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/actualizar`,
         {
           nombre: userName,
           telefono: userPhone,
@@ -145,18 +130,13 @@ const ActualizarInfo = () => {
       toast.success("Información actualizada ✅");
       setTimeout(() => navigate("/ajustes"), 1200);
     } catch (err) {
-      console.error(err);
       toast.error("Error al guardar");
     }
   };
 
-  /* =====================================================
-     JSX
-     ===================================================== */
   return (
     <div className="actualizar-container">
       <ToastContainer />
-
       <h2 className="titulo">Actualizar información de cuenta</h2>
 
       <div className="avatar-wrapper">
@@ -172,10 +152,7 @@ const ActualizarInfo = () => {
           <button className="btn-upload" onClick={handleFileClick}>
             Subir foto
           </button>
-          <button
-            className="btn-select"
-            onClick={() => setAvatarModalOpen(true)}
-          >
+          <button className="btn-select" onClick={() => setAvatarModalOpen(true)}>
             Elegir avatar
           </button>
         </div>
@@ -189,19 +166,16 @@ const ActualizarInfo = () => {
         />
       </div>
 
-      {/* MODAL AVATARES */}
       {avatarModalOpen && (
         <div className="avatar-modal-overlay">
           <div className="avatar-modal-content">
-            <h3 className="modal-title">Seleccionar Avatar Kawaii</h3>
-
+            <h3>Seleccionar Avatar Kawaii</h3>
             <div className="avatar-options-grid">
               {avatarOptions.map((url, i) => (
                 <img
                   key={i}
                   src={url}
                   className="avatar-option"
-                  alt={`avatar-${i}`}
                   onClick={() => {
                     setAvatar(url);
                     setAvatarModalOpen(false);
@@ -209,65 +183,23 @@ const ActualizarInfo = () => {
                 />
               ))}
             </div>
-
-            <button
-              className="modal-close-btn"
-              onClick={() => setAvatarModalOpen(false)}
-            >
-              Cerrar
-            </button>
+            <button onClick={() => setAvatarModalOpen(false)}>Cerrar</button>
           </div>
         </div>
       )}
 
-      {/* MODAL CROPPER */}
       {cropperModalOpen && imageToCrop && (
         <AvatarCropperModal
           imageSrc={imageToCrop}
-          open={cropperModalOpen}
+          open
           onClose={() => setCropperModalOpen(false)}
           onCropComplete={handleCroppedAvatar}
         />
       )}
 
-      {/* FORMULARIO */}
-      <div className="form-section">
-        {[
-          ["Usuario", userName, setUserName],
-          ["Teléfono", userPhone, setUserPhone],
-          ["Dirección", userAddress, setUserAddress],
-          ["Cédula", userCedula, setUserCedula],
-          ["Universidad", userUniversity, setUserUniversity],
-          ["Carrera", userCareer, setUserCareer],
-        ].map(([label, value, setter], i) => (
-          <div className="field-row" key={i}>
-            <label className="field-label">{label}</label>
-            <input
-              className="field-input"
-              value={value}
-              onChange={(e) => setter(e.target.value)}
-            />
-          </div>
-        ))}
-
-        <div className="field-row">
-          <label className="field-label">Descripción</label>
-          <textarea
-            className="field-input textarea-input"
-            value={userDescription}
-            onChange={(e) => setUserDescription(e.target.value)}
-          />
-        </div>
-
-        <div className="btn-row">
-          <button className="cancel-btn" onClick={() => navigate("/ajustes")}>
-            Cancelar
-          </button>
-          <button className="save-btn" onClick={handleUpdate}>
-            Guardar cambios
-          </button>
-        </div>
-      </div>
+      <button className="save-btn" onClick={handleUpdate}>
+        Guardar cambios
+      </button>
     </div>
   );
 };
