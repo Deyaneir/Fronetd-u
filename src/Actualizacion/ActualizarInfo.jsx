@@ -24,20 +24,17 @@ const ActualizarInfo = () => {
   const [userUniversity, setUserUniversity] = useState("");
   const [userCareer, setUserCareer] = useState("");
 
-  /* =====================================================
-     AVATARES KAWAII (CANTIDAD ILIMITADA)
-     👉 SOLO cambia AVATAR_COUNT si quieres más
-     ===================================================== */
-  const AVATAR_COUNT = 200; // 🔥 200, 500, 1000… lo que quieras
-
+  /* ===============================
+     AVATARES MULTIAVATAR (FIJOS)
+     =============================== */
+  const AVATAR_COUNT = 80;
   const avatarOptions = Array.from({ length: AVATAR_COUNT }, (_, i) => {
-    const seed = `avatar_${i + 1}`;
-    return `https://api.dicebear.com/6.x/bottts/svg?seed=${seed}`;
+    return `https://api.multiavatar.com/usuario_${i + 1}.png`;
   });
 
-  /* =====================================================
-     CARGAR PERFIL (AVATAR FIJO)
-     ===================================================== */
+  /* ===============================
+     CARGAR PERFIL ✅ /api/usuarios
+     =============================== */
   useEffect(() => {
     const fetchUserInfo = async () => {
       const token = localStorage.getItem("token");
@@ -49,25 +46,27 @@ const ActualizarInfo = () => {
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
-        setUserName(res.data.nombre || "");
-        setAvatar(res.data.avatar || null);
-        setUserPhone(res.data.telefono || "");
-        setUserAddress(res.data.direccion || "");
-        setUserCedula(res.data.cedula || "");
-        setUserDescription(res.data.descripcion || "");
-        setUserUniversity(res.data.universidad || "");
-        setUserCareer(res.data.carrera || "");
+        const u = res.data.usuario || res.data;
+
+        setUserName(u.nombre || "");
+        setAvatar(u.avatar || null);
+        setUserPhone(u.telefono || "");
+        setUserAddress(u.direccion || "");
+        setUserCedula(u.cedula || "");
+        setUserDescription(u.descripcion || "");
+        setUserUniversity(u.universidad || "");
+        setUserCareer(u.carrera || "");
       } catch (err) {
-        console.error("Error perfil:", err);
+        console.error("Perfil:", err.response?.data || err);
       }
     };
 
     fetchUserInfo();
   }, []);
 
-  /* =====================================================
-     FOTO PROPIA (CROP)
-     ===================================================== */
+  /* ===============================
+     SUBIR FOTO PROPIA (CROP)
+     =============================== */
   const handleFileClick = () => fileInputRef.current.click();
 
   const handleFileChange = (e) => {
@@ -104,10 +103,11 @@ const ActualizarInfo = () => {
     }
   };
 
-  /* =====================================================
-     AVATAR DICEBEAR → CLOUDINARY (FIJO ✅)
-     ===================================================== */
-  const selectAvatar = async (url) => {
+  /* ===============================
+     SELECCIONAR AVATAR MULTIAVATAR
+     → SUBIR A CLOUDINARY (FIJO)
+     =============================== */
+  const selectMultiAvatar = async (url) => {
     try {
       const response = await fetch(url);
       const blob = await response.blob();
@@ -115,7 +115,8 @@ const ActualizarInfo = () => {
       const formData = new FormData();
       formData.append("file", blob);
       formData.append("upload_preset", "VIBE-U");
-      formData.append("folder", "usuarios/avatars-dicebear");
+      formData.append("folder", "usuarios/avatars-multiavatar");
+      formData.append("resource_type", "image");
 
       const cloud = await axios.post(
         "https://api.cloudinary.com/v1_1/dm5yhmz9a/image/upload",
@@ -131,9 +132,9 @@ const ActualizarInfo = () => {
     }
   };
 
-  /* =====================================================
-     GUARDAR INFO (SIN ERRORES)
-     ===================================================== */
+  /* ===============================
+     GUARDAR INFO ✅
+     =============================== */
   const handleUpdate = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -161,15 +162,13 @@ const ActualizarInfo = () => {
     }
   };
 
-  /* =====================================================
-     JSX (TODO INTACTO)
-     ===================================================== */
   return (
     <div className="actualizar-container">
       <ToastContainer />
 
       <h2 className="titulo">Actualizar información de cuenta</h2>
 
+      {/* AVATAR */}
       <div className="avatar-wrapper">
         <div className="avatar-circle" onClick={handleFileClick}>
           {avatar ? (
@@ -212,8 +211,8 @@ const ActualizarInfo = () => {
                   key={i}
                   src={url}
                   className="avatar-option"
+                  onClick={() => selectMultiAvatar(url)}
                   alt={`avatar-${i}`}
-                  onClick={() => selectAvatar(url)}
                 />
               ))}
             </div>
@@ -238,7 +237,7 @@ const ActualizarInfo = () => {
         />
       )}
 
-      {/* FORMULARIO (INTOCABLE ✅) */}
+      {/* FORMULARIO (INTOCABLE) */}
       <div className="form-section">
         {[
           ["Usuario", userName, setUserName],
