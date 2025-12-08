@@ -1,21 +1,19 @@
-import { useEffect } from "react";
-import React, { useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios"; // Necesitas axios
-import storeAuth from "../../context/storeAuth"; // Necesitas storeAuth
+import axios from "axios";
 import "./Ajustes.css";
 
 const Ajustes = () => {
-  const [notificaciones, setNotificaciones] = useState(true);
-  const [tema, setTema] = useState("claro");
+  const navigate = useNavigate();
+
   const [usuario, setUsuario] = useState({
     nombre: "",
     correo: "",
     avatar: "",
   });
 
+  // ⚠️ ref SOLO existe pero no se usa en el menú
   const fileInputRef = useRef(null);
-  const navigate = useNavigate();
 
   // =============================
   // TRAER DATOS USUARIO
@@ -43,7 +41,7 @@ const Ajustes = () => {
   }, []);
 
   // =============================
-  // SUBIR AVATAR
+  // SUBIR AVATAR (SOLO CUANDO SE LLAME)
   // =============================
   const handleAvatarClick = () => {
     fileInputRef.current.click();
@@ -69,11 +67,7 @@ const Ajustes = () => {
       await axios.put(
         `${import.meta.env.VITE_BACKEND_URL}/actualizar`,
         { avatar: avatarUrl },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       setUsuario({ ...usuario, avatar: avatarUrl });
@@ -87,22 +81,24 @@ const Ajustes = () => {
       <div className="ajustes-card">
         <h2>Ajustes</h2>
 
+        {/* ✅ AVATAR NO CLICKEABLE (MENÚ HAMBURGUESA / PERFIL SIMPLE) */}
         <div className="avatar-section">
-          <div className="avatar-container" onClick={handleAvatarClick}>
+          <div className="avatar-container">
             {usuario.avatar ? (
               <img src={usuario.avatar} alt="Avatar" />
             ) : (
               <div className="default-avatar">👤</div>
             )}
           </div>
-
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handleFileChange}
-            style={{ display: "none" }}
-          />
         </div>
+
+        {/* ✅ INPUT OCULTO (NO SE ACTIVA DESDE EL AVATAR) */}
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={handleFileChange}
+          style={{ display: "none" }}
+        />
 
         <div className="user-info">
           <p>
