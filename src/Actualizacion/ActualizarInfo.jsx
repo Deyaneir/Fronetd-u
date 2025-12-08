@@ -30,10 +30,11 @@ const ActualizarInfo = () => {
      ================================ */
   const AVATAR_COUNT = 40;
 
-  const avatarOptions = Array.from({ length: AVATAR_COUNT }, (_, i) => {
-    const seed = `kawaii_${i + 1}`;
-    return `https://api.dicebear.com/7.x/adventurer/svg?seed=${seed}&radius=50`;
-  });
+ const avatarOptions = Array.from({ length: AVATAR_COUNT }, (_, i) => {
+  const seed = `kawaii_${i + 1}`;
+  return `https://api.dicebear.com/7.x/adventurer/png?seed=${seed}&size=200`;
+});
+
 
   /* ================================
      CARGAR PERFIL
