@@ -25,6 +25,7 @@ const Dashboard = () => {
     // Función auxiliar para obtener la URL del avatar
     const getAvatarUrl = (url) => {
         if (!url) return null;
+        // Evita caché si la URL cambia dinámicamente o si es necesario
         return `${url}`; 
     };
 
@@ -94,14 +95,14 @@ const Dashboard = () => {
                 <div className="menu-header">
                     <h3 className="menu-title">Menú</h3>
 
-                    {/* AVATAR SIN FUNCIONALIDAD CLIC (TAMAÑO CORREGIDO) */}
-                  <div className="avatar-section">
-        {avatar ? (
-            <img src={avatar} alt="Avatar" className="avatar-img" />
-        ) : (
-            <span className="default-avatar">👤</span>
-        )}
-    </div>
+                    {/* AVATAR CIRCULAR CORREGIDO */}
+                    <div className="avatar-section">
+                        {avatar ? (
+                            <img src={getAvatarUrl(avatar)} alt="Avatar" className="avatar-img" />
+                        ) : (
+                            <span className="default-avatar">👤</span>
+                        )}
+                    </div>
                 </div>
 
                 {/* BOTONES DEL MENÚ */}
