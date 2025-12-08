@@ -43,10 +43,6 @@ const Ajustes = () => {
   // =============================
   // SUBIR AVATAR (SOLO CUANDO SE LLAME)
   // =============================
-  const handleAvatarClick = () => {
-    fileInputRef.current.click();
-  };
-
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
