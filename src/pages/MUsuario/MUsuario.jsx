@@ -144,6 +144,7 @@ const MUsuario = () => {
               src={getAvatarUrl(avatar)}
               className="avatar-img-large"
               alt="avatar"
+              style={{ pointerEvents: "none" }}   // ✅ NO CLICK
             />
           ) : (
             <div className="default-avatar-large">👤</div>
@@ -199,7 +200,7 @@ const MUsuario = () => {
         <div className="menu-header">
           <h3 className="menu-title">Menú</h3>
 
-          {/* ✅ AVATAR CLICKABLE SOLO AQUÍ */}
+          {/* ✅ ÚNICO AVATAR CLICKABLE */}
           <div className="avatar-container" onClick={handleFileClick}>
             {avatar ? (
               <img src={getAvatarUrl(avatar)} className="avatar-img" />
@@ -235,7 +236,10 @@ const MUsuario = () => {
 
       {/* PANEL IZQUIERDO (NO CLICK) */}
       <div className="main-nav-panel">
-        <div className="desktop-avatar-container">
+        <div
+          className="desktop-avatar-container"
+          style={{ pointerEvents: "none" }}   // ✅ NO CLICK
+        >
           {avatar ? (
             <img src={getAvatarUrl(avatar)} alt="avatar" />
           ) : (
