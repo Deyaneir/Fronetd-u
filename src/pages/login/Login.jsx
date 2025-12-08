@@ -60,7 +60,7 @@ const Login = () => {
 
         try {
             const res = await axios.post(
-                `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/login`, // ruta de tu backend
+                `${import.meta.env.VITE_BACKEND_URL}/login`,
                 {
                     correoInstitucional: data.email,
                     password: data.password,
@@ -125,7 +125,6 @@ const Login = () => {
                                 type={showPassword ? "text" : "password"}
                                 placeholder="Contraseña"
                                 {...register("password", { required: "La contraseña es obligatoria" })}
-                                style={{ color: "#333" }} // forzamos color visible
                             />
                             <span
                                 className="eye-icon"
@@ -135,8 +134,7 @@ const Login = () => {
                                     right: "10px",
                                     top: "50%",
                                     transform: "translateY(-50%)",
-                                    cursor: "pointer",
-                                    color: "#333" // ojito visible
+                                    cursor: "pointer"
                                 }}
                             >
                                 {showPassword ? <KawaiiEyeIcon /> : <KawaiiEyeOffIcon />}
