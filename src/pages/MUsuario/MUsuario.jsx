@@ -21,7 +21,6 @@ const MUsuario = () => {
     "https://api.dicebear.com/6.x/bottts/svg?seed=Avatar4",
     "https://api.dicebear.com/6.x/bottts/svg?seed=Avatar5"
   ];
-  const [avatarModalOpen, setAvatarModalOpen] = useState(false);
 
   const [userPhone, setUserPhone] = useState("");
   const [userAddress, setUserAddress] = useState("");
@@ -115,6 +114,18 @@ const MUsuario = () => {
                   <span className="default-avatar-large">👤</span>
                 )}
               </div>
+
+              {/* Botón cambiar avatar random */}
+              <button
+                className="btn-avatar"
+                onClick={() => {
+                  const randomIndex = Math.floor(Math.random() * avatarOptions.length);
+                  setAvatar(avatarOptions[randomIndex]);
+                  toast.success("Avatar cambiado ✅");
+                }}
+              >
+                Cambiar Avatar
+              </button>
             </div>
 
             <div className="profile-info">
@@ -134,7 +145,6 @@ const MUsuario = () => {
                 <strong>Cédula:</strong>
                 <span style={{ color: userCedula ? "#333" : "#000" }}>{userCedula || "No disponible"}</span>
               </div>
-
               <div className="info-row">
                 <strong>Universidad:</strong>
                 <span style={{ color: userUniversity ? "#333" : "#000" }}>{userUniversity || "No disponible"}</span>
@@ -171,13 +181,8 @@ const MUsuario = () => {
 
       {/* MENÚ DESLIZABLE */}
       <nav className={`side-menu ${menuOpen ? "show" : ""}`}>
-
-        {/* SECCIÓN SUPERIOR */}
         <div className="menu-header">
-
           <h3 className="menu-title">Menú</h3>
-
-          {/* Avatar visual circular */}
           <div className="avatar-section">
             <div className="avatar-container">
               {avatar ? (
@@ -186,8 +191,17 @@ const MUsuario = () => {
                 <span className="default-avatar">👤</span>
               )}
             </div>
+            <button
+              className="btn-avatar"
+              onClick={() => {
+                const randomIndex = Math.floor(Math.random() * avatarOptions.length);
+                setAvatar(avatarOptions[randomIndex]);
+                toast.success("Avatar cambiado ✅");
+              }}
+            >
+              Aleatorio
+            </button>
           </div>
-
         </div>
 
         <div className="menu-buttons">
@@ -199,11 +213,9 @@ const MUsuario = () => {
         </div>
       </nav>
 
-      <div className="main-nav-panel"> 
+      <div className="main-nav-panel">
         <div className="left-panel-content">
-
           <div style={{ textAlign: "center", marginBottom: "20px" }}>
-            {/* Avatar circular panel izquierdo */}
             <div className="avatar-container">
               {avatar ? (
                 <img src={getAvatarUrl(avatar)} alt="Avatar" className="avatar-img" />
@@ -212,7 +224,7 @@ const MUsuario = () => {
               )}
             </div>
 
-            <h3 style={{ color: "white", marginTop: "10px"}}>{userName}</h3>
+            <h3 style={{ color: "white", marginTop: "10px" }}>{userName}</h3>
             <p style={{ color: "#8bc34a", marginTop: "-5px" }}>{userStatus}</p>
 
             <hr style={{ marginTop: "10px", marginBottom: "10px", borderTop: "1px solid rgba(255, 255, 255, 0.2)" }} />
