@@ -1,5 +1,5 @@
 /* ---------------------------- */
-/* DASHBOARD GENERAL     */
+/* DASHBOARD GENERAL       */
 /* ---------------------------- */
 .dashboard-section {
     font-family: 'Poppins', sans-serif;
@@ -113,7 +113,7 @@
 }
 
 /* ---------------------------- */
-/* MENÚ HAMBURGUESA      */
+/* MENÚ HAMBURGUESA        */
 /* ---------------------------- */
 .hamburger-btn {
     position: fixed;
@@ -139,7 +139,7 @@
 }
 
 /* ---------------------------- */
-/* MENÚ LATERAL           */
+/* MENÚ LATERAL            */
 /* ---------------------------- */
 .side-menu {
     position: fixed;
@@ -154,7 +154,7 @@
     transition: transform 0.45s ease;
     display: flex;
     flex-direction: column;
-    align-items: flex-start; /* Los botones quedarán a la izquierda */
+    align-items: flex-start; 
 }
 
 /* Cuando el menú se muestra */
@@ -181,10 +181,10 @@
 .menu-header {
     display: flex;
     flex-direction: column;
-    align-items: center; /* centra título y avatar */
+    align-items: center; 
     width: 100%;
-    margin-top: 50px; /* <--- esto los baja */
-    margin-bottom: 30px; /* separa de los botones */
+    margin-top: 50px; 
+    margin-bottom: 30px; 
 }
 .menu-title {
     text-align: center;
@@ -193,47 +193,43 @@
 }
 
 /* ---------------------------- */
-/* AVATAR (MODIFICADO)    */
+/* AVATAR (CORRECCIÓN FINAL OVALADO) */
 /* ---------------------------- */
 
 /* Contenedor principal del avatar - le damos el tamaño y la forma circular */
 .avatar-section {
-    width: 80px;         
-    height: 80px;        
+    width: 80px;        
+    height: 80px;       
     border-radius: 50%; 
     overflow: hidden;
     
+    /* Propiedad clave para forzar que el ancho y alto sean iguales */
+    aspect-ratio: 1 / 1; 
+
     display: flex;
     justify-content: center;
     align-items: center;
     margin-bottom: 30px;
     cursor: pointer;
-    /* Asegura que esté centrado en el header */
     margin-left: auto;
     margin-right: auto;
-    position: relative; /* Para posicionar el overlay si lo añades */
-    background-color: #fff; /* Fondo blanco si no hay imagen */
+    position: relative; 
+    background-color: #fff; 
+    display: block; 
 }
-
-/* Ya no necesitamos avatar-container si usamos avatar-section directamente */
-.avatar-container {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    overflow: hidden;
-    cursor: pointer;
-    margin-bottom: 10px;
-} 
 
 .avatar-img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    /* IMPOTANTE: object-fit: cover evita que la imagen se estire y se vea ovalada */
+    object-fit: cover; 
+    border-radius: 50%; /* Capa extra de seguridad para la imagen */
 }
 
+/* El resto de estilos permanece igual */
 .menu-title {
     width: 100%;
-    text-align: center; /* Esto centra la palabra "Menú" */
+    text-align: center; 
     margin: 0;
     color: white;
     font-size: 1.2rem;
@@ -241,13 +237,13 @@
 
 /* Emoji por defecto (dentro del círculo) */
 .default-avatar {
-    font-size: 40px; /* Reducido un poco para que quepa */
+    font-size: 40px; 
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
     height: 100%;
-    color: #760265; /* Color del emoji */
+    color: #760265; 
 }
 
 .avatar-overlay {
@@ -268,7 +264,7 @@
 /* Botones verticales debajo del avatar */
 .menu-buttons {
     display: flex;
-    flex-direction: column; /* vertical */
+    flex-direction: column; 
     gap: 10px;
     width: 100%;
     padding: 0;
@@ -276,19 +272,19 @@
 }
 
 .menu-buttons button {
-    width: 100%;          /* ocupa todo el ancho del contenedor */
-    text-align: left;     /* texto alineado a la izquierda */
+    width: 100%;          
+    text-align: left;     
     padding: 10px 15px;
     background: transparent;
     color: white;
     border: none;
-    border-radius: 5px;  /* opcional, para efecto suave */
+    border-radius: 5px;  
     cursor: pointer;
     transition: background 0.2s;
 }
 
 .menu-buttons button:hover {
-    background: rgba(255, 255, 255, 0.1); /* efecto hover */
+    background: rgba(255, 255, 255, 0.1); 
 }
 
 
@@ -307,28 +303,28 @@
     gap: 10px;
     margin-bottom: 30px;
     width: 100%;
-    padding: 0;           /* Asegúrate de que no haya padding interno */
-    margin: 0;            /* Sin márgenes */
+    padding: 0;           
+    margin: 0;            
 }
 
 .menu-buttons button {
-    width: 100%;              /* Ocupa todo el ancho del contenedor */
-    padding: 10px 15px;       /* Ajusta a gusto */
+    width: 100%;              
+    padding: 10px 15px;       
     background: transparent;
     color: white;
     border: none;
     cursor: pointer;
     text-align: left;
-    border-radius: 0;         /* Sin bordes redondeados para el hover */
-    box-sizing: border-box;   /* Incluye padding dentro del width */
-    position: relative;       /* Necesario para pseudo-elementos si quieres */
-    overflow: hidden;         /* Evita que el hover quede recortado */
+    border-radius: 0;         
+    box-sizing: border-box;   
+    position: relative;       
+    overflow: hidden;         
     transition: background 0.2s;
 }
 
 .menu-buttons button:hover {
-    background: rgba(255, 255, 255, 0.1); /* Gris semi-transparente */
-    width: 100%;                          /* Todo el ancho */
+    background: rgba(255, 255, 255, 0.1); 
+    width: 100%;                          
 }
 
 
