@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import storeAuth from "../../context/storeAuth";
@@ -11,10 +11,9 @@ const Ajustes = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [avatar, setAvatar] = useState(null);
 
-  const fileInputRef = useRef(null);
   const navigate = useNavigate();
 
-  // 🔹 Cargar avatar
+  // 🔹 Cargar avatar (SOLO LECTURA)
   useEffect(() => {
     const fetchAvatar = async () => {
       try {
@@ -58,8 +57,9 @@ const Ajustes = () => {
         <div className="menu-header">
           <h3 className="menu-title">Menú</h3>
 
+          {/* ✅ AVATAR SOLO VISUAL */}
           <div className="avatar-section">
-            <div className="avatar-container">
+            <div className="avatar-container no-click">
               {avatar ? (
                 <img src={avatar} alt="Avatar" className="avatar-img" />
               ) : (
@@ -81,7 +81,7 @@ const Ajustes = () => {
       {/* TÍTULO */}
       <h2 className="ajustes-title">Ajustes</h2>
 
-      {/* ✅ CONTENEDOR QUE LIMITA EL ANCHO */}
+      {/* CONTENEDOR PRINCIPAL */}
       <div className="ajustes-container">
 
         {/* CUENTA */}
