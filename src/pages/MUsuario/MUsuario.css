@@ -203,8 +203,7 @@
 .avatar-section {
     display: flex;
     flex-direction: column;
-    align-items: center; /* 🔹 Centrado horizontal */
-    justify-content: center; /* 🔹 Centrado vertical opcional */
+    align-items: center;
     margin-bottom: 30px;
     width: 100%;
 }
@@ -215,11 +214,8 @@
     border-radius: 50%;
     overflow: hidden;
     cursor: pointer;
-    margin: 0 auto 10px; /* 🔹 margin 0 auto para centrar horizontal */
+    margin-bottom: 10px;
     position: relative; /* Para el overlay */
-    display: flex; /* 🔹 flex para centrar la imagen interna */
-    justify-content: center; /* 🔹 centrado horizontal */
-    align-items: center; /* 🔹 centrado vertical */
 }
 
 .avatar-overlay {
