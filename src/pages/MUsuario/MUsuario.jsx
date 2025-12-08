@@ -9,24 +9,33 @@ const MUsuario = () => {
   const [userName, setUserName] = useState("Usuario");
   const [userRole, setUserRole] = useState("");
   const [userStatus, setUserStatus] = useState("Disponible");
-  const [avatar, setAvatar] = useState(null);
+  const [avatar, setAvatar] = useState("");
   const [activeTab, setActiveTab] = useState("cuenta");
 
   useEffect(() => {
     const fetchUserInfo = async () => {
-      const token = localStorage.getItem("token");
-      if (!token) return;
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) return;
 
-      const res = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/perfil`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+        const res = await axios.get(
+          `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/perfil`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        );
 
-      const u = res.data;
-      setUserName(u.nombre);
-      setUserRole(u.rol);
-      setUserStatus(u.estado);
-      setAvatar(u.avatar);
+        const u = res.data;
+
+        setUserName(u.nombre || "Usuario");
+        setUserRole(u.rol || "");
+        setUserStatus(u.estado || "Disponible");
+        setAvatar(u.avatar || "");
+      } catch (error) {
+        console.error("Error al cargar perfil:", error);
+      }
     };
 
     fetchUserInfo();
@@ -34,22 +43,40 @@ const MUsuario = () => {
 
   return (
     <div className="musuario-container">
+      {/* PANEL IZQUIERDO */}
       <div className="main-nav-panel">
-        <div style={{ textAlign: "center" }}>
-          <div style={{ width: 100, height: 100, borderRadius: "50%", overflow: "hidden", margin: "0 auto" }}>
-            {avatar ? <img src={avatar} style={{ width: "100%", height: "100%" }} /> : "👤"}
+        <div className="perfil-panel">
+          {/* AVATAR SOLO VISUAL */}
+          <div className="avatar-container">
+            <img
+              src={avatar || "/avatar-default.png"}
+              alt="Avatar del usuario"
+              className="avatar-img"
+              draggable={false}
+            />
           </div>
 
-          {userRole && <p style={{ textTransform: "capitalize" }}>{userRole}</p>}
-          <h3>{userName}</h3>
-          <p>{userStatus}</p>
+          {/* ROL */}
+          {userRole && (
+            <p className="rol-usuario">
+              {userRole.charAt(0).toUpperCase() + userRole.slice(1)}
+            </p>
+          )}
+
+          {/* NOMBRE */}
+          <h3 className="nombre-usuario">{userName}</h3>
+
+          {/* ESTADO */}
+          <p className="estado-usuario">{userStatus}</p>
         </div>
 
+        {/* BOTONES */}
         <button onClick={() => setActiveTab("cuenta")}>Cuenta</button>
         <button onClick={() => navigate("/Ajustes")}>Ajustes</button>
         <button onClick={() => navigate("/login")}>Cerrar sesión</button>
       </div>
 
+      {/* PANEL DERECHO */}
       <div className="right-panel">
         {activeTab === "cuenta" && <h3>Mi cuenta</h3>}
       </div>
