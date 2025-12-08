@@ -11,8 +11,10 @@ const ActualizarInfo = () => {
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
 
-  const [avatar, setAvatar] = useState(null);
+  const [avatar, setAvatar] = useState(null); // Avatar actual del perfil
+  const [selectedAvatarUrl, setSelectedAvatarUrl] = useState(null); // 🔑 URL temporal de avatar preseleccionado
   const [avatarModalOpen, setAvatarModalOpen] = useState(false);
+  
   const [imageToCrop, setImageToCrop] = useState(null);
   const [cropperModalOpen, setCropperModalOpen] = useState(false);
 
@@ -24,15 +26,26 @@ const ActualizarInfo = () => {
   const [userUniversity, setUserUniversity] = useState("");
   const [userCareer, setUserCareer] = useState("");
 
-  // ---------- AVATARES DINÁMICOS MULTIAVATAR ----------
-  const AVATAR_COUNT = 50; // Cambia este número a la cantidad de avatares que quieras
+  // ---------- AVATARES KAWAIIS (DiceBear Adventurer/Micah) ----------
+  const AVATAR_COUNT = 12; 
   const generateAvatars = () => {
+    const styles = ["adventurer", "micah"];
+    const seeds = ["Aura", "Kiko", "Leo", "Panda", "Luna", "Star", "Bob", "Ivy", "Felix", "Nina", "Ryu", "Toby"];
+
     return Array.from({ length: AVATAR_COUNT }, (_, i) => {
-      const seed = `usuario_${i + 1}`; // Seed único por avatar
-      return `https://api.multiavatar.com/${seed}.png`;
+      const style = styles[i % 2]; 
+      const seed = seeds[i]; 
+      return `https://api.dicebear.com/7.x/${style}/svg?seed=${seed}`;
     });
   };
   const avatarOptions = generateAvatars();
+
+  // Función para obtener la URL del avatar evitando la caché
+  const getAvatarUrl = (url) => {
+    if (!url) return null;
+    return `${url}`; 
+  };
+
 
   // ---------- CARGAR INFO DEL USUARIO ----------
   useEffect(() => {
@@ -46,14 +59,19 @@ const ActualizarInfo = () => {
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
+        // Inicializa los estados
         setUserName(res.data.nombre || "");
-        setAvatar(res.data.avatar || null); // Avatar fijo del perfil
+        setAvatar(res.data.avatar || null); 
         setUserPhone(res.data.telefono || "");
         setUserAddress(res.data.direccion || "");
         setUserCedula(res.data.cedula || "");
         setUserDescription(res.data.descripcion || "");
         setUserUniversity(res.data.universidad || "");
         setUserCareer(res.data.carrera || "");
+        
+        // Inicializa el estado temporal con el avatar actual
+        setSelectedAvatarUrl(res.data.avatar || null); 
+
       } catch (err) {
         console.error("Error perfil:", err.response?.data || err);
       }
@@ -72,6 +90,7 @@ const ActualizarInfo = () => {
     reader.onload = () => {
       setImageToCrop(reader.result);
       setCropperModalOpen(true);
+      setAvatarModalOpen(false); // Asegúrate de cerrar la modal de selección si está abierta
     };
     reader.readAsDataURL(file);
   };
@@ -98,19 +117,48 @@ const ActualizarInfo = () => {
         "https://api.cloudinary.com/v1_1/dm5yhmz9a/image/upload",
         formData
       );
+      
+      // 🔑 Al subir una foto, se actualiza el avatar principal y el temporal
       setAvatar(res.data.secure_url);
+      setSelectedAvatarUrl(res.data.secure_url); 
+      
       toast.success("Avatar actualizado ✅");
     } catch (err) {
       console.error("Cloudinary:", err.response?.data || err);
       toast.error("Error al subir avatar");
     }
   };
+  
+  // 🔑 Función para aplicar el avatar seleccionado (Solo se llama al guardar)
+  const applySelectedAvatar = () => {
+    // Si se seleccionó un avatar predefinido, lo establecemos como el avatar final
+    if (selectedAvatarUrl && selectedAvatarUrl !== avatar) {
+      setAvatar(selectedAvatarUrl);
+    }
+    setAvatarModalOpen(false);
+  };
+  
+  // 🔑 Función para cerrar la modal y descartar la preselección si no se guarda
+  const closeAvatarModal = () => {
+    // Restaurar el avatar temporal al valor actual del avatar si se cancela
+    setSelectedAvatarUrl(avatar);
+    setAvatarModalOpen(false);
+  };
+
 
   // ---------- ACTUALIZAR INFO EN BACKEND ----------
   const handleUpdate = async () => {
-    try {
-      const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token");
 
+    // 🔑 Aplicar el avatar seleccionado *antes* de enviar la petición
+    // Esto es crucial para que el avatar que se envía sea el elegido en la modal
+    let finalAvatar = avatar;
+    if (selectedAvatarUrl !== avatar) {
+        finalAvatar = selectedAvatarUrl;
+        setAvatar(finalAvatar); // Actualiza el estado principal
+    }
+    
+    try {
       await axios.put(
         `${import.meta.env.VITE_BACKEND_URL}/actualizar`,
         {
@@ -121,7 +169,7 @@ const ActualizarInfo = () => {
           descripcion: userDescription,
           universidad: userUniversity,
           carrera: userCareer,
-          avatar, // Avatar fijo
+          avatar: finalAvatar, // Envía el avatar final (subido o seleccionado)
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -143,11 +191,12 @@ const ActualizarInfo = () => {
       {/* ---------- AVATAR ---------- */}
       <div className="avatar-wrapper">
         <div className="avatar-circle" onClick={handleFileClick}>
-          {avatar ? (
-            <img src={avatar} alt="Avatar" className="avatar-img-preview" />
-          ) : (
-            <span className="default-avatar">👤</span>
-          )}
+          {/* Muestra el avatar temporal si la modal está abierta, si no, muestra el avatar principal */}
+          <img 
+            src={getAvatarUrl(avatar)} 
+            alt="Avatar" 
+            className="avatar-img-preview" 
+          />
         </div>
 
         <div className="btns-avatar">
@@ -156,7 +205,7 @@ const ActualizarInfo = () => {
           </button>
           <button
             className="btn-select"
-            onClick={() => setAvatarModalOpen(!avatarModalOpen)}
+            onClick={() => setAvatarModalOpen(true)}
           >
             Elegir avatar
           </button>
@@ -171,31 +220,44 @@ const ActualizarInfo = () => {
         />
       </div>
 
-      {/* ---------- MODAL DE AVATARES ---------- */}
+      {/* ---------- MODAL DE AVATARES KAWAIIS ---------- */}
       {avatarModalOpen && (
         <div className="avatar-modal-overlay">
           <div className="avatar-modal-content">
-            <h3 className="modal-title">Seleccionar Avatar</h3>
+            <h3 className="modal-title">Seleccionar Avatar Kawaii</h3>
+            <p>Elige una opción y presiona 'Aplicar' para verla en el formulario.</p>
+            
             <div className="avatar-options-grid">
               {avatarOptions.map((url, i) => (
-                <img
-                  key={i}
-                  src={url}
-                  className="avatar-option"
-                  onClick={() => {
-                    setAvatar(url);
-                    setAvatarModalOpen(false);
-                  }}
-                  alt={`avatar-${i}`}
-                />
+                <div 
+                    key={i}
+                    className={`avatar-option ${selectedAvatarUrl === url ? 'selected' : ''}`}
+                    onClick={() => setSelectedAvatarUrl(url)} // 🔑 Solo actualiza el estado temporal
+                >
+                    <img
+                        src={url}
+                        alt={`kawaii-avatar-${i}`}
+                    />
+                    {selectedAvatarUrl === url && <span className="selected-check">✓</span>}
+                </div>
               ))}
             </div>
-            <button
-              className="modal-close-btn"
-              onClick={() => setAvatarModalOpen(false)}
-            >
-              Cerrar
-            </button>
+            
+            <div className="modal-btns-row">
+                <button
+                    className="modal-apply-btn"
+                    onClick={applySelectedAvatar} // 🔑 Aplica la selección al estado principal
+                >
+                    Aplicar
+                </button>
+                <button
+                    className="modal-close-btn"
+                    onClick={closeAvatarModal} // 🔑 Cierra y descarta la preselección
+                >
+                    Cancelar
+                </button>
+            </div>
+            
           </div>
         </div>
       )}
