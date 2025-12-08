@@ -95,13 +95,13 @@ const Dashboard = () => {
                     <h3 className="menu-title">Menú</h3>
 
                     {/* AVATAR SIN FUNCIONALIDAD CLIC (TAMAÑO CORREGIDO) */}
-                    <div className="avatar-section">
-                        {avatar ? (
-                            <img src={getAvatarUrl(avatar)} alt="Avatar" className="avatar-img" />
-                        ) : (
-                            <span className="default-avatar">👤</span>
-                        )}
-                    </div>
+                  <div className="avatar-section">
+        {avatar ? (
+            <img src={avatar} alt="Avatar" className="avatar-img" />
+        ) : (
+            <span className="default-avatar">👤</span>
+        )}
+    </div>
                 </div>
 
                 {/* BOTONES DEL MENÚ */}
