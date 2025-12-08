@@ -24,16 +24,11 @@ const ActualizarInfo = () => {
   const [userUniversity, setUserUniversity] = useState("");
   const [userCareer, setUserCareer] = useState("");
 
-  /* =====================================================
-     AVATARES KAWAII (DiceBear v7)
-     ===================================================== */
+  /* ===============================
+     AVATARES KAWAII (DiceBear)
+     =============================== */
   const AVATAR_COUNT = 150;
-
-  const avatarStyles = [
-    "fun-emoji",
-    "lorelei",
-    "pixel-art"
-  ];
+  const avatarStyles = ["fun-emoji", "lorelei", "pixel-art"];
 
   const avatarOptions = Array.from({ length: AVATAR_COUNT }, (_, i) => {
     const seed = `kawaii_${i + 1}`;
@@ -41,11 +36,11 @@ const ActualizarInfo = () => {
     return `https://api.dicebear.com/7.x/${style}/svg?seed=${seed}`;
   });
 
-  /* =====================================================
+  /* ===============================
      CARGAR PERFIL
-     ===================================================== */
+     =============================== */
   useEffect(() => {
-    const fetchProfile = async () => {
+    const fetchUserInfo = async () => {
       const token = localStorage.getItem("token");
       if (!token) return;
 
@@ -68,12 +63,12 @@ const ActualizarInfo = () => {
       }
     };
 
-    fetchProfile();
+    fetchUserInfo();
   }, []);
 
-  /* =====================================================
-     SUBIR FOTO PROPIA
-     ===================================================== */
+  /* ===============================
+     FOTO PROPIA
+     =============================== */
   const handleFileClick = () => fileInputRef.current.click();
 
   const handleFileChange = (e) => {
@@ -105,29 +100,29 @@ const ActualizarInfo = () => {
       setAvatar(res.data.secure_url);
       toast.success("Avatar actualizado ✅");
     } catch {
-      toast.error("Error al subir imagen");
+      toast.error("Error al subir avatar");
     }
   };
 
-  /* =====================================================
+  /* ===============================
      AVATAR KAWAII → CLOUDINARY ✅
-     ===================================================== */
+     =============================== */
   const selectKawaiiAvatar = async (url) => {
     try {
-      const response = await fetch(url);
-      const svgBlob = await response.blob();
+      const res = await fetch(url);
+      const svgBlob = await res.blob();
 
       const formData = new FormData();
       formData.append("file", svgBlob);
       formData.append("upload_preset", "VIBE-U");
       formData.append("folder", "usuarios/avatars-kawaii");
 
-      const cloudRes = await axios.post(
+      const cloud = await axios.post(
         "https://api.cloudinary.com/v1_1/dm5yhmz9a/image/upload",
         formData
       );
 
-      setAvatar(cloudRes.data.secure_url);
+      setAvatar(cloud.data.secure_url);
       setAvatarModalOpen(false);
       toast.success("Avatar seleccionado ✅");
     } catch (err) {
@@ -136,9 +131,9 @@ const ActualizarInfo = () => {
     }
   };
 
-  /* =====================================================
-     GUARDAR INFO ✅
-     ===================================================== */
+  /* ===============================
+     GUARDAR INFO
+     =============================== */
   const handleUpdate = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -153,7 +148,7 @@ const ActualizarInfo = () => {
           descripcion: userDescription,
           universidad: userUniversity,
           carrera: userCareer,
-          avatar
+          avatar,
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -166,14 +161,13 @@ const ActualizarInfo = () => {
     }
   };
 
-  /* =====================================================
-     JSX
-     ===================================================== */
+  /* ===============================
+     JSX (INPUTS INTACTOS ✅)
+     =============================== */
   return (
     <div className="actualizar-container">
       <ToastContainer />
-
-      <h2 className="titulo">Actualizar información</h2>
+      <h2 className="titulo">Actualizar información de cuenta</h2>
 
       <div className="avatar-wrapper">
         <div className="avatar-circle" onClick={handleFileClick}>
@@ -229,17 +223,7 @@ const ActualizarInfo = () => {
         </div>
       )}
 
-      {/* MODAL CROP */}
-      {cropperModalOpen && imageToCrop && (
-        <AvatarCropperModal
-          imageSrc={imageToCrop}
-          open={cropperModalOpen}
-          onClose={() => setCropperModalOpen(false)}
-          onCropComplete={handleCroppedAvatar}
-        />
-      )}
-
-      {/* FORM */}
+      {/* FORMULARIO COMPLETO */}
       <div className="form-section">
         {[
           ["Usuario", userName, setUserName],
