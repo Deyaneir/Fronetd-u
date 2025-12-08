@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
@@ -15,6 +15,8 @@ const Dashboard = () => {
     const [menuOpen, setMenuOpen] = useState(false);
     const [avatar, setAvatar] = useState(null);
 
+    const fileInputRef = useRef(null);
+
     // 🚀 Logout
     const handleLogout = () => {
         localStorage.clear();
@@ -27,15 +29,18 @@ const Dashboard = () => {
         const fetchUserInfo = async () => {
             try {
                 const token = storeAuth.getState().token;
+
                 if (!token) return setIsLoading(false);
 
                 const res = await axios.get(
-                    `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/perfil`,
+                    `${import.meta.env.VITE_BACKEND_URL}/perfil`,
                     { headers: { Authorization: `Bearer ${token}` } }
                 );
 
                 if (res.data?.nombre) setUserName(res.data.nombre);
                 if (res.data?.rol) setUserRole(res.data.rol);
+
+                // ✔ Cargar avatar desde backend
                 if (res.data?.avatar) setAvatar(res.data.avatar);
 
             } catch (error) {
@@ -48,7 +53,7 @@ const Dashboard = () => {
         const fetchQuote = async () => {
             try {
                 const response = await axios.get(
-                    `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/frase`
+                    `${import.meta.env.VITE_BACKEND_URL}/frase`
                 );
 
                 const { q: frase, a: autor } = response.data[0];
@@ -57,10 +62,7 @@ const Dashboard = () => {
                     `https://api.mymemory.translated.net/get?q=${encodeURIComponent(frase)}&langpair=en|es`
                 );
 
-                setQuote({
-                    texto: `"${traduccion.data.responseData.translatedText}"`,
-                    autor
-                });
+                setQuote({ texto: `"${traduccion.data.responseData.translatedText}"`, autor });
 
             } catch (error) {
                 console.error("Error frase motivadora:", error);
@@ -70,23 +72,40 @@ const Dashboard = () => {
         fetchUserInfo();
         fetchQuote();
 
+        // 🟦 Toast solo al iniciar sesión
         const token = storeAuth.getState().token;
         const toastShownBefore = localStorage.getItem("loginToastShown");
 
         if (token && !toastShownBefore) {
             localStorage.setItem("loginToastShown", "true");
-            toast.success("Inicio de sesión exitoso 🎉", {
-                position: "top-right",
-                autoClose: 2000,
-            });
+            setTimeout(() => {
+                toast.success("Inicio de sesión exitoso 🎉", {
+                    position: "top-right",
+                    autoClose: 2000,
+                });
+            }, 0);
         }
+
     }, []);
+
+    // 📸 Abrir selector de archivo
+    const handleFileClick = () => fileInputRef.current.click();
+
+    // 📸 Vista previa del avatar nuevo
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = () => setAvatar(reader.result);
+            reader.readAsDataURL(file);
+        }
+    };
 
     return (
         <section className="dashboard-section">
             <ToastContainer />
 
-            {/* BOTÓN HAMBURGUESA */}
+            {/* BOTÓN 3 LÍNEAS */}
             <button
                 className={`hamburger-btn ${menuOpen ? "open" : ""}`}
                 onClick={() => setMenuOpen(!menuOpen)}
@@ -99,39 +118,50 @@ const Dashboard = () => {
             {/* MENÚ DESLIZABLE */}
             <nav className={`side-menu ${menuOpen ? "show" : ""}`}>
 
-                {/* HEADER MENÚ */}
+                {/* TOP DEL MENÚ */}
                 <div className="menu-header">
                     <h3 className="menu-title">Menú</h3>
 
-                    {/* ✅ AVATAR SOLO VISUAL */}
+                    {/* Avatar */}
                     <div className="avatar-section">
-                        <div className="avatar-container no-click">
+                        <div className="avatar-container" onClick={handleFileClick}>
                             {avatar ? (
                                 <img src={avatar} alt="Avatar" className="avatar-img" />
                             ) : (
                                 <span className="default-avatar">👤</span>
                             )}
+                            <div className="avatar-overlay">
+                                <i className="fa fa-camera"></i>
+                            </div>
                         </div>
+
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            onChange={handleFileChange}
+                            className="input-file-hidden"
+                            accept="image/*"
+                        />
                     </div>
                 </div>
 
-                {/* BOTONES MENÚ */}
+                {/* BOTONES DEL MENÚ */}
                 <div className="menu-buttons">
                     <button onClick={() => navigate("/Dashboard")}>Inicio</button>
                     <button onClick={() => navigate("/MUsuario")}>Mi cuenta</button>
-                    <button>Favoritos</button>
+                    <button onClick={() => { }}>Favoritos</button>
                     <button onClick={() => navigate("/Ajustes")}>Ajustes</button>
                     <button onClick={handleLogout}>Cerrar sesión</button>
                 </div>
             </nav>
 
-            {/* OVERLAY */}
+            {/* OVERLAY DEL MENÚ */}
             <div
                 className={`menu-overlay ${menuOpen ? "show" : ""}`}
                 onClick={() => setMenuOpen(false)}
-            />
+            ></div>
 
-            {/* CONTENIDO */}
+            {/* CONTENIDO PRINCIPAL */}
             <div className="dashboard-header">
                 {isLoading ? (
                     <h2>Cargando...</h2>
@@ -149,20 +179,23 @@ const Dashboard = () => {
                 )}
             </div>
 
-            {/* TARJETAS */}
+            {/* TARJETAS DEL DASHBOARD */}
             <div className="dashboard-grid">
                 <div className="dashboard-card events-card">
-                    <h3>Eventos en tu U 🎉</h3>
+                    <h3 className="card-title">Eventos en tu U 🎉</h3>
+                    <p>Descubre próximos eventos en tu campus.</p>
                     <button className="dashboard-btn">Ver Eventos</button>
                 </div>
 
                 <div className="dashboard-card groups-card">
-                    <h3>Grupos y Comunidades 🤝</h3>
+                    <h3 className="card-title">Grupos y Comunidades 🤝</h3>
+                    <p>Únete a clubes con tus mismos intereses.</p>
                     <button className="dashboard-btn">Explorar Grupos</button>
                 </div>
 
                 <div className="dashboard-card matches-card">
-                    <h3>Tus Posibles Matches 💖</h3>
+                    <h3 className="card-title">Tus Posibles Matches 💖</h3>
+                    <p>Conecta con estudiantes que comparten tu vibe.</p>
                     <button
                         className="dashboard-btn"
                         onClick={() => navigate("/matches")}
