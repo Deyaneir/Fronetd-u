@@ -24,15 +24,15 @@ const ActualizarInfo = () => {
   const [userUniversity, setUserUniversity] = useState("");
   const [userCareer, setUserCareer] = useState("");
 
-  /* ==================================================
-     AVATARES KAWAII ✅ (DICEBEAR v7 OFICIAL)
-     ================================================== */
-  const AVATAR_COUNT = 60;
+  /* =====================================================
+     AVATARES KAWAII AUMENTADOS ✅ (DICEBEAR v7)
+     ===================================================== */
+  const AVATAR_COUNT = 150; // 🔥 AUMENTADO (cambia a 300 si quieres)
 
   const avatarStyles = [
-    "fun-emoji",   // kawaii 😍
-    "lorelei",     // cute
-    "pixel-art",   // retro cute
+    "fun-emoji",   // kawaii emoji
+    "lorelei",     // cute cartoon
+    "pixel-art",   // retro kawaii
   ];
 
   const generateKawaiiAvatars = () => {
@@ -45,9 +45,9 @@ const ActualizarInfo = () => {
 
   const avatarOptions = generateKawaiiAvatars();
 
-  /* ==================================================
+  /* =====================================================
      CARGAR PERFIL
-     ================================================== */
+     ===================================================== */
   useEffect(() => {
     const fetchUserInfo = async () => {
       const token = localStorage.getItem("token");
@@ -89,13 +89,12 @@ const ActualizarInfo = () => {
     reader.readAsDataURL(file);
   };
 
-  /* ==================================================
-     SUBIR AVATAR RECORTADO
-     ================================================== */
+  /* =====================================================
+     SUBIR AVATAR CORTADO (CLOUDINARY)
+     ===================================================== */
   const handleCroppedAvatar = async (croppedImageBlob) => {
     setCropperModalOpen(false);
     setImageToCrop(null);
-
     if (!croppedImageBlob) return;
 
     const safeUserName = userName?.trim()
@@ -121,9 +120,9 @@ const ActualizarInfo = () => {
     }
   };
 
-  /* ==================================================
-     GUARDAR INFO
-     ================================================== */
+  /* =====================================================
+     ACTUALIZAR INFO
+     ===================================================== */
   const handleUpdate = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -151,9 +150,9 @@ const ActualizarInfo = () => {
     }
   };
 
-  /* ==================================================
+  /* =====================================================
      JSX
-     ================================================== */
+     ===================================================== */
   return (
     <div className="actualizar-container">
       <ToastContainer />
@@ -231,7 +230,7 @@ const ActualizarInfo = () => {
         />
       )}
 
-      {/* FORM */}
+      {/* FORMULARIO */}
       <div className="form-section">
         {[
           ["Usuario", userName, setUserName],
