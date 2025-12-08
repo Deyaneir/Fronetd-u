@@ -1,84 +1,146 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import "./MUsuario.css";
+import { FaCamera, FaUser } from "react-icons/fa";
 
 const MUsuario = () => {
-  const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [user, setUser] = useState(null);
+  const fileInputRef = useRef(null);
 
-  const [userName, setUserName] = useState("Usuario");
-  const [userRole, setUserRole] = useState("");
-  const [userStatus, setUserStatus] = useState("Disponible");
-  const [avatar, setAvatar] = useState("");
-  const [activeTab, setActiveTab] = useState("cuenta");
+  // 👉 URL del avatar (UN SOLO ESTADO)
+  const [avatarUrl, setAvatarUrl] = useState("");
 
+  // ===============================
+  // Cargar usuario (EJEMPLO)
+  // ===============================
   useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) return;
-
-        const res = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/perfil`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          }
-        );
-
-        const u = res.data;
-
-        setUserName(u.nombre || "Usuario");
-        setUserRole(u.rol || "");
-        setUserStatus(u.estado || "Disponible");
-        setAvatar(u.avatar || "");
-      } catch (error) {
-        console.error("Error al cargar perfil:", error);
-      }
+    const fetchUser = async () => {
+      // EJEMPLO (ajusta a tu backend)
+      const res = await axios.get("http://localhost:3001/user");
+      setUser(res.data);
+      setAvatarUrl(res.data.avatar); // 👈 MUY IMPORTANTE
     };
 
-    fetchUserInfo();
+    fetchUser();
   }, []);
+
+  // ===============================
+  // Subir imagen a Cloudinary
+  // ===============================
+  const uploadAvatar = async (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "avatar_preset"); // TU preset
+    formData.append("cloud_name", "TU_CLOUD_NAME");
+
+    const res = await axios.post(
+      "https://api.cloudinary.com/v1_1/TU_CLOUD_NAME/image/upload",
+      formData
+    );
+
+    return res.data.secure_url;
+  };
+
+  // ===============================
+  // Cambiar avatar
+  // ===============================
+  const handleAvatarChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const url = await uploadAvatar(file);
+    setAvatarUrl(url);
+
+    // Guardar en backend
+    await axios.put("http://localhost:3001/user/avatar", {
+      avatar: url,
+    });
+  };
+
+  if (!user) return null;
 
   return (
     <div className="musuario-container">
-      {/* PANEL IZQUIERDO */}
+      {/* ============ PANEL IZQUIERDO ============ */}
       <div className="main-nav-panel">
-        <div className="perfil-panel">
-          {/* AVATAR SOLO VISUAL */}
-          <div className="avatar-container">
-            <img
-              src={avatar || "/avatar-default.png"}
-              alt="Avatar del usuario"
-              className="avatar-img"
-              draggable={false}
-            />
+        <div className="desktop-avatar-section">
+          <div className="desktop-avatar-container">
+            {avatarUrl ? (
+              <img src={avatarUrl} alt="avatar" />
+            ) : (
+              <FaUser size={60} />
+            )}
           </div>
-
-          {/* ROL */}
-          {userRole && (
-            <p className="rol-usuario">
-              {userRole.charAt(0).toUpperCase() + userRole.slice(1)}
-            </p>
-          )}
-
-          {/* NOMBRE */}
-          <h3 className="nombre-usuario">{userName}</h3>
-
-          {/* ESTADO */}
-          <p className="estado-usuario">{userStatus}</p>
+          <span className="desktop-status">Disponible</span>
         </div>
-
-        {/* BOTONES */}
-        <button onClick={() => setActiveTab("cuenta")}>Cuenta</button>
-        <button onClick={() => navigate("/Ajustes")}>Ajustes</button>
-        <button onClick={() => navigate("/login")}>Cerrar sesión</button>
       </div>
 
-      {/* PANEL DERECHO */}
+      {/* ============ PANEL DERECHO ============ */}
       <div className="right-panel">
-        {activeTab === "cuenta" && <h3>Mi cuenta</h3>}
+        <button className="hamburger-btn" onClick={() => setMenuOpen(true)}>
+          <span />
+          <span />
+          <span />
+        </button>
+
+        {/* ===== MENU PEQUEÑO ===== */}
+        <div className={`side-menu ${menuOpen ? "show" : ""}`}>
+          <div className="menu-header">
+            <div className="avatar-section">
+              <div
+                className="avatar-container"
+                onClick={() => fileInputRef.current.click()}
+              >
+                {avatarUrl ? (
+                  <img src={avatarUrl} className="avatar-img" />
+                ) : (
+                  <div className="default-avatar">
+                    <FaUser />
+                  </div>
+                )}
+                <div className="avatar-overlay">
+                  <FaCamera />
+                </div>
+              </div>
+
+              <input
+                type="file"
+                accept="image/*"
+                ref={fileInputRef}
+                className="input-file-hidden"
+                onChange={handleAvatarChange}
+              />
+            </div>
+          </div>
+
+          <button onClick={() => setMenuOpen(false)}>Cerrar</button>
+        </div>
+
+        {/* ===== PERFIL GRANDE ===== */}
+        <div className="user-profile-section">
+          <div className="avatar-circle-large">
+            {avatarUrl ? (
+              <img src={avatarUrl} className="avatar-img-large" />
+            ) : (
+              <div className="default-avatar-large">
+                <FaUser />
+              </div>
+            )}
+          </div>
+
+          <div className="profile-info">
+            <div className="info-row">
+              <strong>Nombre</strong>
+              <span>{user.nombre}</span>
+            </div>
+
+            <div className="info-row">
+              <strong>Rol</strong>
+              <span>{user.rol}</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
