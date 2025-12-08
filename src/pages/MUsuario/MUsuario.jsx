@@ -64,49 +64,6 @@ const MUsuario = () => {
     fetchUserInfo();
   }, []);
 
-  const handleFileClick = () => {
-    fileInputRef.current.click();
-  };
-
-  const handleFileChange = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", "VIBE-U");
-    formData.append("folder", "avatars");
-
-    let newAvatarUrl = null;
-    const token = localStorage.getItem('token');
-    if (!token) {
-        toast.error("Sesión expirada. Por favor, inicia sesión.");
-        return;
-    }
-
-    try {
-      const resCloudinary = await axios.post(
-        "https://api.cloudinary.com/v1_1/dm5yhmz9a/image/upload",
-        formData
-      );
-      newAvatarUrl = resCloudinary.data.secure_url;
-      
-      setAvatar(newAvatarUrl);
-      
-      await axios.put(
-        `${import.meta.env.VITE_BACKEND_URL}/actualizar`, 
-        { avatar: newAvatarUrl },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      toast.success("Avatar actualizado y guardado correctamente.");
-      
-    } catch (err) {
-      console.error("Error al subir o guardar el avatar:", err.response?.data || err);
-      toast.error("Error al actualizar el avatar.");
-    }
-  };
-
   const handleLogout = () => {
     localStorage.removeItem('token');
     navigate('/login');
@@ -218,27 +175,19 @@ const MUsuario = () => {
         {/* SECCIÓN SUPERIOR */}
         <div className="menu-header">
 
-          {/* 🔵 CAMBIO AÑADIDO AQUÍ */}
           <h3 className="menu-title">Menú</h3>
 
+          {/* Avatar visual circular */}
           <div className="avatar-section">
+            <div className="avatar-container">
               {avatar ? (
                 <img src={getAvatarUrl(avatar)} alt="Avatar" className="avatar-img" />
               ) : (
                 <span className="default-avatar">👤</span>
               )}
-              <div className="avatar-overlay">
-                <i className="fa fa-camera"></i>
             </div>
-
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleFileChange}
-              className="input-file-hidden"
-              accept="image/*"
-            />
           </div>
+
         </div>
 
         <div className="menu-buttons">
@@ -254,20 +203,12 @@ const MUsuario = () => {
         <div className="left-panel-content">
 
           <div style={{ textAlign: "center", marginBottom: "20px" }}>
-            <div
-              style={{
-                width: "100px",
-                height: "100px",
-                borderRadius: "50%",
-                overflow: "hidden",
-                margin: "0 auto",
-                backgroundColor: "#ddd",
-              }}
-            >
+            {/* Avatar circular panel izquierdo */}
+            <div className="avatar-container">
               {avatar ? (
-                <img src={getAvatarUrl(avatar)} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="Avatar" />
+                <img src={getAvatarUrl(avatar)} alt="Avatar" className="avatar-img" />
               ) : (
-                <span style={{ fontSize: "50px", display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>👤</span>
+                <span className="default-avatar">👤</span>
               )}
             </div>
 
