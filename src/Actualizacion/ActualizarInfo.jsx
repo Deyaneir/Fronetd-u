@@ -24,22 +24,28 @@ const ActualizarInfo = () => {
   const [userUniversity, setUserUniversity] = useState("");
   const [userCareer, setUserCareer] = useState("");
 
-  /* ================= AVATARES KAWAII ================= */
+  /* =====================================================
+     AVATARES KAWAII (DiceBear v7)
+     ===================================================== */
   const AVATAR_COUNT = 150;
-  const avatarStyles = ["fun-emoji", "lorelei", "pixel-art"];
 
-  const generateKawaiiAvatars = () =>
-    Array.from({ length: AVATAR_COUNT }, (_, i) => {
-      const seed = `kawaii_${i + 1}`;
-      const style = avatarStyles[i % avatarStyles.length];
-      return `https://api.dicebear.com/7.x/${style}/svg?seed=${seed}`;
-    });
+  const avatarStyles = [
+    "fun-emoji",
+    "lorelei",
+    "pixel-art"
+  ];
 
-  const avatarOptions = generateKawaiiAvatars();
+  const avatarOptions = Array.from({ length: AVATAR_COUNT }, (_, i) => {
+    const seed = `kawaii_${i + 1}`;
+    const style = avatarStyles[i % avatarStyles.length];
+    return `https://api.dicebear.com/7.x/${style}/svg?seed=${seed}`;
+  });
 
-  /* ================= PERFIL ================= */
+  /* =====================================================
+     CARGAR PERFIL
+     ===================================================== */
   useEffect(() => {
-    const fetchUserInfo = async () => {
+    const fetchProfile = async () => {
       const token = localStorage.getItem("token");
       if (!token) return;
 
@@ -58,13 +64,16 @@ const ActualizarInfo = () => {
         setUserUniversity(res.data.universidad || "");
         setUserCareer(res.data.carrera || "");
       } catch (err) {
-        console.error("Error perfil:", err);
+        console.error(err);
       }
     };
 
-    fetchUserInfo();
+    fetchProfile();
   }, []);
 
+  /* =====================================================
+     SUBIR FOTO PROPIA
+     ===================================================== */
   const handleFileClick = () => fileInputRef.current.click();
 
   const handleFileChange = (e) => {
@@ -79,21 +88,14 @@ const ActualizarInfo = () => {
     reader.readAsDataURL(file);
   };
 
-  /* ================= CLOUDINARY ================= */
-  const handleCroppedAvatar = async (croppedImageBlob) => {
+  const handleCroppedAvatar = async (blob) => {
     setCropperModalOpen(false);
-    setImageToCrop(null);
-    if (!croppedImageBlob) return;
-
-    const safeUserName = userName?.trim()
-      ? userName.replace(/\s+/g, "_")
-      : "usuario";
+    if (!blob) return;
 
     const formData = new FormData();
-    formData.append("file", croppedImageBlob);
+    formData.append("file", blob);
     formData.append("upload_preset", "VIBE-U");
-    formData.append("folder", `usuarios/${safeUserName}`);
-    formData.append("public_id", "avatar");
+    formData.append("folder", "usuarios/avatar");
 
     try {
       const res = await axios.post(
@@ -102,18 +104,47 @@ const ActualizarInfo = () => {
       );
       setAvatar(res.data.secure_url);
       toast.success("Avatar actualizado ✅");
-    } catch (err) {
-      toast.error("Error al subir avatar");
+    } catch {
+      toast.error("Error al subir imagen");
     }
   };
 
-  /* ================= ACTUALIZAR ================= */
+  /* =====================================================
+     AVATAR KAWAII → CLOUDINARY ✅
+     ===================================================== */
+  const selectKawaiiAvatar = async (url) => {
+    try {
+      const response = await fetch(url);
+      const svgBlob = await response.blob();
+
+      const formData = new FormData();
+      formData.append("file", svgBlob);
+      formData.append("upload_preset", "VIBE-U");
+      formData.append("folder", "usuarios/avatars-kawaii");
+
+      const cloudRes = await axios.post(
+        "https://api.cloudinary.com/v1_1/dm5yhmz9a/image/upload",
+        formData
+      );
+
+      setAvatar(cloudRes.data.secure_url);
+      setAvatarModalOpen(false);
+      toast.success("Avatar seleccionado ✅");
+    } catch (err) {
+      console.error(err);
+      toast.error("Error al seleccionar avatar");
+    }
+  };
+
+  /* =====================================================
+     GUARDAR INFO ✅
+     ===================================================== */
   const handleUpdate = async () => {
     try {
       const token = localStorage.getItem("token");
 
       await axios.put(
-        `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/actualizar`,
+        `${import.meta.env.VITE_BACKEND_URL}/actualizar`,
         {
           nombre: userName,
           telefono: userPhone,
@@ -122,7 +153,7 @@ const ActualizarInfo = () => {
           descripcion: userDescription,
           universidad: userUniversity,
           carrera: userCareer,
-          avatar,
+          avatar
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -130,19 +161,24 @@ const ActualizarInfo = () => {
       toast.success("Información actualizada ✅");
       setTimeout(() => navigate("/ajustes"), 1200);
     } catch (err) {
-      toast.error("Error al guardar");
+      console.error(err);
+      toast.error("FALLA AL GUARDAR ❌");
     }
   };
 
+  /* =====================================================
+     JSX
+     ===================================================== */
   return (
     <div className="actualizar-container">
       <ToastContainer />
-      <h2 className="titulo">Actualizar información de cuenta</h2>
+
+      <h2 className="titulo">Actualizar información</h2>
 
       <div className="avatar-wrapper">
         <div className="avatar-circle" onClick={handleFileClick}>
           {avatar ? (
-            <img src={avatar} alt="Avatar" className="avatar-img-preview" />
+            <img src={avatar} className="avatar-img-preview" />
           ) : (
             <span className="default-avatar">👤</span>
           )}
@@ -166,40 +202,72 @@ const ActualizarInfo = () => {
         />
       </div>
 
+      {/* MODAL AVATARES */}
       {avatarModalOpen && (
         <div className="avatar-modal-overlay">
           <div className="avatar-modal-content">
             <h3>Seleccionar Avatar Kawaii</h3>
+
             <div className="avatar-options-grid">
               {avatarOptions.map((url, i) => (
                 <img
                   key={i}
                   src={url}
                   className="avatar-option"
-                  onClick={() => {
-                    setAvatar(url);
-                    setAvatarModalOpen(false);
-                  }}
+                  onClick={() => selectKawaiiAvatar(url)}
                 />
               ))}
             </div>
-            <button onClick={() => setAvatarModalOpen(false)}>Cerrar</button>
+
+            <button
+              className="modal-close-btn"
+              onClick={() => setAvatarModalOpen(false)}
+            >
+              Cerrar
+            </button>
           </div>
         </div>
       )}
 
+      {/* MODAL CROP */}
       {cropperModalOpen && imageToCrop && (
         <AvatarCropperModal
           imageSrc={imageToCrop}
-          open
+          open={cropperModalOpen}
           onClose={() => setCropperModalOpen(false)}
           onCropComplete={handleCroppedAvatar}
         />
       )}
 
-      <button className="save-btn" onClick={handleUpdate}>
-        Guardar cambios
-      </button>
+      {/* FORM */}
+      <div className="form-section">
+        {[
+          ["Usuario", userName, setUserName],
+          ["Teléfono", userPhone, setUserPhone],
+          ["Dirección", userAddress, setUserAddress],
+          ["Cédula", userCedula, setUserCedula],
+          ["Universidad", userUniversity, setUserUniversity],
+          ["Carrera", userCareer, setUserCareer],
+        ].map(([label, value, setter], i) => (
+          <div className="field-row" key={i}>
+            <label>{label}</label>
+            <input value={value} onChange={(e) => setter(e.target.value)} />
+          </div>
+        ))}
+
+        <div className="field-row">
+          <label>Descripción</label>
+          <textarea
+            value={userDescription}
+            onChange={(e) => setUserDescription(e.target.value)}
+          />
+        </div>
+
+        <div className="btn-row">
+          <button onClick={() => navigate("/ajustes")}>Cancelar</button>
+          <button onClick={handleUpdate}>Guardar cambios</button>
+        </div>
+      </div>
     </div>
   );
 };
