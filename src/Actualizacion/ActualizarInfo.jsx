@@ -45,7 +45,7 @@ const ActualizarInfo = () => {
 
       try {
         const res = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/perfil`,
+          `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/perfil`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
@@ -139,7 +139,7 @@ const ActualizarInfo = () => {
       const token = localStorage.getItem("token");
 
       await axios.put(
-        `${import.meta.env.VITE_BACKEND_URL}/actualizar`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/actualizar`,
         {
           nombre: userName,
           telefono: userPhone,
