@@ -63,6 +63,31 @@ const MUsuario = () => {
     setMenuOpen(!menuOpen);
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      const menu = document.querySelector(".side-menu");
+      const hamburger = document.querySelector(".hamburger-btn");
+
+      if (menuOpen && menu && !menu.contains(event.target) && hamburger && !hamburger.contains(event.target)) {
+        setMenuOpen(false);
+      }
+    };
+
+    const handleEscape = (event) => {
+      if (event.key === "Escape" && menuOpen) {
+        setMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [menuOpen]);
+
   const renderRightContent = () => {
     switch (activeTab) {
       case "cuenta":
@@ -139,6 +164,7 @@ const MUsuario = () => {
         <div className="menu-header">
           <h3 className="menu-title">Menú</h3>
 
+          {/* SOLO VISUAL DEL AVATAR, SIN OPCIÓN DE SUBIR */}
           <div className="avatar-section">
               {avatar ? (
                 <img src={getAvatarUrl(avatar)} alt="Avatar" className="avatar-img" />
@@ -159,7 +185,6 @@ const MUsuario = () => {
 
       <div className="main-nav-panel"> 
         <div className="left-panel-content">
-
           <div style={{ textAlign: "center", marginBottom: "20px" }}>
             <div
               style={{
@@ -172,7 +197,7 @@ const MUsuario = () => {
               }}
             >
               {avatar ? (
-                <img src={getAvatarUrl(avatar)} style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "50%" }} alt="Avatar" />
+                <img src={getAvatarUrl(avatar)} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="Avatar" />
               ) : (
                 <span style={{ fontSize: "50px", display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>👤</span>
               )}
