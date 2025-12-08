@@ -1,24 +1,27 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import "./MUsuario.css";
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import './MUsuario.css';
 
 const MUsuario = () => {
   const navigate = useNavigate();
-
-  // =====================
-  // ESTADOS
-  // =====================
   const [userName, setUserName] = useState("Usuario");
   const [userStatus, setUserStatus] = useState("Disponible");
   const [avatar, setAvatar] = useState(null);
-
   const [activeTab, setActiveTab] = useState("cuenta");
   const [menuOpen, setMenuOpen] = useState(false);
-
   const fileInputRef = useRef(null);
+
+  const avatarOptions = [
+    "https://api.dicebear.com/6.x/bottts/svg?seed=Avatar1",
+    "https://api.dicebear.com/6.x/bottts/svg?seed=Avatar2",
+    "https://api.dicebear.com/6.x/bottts/svg?seed=Avatar3",
+    "https://api.dicebear.com/6.x/bottts/svg?seed=Avatar4",
+    "https://api.dicebear.com/6.x/bottts/svg?seed=Avatar5"
+  ];
+  const [avatarModalOpen, setAvatarModalOpen] = useState(false);
 
   const [userPhone, setUserPhone] = useState("");
   const [userAddress, setUserAddress] = useState("");
@@ -27,51 +30,43 @@ const MUsuario = () => {
   const [userUniversity, setUserUniversity] = useState("");
   const [userCareer, setUserCareer] = useState("");
 
-  // =====================
-  // UTILIDAD AVATAR (CACHE FIX)
-  // =====================
   const getAvatarUrl = (url) => {
     if (!url) return null;
-    return `${url}?t=${Date.now()}`;
+    return `${url}?t=${new Date().getTime()}`;
   };
 
-  // =====================
-  // TRAER PERFIL
-  // =====================
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem('token');
         if (!token) return;
 
         const response = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/perfil`,
+          `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/perfil`, 
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
-        const u = response.data;
+        if (response.data?.nombre) setUserName(response.data.nombre);
+        if (response.data?.estado) setUserStatus(response.data.estado);
+        if (response.data?.avatar) setAvatar(response.data.avatar);
+        if (response.data?.telefono) setUserPhone(response.data.telefono);
+        if (response.data?.direccion) setUserAddress(response.data.direccion);
+        if (response.data?.cedula) setUserCedula(response.data.cedula);
+        if (response.data?.descripcion) setUserDescription(response.data.descripcion);
+        if (response.data?.universidad) setUserUniversity(response.data.universidad);
+        if (response.data?.carrera) setUserCareer(response.data.carrera);
 
-        if (u?.nombre) setUserName(u.nombre);
-        if (u?.estado) setUserStatus(u.estado);
-        if (u?.avatar) setAvatar(u.avatar);
-        if (u?.telefono) setUserPhone(u.telefono);
-        if (u?.direccion) setUserAddress(u.direccion);
-        if (u?.cedula) setUserCedula(u.cedula);
-        if (u?.descripcion) setUserDescription(u.descripcion);
-        if (u?.universidad) setUserUniversity(u.universidad);
-        if (u?.carrera) setUserCareer(u.carrera);
-      } catch (err) {
-        console.error("Error al obtener usuario:", err);
+      } catch (error) {
+        console.error("Error al obtener el usuario:", error);
       }
     };
 
     fetchUserInfo();
   }, []);
 
-  // =====================
-  // SUBIR AVATAR (SOLO MENÚ HAMBURGUESA)
-  // =====================
-  const handleFileClick = () => fileInputRef.current.click();
+  const handleFileClick = () => {
+    fileInputRef.current.click();
+  };
 
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
@@ -82,185 +77,220 @@ const MUsuario = () => {
     formData.append("upload_preset", "VIBE-U");
     formData.append("folder", "avatars");
 
+    let newAvatarUrl = null;
+    const token = localStorage.getItem('token');
+    if (!token) {
+        toast.error("Sesión expirada. Por favor, inicia sesión.");
+        return;
+    }
+
     try {
       const resCloudinary = await axios.post(
         "https://api.cloudinary.com/v1_1/dm5yhmz9a/image/upload",
         formData
       );
-
-      const newAvatarUrl = resCloudinary.data.secure_url;
+      newAvatarUrl = resCloudinary.data.secure_url;
+      
       setAvatar(newAvatarUrl);
-
-      const token = localStorage.getItem("token");
+      
       await axios.put(
-        `${import.meta.env.VITE_BACKEND_URL}/actualizar`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/actualizar`, 
         { avatar: newAvatarUrl },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      toast.success("Avatar actualizado correctamente");
-    } catch (error) {
-      console.error(error);
-      toast.error("Error al actualizar avatar");
+      toast.success("Avatar actualizado y guardado correctamente.");
+      
+    } catch (err) {
+      console.error("Error al subir o guardar el avatar:", err.response?.data || err);
+      toast.error("Error al actualizar el avatar.");
     }
   };
 
-  // =====================
-  // MENU HAMBURGUESA
-  // =====================
-  const handleMenuToggle = () => setMenuOpen(!menuOpen);
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/login');
+  };
+
+  const handleMenuToggle = () => {
+    setMenuOpen(!menuOpen);
+  };
 
   useEffect(() => {
-    const handleClickOutside = (e) => {
+    const handleClickOutside = (event) => {
       const menu = document.querySelector(".side-menu");
       const hamburger = document.querySelector(".hamburger-btn");
 
-      if (
-        menuOpen &&
-        menu &&
-        !menu.contains(e.target) &&
-        hamburger &&
-        !hamburger.contains(e.target)
-      ) {
+      if (menuOpen && menu && !menu.contains(event.target) && hamburger && !hamburger.contains(event.target)) {
+        setMenuOpen(false);
+      }
+    };
+
+    const handleEscape = (event) => {
+      if (event.key === "Escape" && menuOpen) {
         setMenuOpen(false);
       }
     };
 
     document.addEventListener("click", handleClickOutside);
-    return () => document.removeEventListener("click", handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
+    };
   }, [menuOpen]);
 
-  // =====================
-  // PANEL DERECHO
-  // =====================
   const renderRightContent = () => {
-    if (activeTab !== "cuenta") return null;
+    switch (activeTab) {
+      case "cuenta":
+        return (
+          <div className="user-profile-section">
+            <h3 style={{ textAlign: "center", marginBottom: "15px", color: "#000" }}>
+              {userName || "Usuario"}
+            </h3>
 
-    return (
-      <div className="user-profile-section">
-        <div className="avatar-circle-large">
-          {avatar ? (
-            <img
-              src={getAvatarUrl(avatar)}
-              className="avatar-img-large"
-              alt="avatar"
-              style={{ pointerEvents: "none" }}   // ✅ NO CLICK
-            />
-          ) : (
-            <div className="default-avatar-large">👤</div>
-          )}
-        </div>
+            <div className="profile-header" style={{ justifyContent: "center" }}>
+              <div className="avatar-circle-large">
+                {avatar ? (
+                  <img src={getAvatarUrl(avatar)} alt="Avatar" className="avatar-img-large" />
+                ) : (
+                  <span className="default-avatar-large">👤</span>
+                )}
+              </div>
+            </div>
 
-        <div className="profile-info">
-          <div className="info-row">
-            <strong>Descripción:</strong>
-            <span>{userDescription || "No disponible"}</span>
+            <div className="profile-info">
+              <div className="info-row">
+                <strong>Descripción:</strong>
+                <span style={{ color: userDescription ? "#333" : "#000" }}>{userDescription || "No disponible"}</span>
+              </div>
+              <div className="info-row">
+                <strong>Teléfono:</strong>
+                <span style={{ color: userPhone ? "#333" : "#000" }}>{userPhone || "No disponible"}</span>
+              </div>
+              <div className="info-row">
+                <strong>Dirección:</strong>
+                <span style={{ color: userAddress ? "#333" : "#000" }}>{userAddress || "No disponible"}</span>
+              </div>
+              <div className="info-row">
+                <strong>Cédula:</strong>
+                <span style={{ color: userCedula ? "#333" : "#000" }}>{userCedula || "No disponible"}</span>
+              </div>
+
+              <div className="info-row">
+                <strong>Universidad:</strong>
+                <span style={{ color: userUniversity ? "#333" : "#000" }}>{userUniversity || "No disponible"}</span>
+              </div>
+              <div className="info-row">
+                <strong>Carrera:</strong>
+                <span style={{ color: userCareer ? "#333" : "#000" }}>{userCareer || "No disponible"}</span>
+              </div>
+            </div>
           </div>
-          <div className="info-row">
-            <strong>Teléfono:</strong>
-            <span>{userPhone || "No disponible"}</span>
-          </div>
-          <div className="info-row">
-            <strong>Dirección:</strong>
-            <span>{userAddress || "No disponible"}</span>
-          </div>
-          <div className="info-row">
-            <strong>Cédula:</strong>
-            <span>{userCedula || "No disponible"}</span>
-          </div>
-          <div className="info-row">
-            <strong>Universidad:</strong>
-            <span>{userUniversity || "No disponible"}</span>
-          </div>
-          <div className="info-row">
-            <strong>Carrera:</strong>
-            <span>{userCareer || "No disponible"}</span>
-          </div>
-        </div>
-      </div>
-    );
+        );
+
+      case "favoritos":
+        return <div><h3>Favoritos</h3><p>Información de tu cuenta...</p></div>;
+      case "chats":
+        return <div><h3>Chats</h3><p>Tus conversaciones...</p></div>;
+      case "notificaciones":
+        return <div><h3>Notificaciones</h3><p>Tus notificaciones...</p></div>;
+      default:
+        return null;
+    }
   };
 
-  // =====================
-  // RENDER
-  // =====================
   return (
     <div className="musuario-container">
       <ToastContainer />
 
-      {/* HAMBURGUESA */}
-      <button className="hamburger-btn" onClick={handleMenuToggle}>
-        <span />
-        <span />
-        <span />
+      {/* BOTÓN DE HAMBURGUESA */}
+      <button className={`hamburger-btn ${menuOpen ? "open" : ""}`} onClick={handleMenuToggle}>
+        <span></span>
+        <span></span>
+        <span></span>
       </button>
 
-      {/* SIDE MENU */}
+      {/* MENÚ DESLIZABLE */}
       <nav className={`side-menu ${menuOpen ? "show" : ""}`}>
+
+        {/* SECCIÓN SUPERIOR */}
         <div className="menu-header">
+
+          {/* 🔵 CAMBIO AÑADIDO AQUÍ */}
           <h3 className="menu-title">Menú</h3>
 
-          {/* ✅ ÚNICO AVATAR CLICKABLE */}
-          <div className="avatar-container" onClick={handleFileClick}>
-            {avatar ? (
-              <img src={getAvatarUrl(avatar)} className="avatar-img" />
-            ) : (
-              <div className="default-avatar">👤</div>
-            )}
-            <div className="avatar-overlay">📷</div>
-          </div>
+          <div className="avatar-section">
+            <div className="avatar-container" onClick={handleFileClick}>
+              {avatar ? (
+                <img src={getAvatarUrl(avatar)} alt="Avatar" className="avatar-img" />
+              ) : (
+                <span className="default-avatar">👤</span>
+              )}
+              <div className="avatar-overlay">
+                <i className="fa fa-camera"></i>
+              </div>
+            </div>
 
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handleFileChange}
-            className="input-file-hidden"
-            accept="image/*"
-          />
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              className="input-file-hidden"
+              accept="image/*"
+            />
+          </div>
         </div>
 
         <div className="menu-buttons">
           <button onClick={() => navigate("/Dashboard")}>Inicio</button>
           <button onClick={() => navigate("/MUsuario")}>Mi cuenta</button>
+          <button onClick={() => {}}>Favoritos</button>
           <button onClick={() => navigate("/Ajustes")}>Ajustes</button>
-          <button
-            onClick={() => {
-              localStorage.removeItem("token");
-              navigate("/login");
-            }}
-          >
-            Cerrar sesión
-          </button>
+          <button onClick={handleLogout}>Cerrar sesión</button>
         </div>
       </nav>
 
-      {/* PANEL IZQUIERDO (NO CLICK) */}
-      <div className="main-nav-panel">
-        <div
-          className="desktop-avatar-container"
-          style={{ pointerEvents: "none" }}   // ✅ NO CLICK
-        >
-          {avatar ? (
-            <img src={getAvatarUrl(avatar)} alt="avatar" />
-          ) : (
-            <div className="default-avatar">👤</div>
-          )}
-        </div>
+      <div className="main-nav-panel"> 
+        <div className="left-panel-content">
 
-        <h3>{userName}</h3>
-        <span className="desktop-status">{userStatus}</span>
+          <div style={{ textAlign: "center", marginBottom: "20px" }}>
+            <div
+              style={{
+                width: "100px",
+                height: "100px",
+                borderRadius: "50%",
+                overflow: "hidden",
+                margin: "0 auto",
+                backgroundColor: "#ddd",
+              }}
+            >
+              {avatar ? (
+                <img src={getAvatarUrl(avatar)} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="Avatar" />
+              ) : (
+                <span style={{ fontSize: "50px", display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>👤</span>
+              )}
+            </div>
 
-        <div className="menu-buttons">
-          <button
-            className={activeTab === "cuenta" ? "active" : ""}
-            onClick={() => setActiveTab("cuenta")}
-          >
-            Cuenta
-          </button>
+            <h3 style={{ color: "white", marginTop: "10px"}}>{userName}</h3>
+            <p style={{ color: "#8bc34a", marginTop: "-5px" }}>{userStatus}</p>
+
+            <hr style={{ marginTop: "10px", marginBottom: "10px", borderTop: "1px solid rgba(255, 255, 255, 0.2)" }} />
+          </div>
+
+          <div className="menu-buttons">
+            <button className={activeTab === "cuenta" ? "active" : ""} onClick={() => setActiveTab("cuenta")}>Cuenta</button>
+            <button className={activeTab === "favoritos" ? "active" : ""} onClick={() => setActiveTab("favoritos")}>Favoritos</button>
+            <button className={activeTab === "chats" ? "active" : ""} onClick={() => setActiveTab("chats")}>Chats</button>
+            <button className={activeTab === "notificaciones" ? "active" : ""} onClick={() => setActiveTab("notificaciones")}>Notificaciones</button>
+          </div>
         </div>
       </div>
 
-      <div className="right-panel">{renderRightContent()}</div>
+      <div className="right-panel">
+        {renderRightContent()}
+      </div>
     </div>
   );
 };
