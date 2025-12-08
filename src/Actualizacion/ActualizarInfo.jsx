@@ -4,6 +4,7 @@ import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./ActualizarInfo.css";
+
 import AvatarCropperModal from "../components/Avatar/AvatarCropperModal.jsx";
 
 const ActualizarInfo = () => {
@@ -23,28 +24,30 @@ const ActualizarInfo = () => {
   const [userUniversity, setUserUniversity] = useState("");
   const [userCareer, setUserCareer] = useState("");
 
-  const avatarOptions = [
-    "https://api.dicebear.com/6.x/bottts/svg?seed=Avatar1",
-    "https://api.dicebear.com/6.x/bottts/svg?seed=Avatar2",
-    "https://api.dicebear.com/6.x/bottts/svg?seed=Avatar3",
-    "https://api.dicebear.com/6.x/bottts/svg?seed=Avatar4",
-    "https://api.dicebear.com/6.x/bottts/svg?seed=Avatar5",
-  ];
+  // ---------- AVATARES DINÁMICOS MULTIAVATAR ----------
+  const AVATAR_COUNT = 100; // Puedes aumentar este número a tu gusto
+  const generateAvatars = () => {
+    return Array.from({ length: AVATAR_COUNT }, (_, i) => {
+      const seed = `usuario_${i + 1}`;
+      return `https://api.multiavatar.com/${seed}.png`;
+    });
+  };
+  const avatarOptions = generateAvatars();
 
-  const BASE_URL = import.meta.env.VITE_BACKEND_URL;
-
+  // ---------- CARGAR INFO DEL USUARIO ----------
   useEffect(() => {
     const fetchUserInfo = async () => {
       const token = localStorage.getItem("token");
       if (!token) return;
 
       try {
-        const res = await axios.get(`${BASE_URL}/api/usuarios/perfil`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await axios.get(
+          `${import.meta.env.VITE_BACKEND_URL}/perfil`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
 
         setUserName(res.data.nombre || "");
-        setAvatar(res.data.avatar || null);
+        setAvatar(res.data.avatar || null); // Avatar fijo del perfil
         setUserPhone(res.data.telefono || "");
         setUserAddress(res.data.direccion || "");
         setUserCedula(res.data.cedula || "");
@@ -52,8 +55,7 @@ const ActualizarInfo = () => {
         setUserUniversity(res.data.universidad || "");
         setUserCareer(res.data.carrera || "");
       } catch (err) {
-        console.error("Error al cargar datos:", err.response?.data || err);
-        toast.error("No se pudo obtener el perfil.");
+        console.error("Error perfil:", err.response?.data || err);
       }
     };
 
@@ -74,14 +76,12 @@ const ActualizarInfo = () => {
     reader.readAsDataURL(file);
   };
 
+  // ---------- SUBIR AVATAR CORTADO A CLOUDINARY ----------
   const handleCroppedAvatar = async (croppedImageBlob) => {
     setCropperModalOpen(false);
     setImageToCrop(null);
 
-    if (!croppedImageBlob) {
-      toast.error("No se pudo obtener la imagen recortada");
-      return;
-    }
+    if (!croppedImageBlob) return;
 
     const safeUserName = userName?.trim()
       ? userName.replace(/\s+/g, "_")
@@ -99,19 +99,20 @@ const ActualizarInfo = () => {
         formData
       );
       setAvatar(res.data.secure_url);
-      toast.success("Avatar subido correctamente");
+      toast.success("Avatar actualizado ✅");
     } catch (err) {
-      console.error("Cloudinary error:", err.response?.data || err);
+      console.error("Cloudinary:", err.response?.data || err);
       toast.error("Error al subir avatar");
     }
   };
 
+  // ---------- ACTUALIZAR INFO EN BACKEND ----------
   const handleUpdate = async () => {
     try {
       const token = localStorage.getItem("token");
 
       await axios.put(
-        `${BASE_URL}/api/usuarios/actualizar`,
+        `${import.meta.env.VITE_BACKEND_URL}/actualizar`,
         {
           nombre: userName,
           telefono: userPhone,
@@ -120,7 +121,7 @@ const ActualizarInfo = () => {
           descripcion: userDescription,
           universidad: userUniversity,
           carrera: userCareer,
-          avatar: avatar,
+          avatar, // Avatar fijo
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -128,8 +129,8 @@ const ActualizarInfo = () => {
       toast.success("Información actualizada");
       setTimeout(() => navigate("/ajustes"), 1200);
     } catch (err) {
-      console.error("Error actualizar:", err.response?.data || err);
-      toast.error(err.response?.data?.msg || "Error al actualizar la información");
+      console.error("Actualizar:", err.response?.data || err);
+      toast.error("Error al guardar");
     }
   };
 
@@ -139,6 +140,7 @@ const ActualizarInfo = () => {
 
       <h2 className="titulo">Actualizar información de cuenta</h2>
 
+      {/* ---------- AVATAR ---------- */}
       <div className="avatar-wrapper">
         <div className="avatar-circle" onClick={handleFileClick}>
           {avatar ? (
@@ -169,10 +171,11 @@ const ActualizarInfo = () => {
         />
       </div>
 
+      {/* ---------- MODAL DE AVATARES ---------- */}
       {avatarModalOpen && (
         <div className="avatar-modal-overlay">
           <div className="avatar-modal-content">
-            <h3 className="modal-title">Seleccionar Avatar Predefinido</h3>
+            <h3 className="modal-title">Seleccionar Avatar</h3>
             <div className="avatar-options-grid">
               {avatarOptions.map((url, i) => (
                 <img
@@ -197,6 +200,7 @@ const ActualizarInfo = () => {
         </div>
       )}
 
+      {/* ---------- MODAL DE CROP ---------- */}
       {cropperModalOpen && imageToCrop && (
         <AvatarCropperModal
           imageSrc={imageToCrop}
@@ -206,15 +210,25 @@ const ActualizarInfo = () => {
         />
       )}
 
+      {/* ---------- FORMULARIO ---------- */}
       <div className="form-section">
-        <div className="field-row">
-          <label className="field-label">Usuario</label>
-          <input
-            className="field-input"
-            value={userName}
-            onChange={(e) => setUserName(e.target.value)}
-          />
-        </div>
+        {[
+          ["Usuario", userName, setUserName],
+          ["Teléfono", userPhone, setUserPhone],
+          ["Dirección", userAddress, setUserAddress],
+          ["Cédula", userCedula, setUserCedula],
+          ["Universidad", userUniversity, setUserUniversity],
+          ["Carrera", userCareer, setUserCareer],
+        ].map(([label, value, setter], i) => (
+          <div className="field-row" key={i}>
+            <label className="field-label">{label}</label>
+            <input
+              className="field-input"
+              value={value}
+              onChange={(e) => setter(e.target.value)}
+            />
+          </div>
+        ))}
 
         <div className="field-row">
           <label className="field-label">Descripción</label>
@@ -222,51 +236,6 @@ const ActualizarInfo = () => {
             className="field-input textarea-input"
             value={userDescription}
             onChange={(e) => setUserDescription(e.target.value)}
-          />
-        </div>
-
-        <div className="field-row">
-          <label className="field-label">Teléfono</label>
-          <input
-            className="field-input"
-            value={userPhone}
-            onChange={(e) => setUserPhone(e.target.value)}
-          />
-        </div>
-
-        <div className="field-row">
-          <label className="field-label">Dirección</label>
-          <input
-            className="field-input"
-            value={userAddress}
-            onChange={(e) => setUserAddress(e.target.value)}
-          />
-        </div>
-
-        <div className="field-row">
-          <label className="field-label">Cédula</label>
-          <input
-            className="field-input"
-            value={userCedula}
-            onChange={(e) => setUserCedula(e.target.value)}
-          />
-        </div>
-
-        <div className="field-row">
-          <label className="field-label">Universidad</label>
-          <input
-            className="field-input"
-            value={userUniversity}
-            onChange={(e) => setUserUniversity(e.target.value)}
-          />
-        </div>
-
-        <div className="field-row">
-          <label className="field-label">Carrera</label>
-          <input
-            className="field-input"
-            value={userCareer}
-            onChange={(e) => setUserCareer(e.target.value)}
           />
         </div>
 
