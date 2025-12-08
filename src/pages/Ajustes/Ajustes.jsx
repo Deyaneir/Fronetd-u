@@ -6,15 +6,19 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import "./Ajustes.css";
 
+// 🔑 NUEVAS OPCIONES DE AVATAR (Kawaii/Caricatura)
 const avatarOptions = [
-    "https://api.dicebear.com/6.x/bottts/svg?seed=Avatar1",
-    "https://api.dicebear.com/6.x/bottts/svg?seed=Avatar2",
-    "https://api.dicebear.com/6.x/bottts/svg?seed=Avatar3",
-    "https://api.dicebear.com/6.x/bottts/svg?seed=Avatar4",
-    "https://api.dicebear.com/6.x/bottts/svg?seed=Avatar5",
-    "https://api.dicebear.com/6.x/bottts/svg?seed=Robot",
-    "https://api.dicebear.com/6.x/bottts/svg?seed=Dragon",
-    "https://api.dicebear.com/6.x/bottts/svg?seed=Star",
+    // Avatares estilo Micáh (animalitos/caricatura)
+    "https://api.dicebear.com/7.x/micah/svg?seed=Lucky",
+    "https://api.dicebear.com/7.x/micah/svg?seed=Toby",
+    "https://api.dicebear.com/7.x/micah/svg?seed=Cleo",
+    "https://api.dicebear.com/7.x/micah/svg?seed=Gizmo",
+    
+    // Avatares estilo Adventurer (personajes animados)
+    "https://api.dicebear.com/7.x/adventurer/svg?seed=Mia",
+    "https://api.dicebear.com/7.x/adventurer/svg?seed=Zoe",
+    "https://api.dicebear.com/7.x/adventurer/svg?seed=Sam",
+    "https://api.dicebear.com/7.x/adventurer/svg?seed=Alex",
 ];
 
 const Ajustes = () => {
@@ -23,7 +27,7 @@ const Ajustes = () => {
     const [idioma, setIdioma] = useState("es");
     const [menuOpen, setMenuOpen] = useState(false);
     const [avatar, setAvatar] = useState(null);
-    const [avatarModalOpen, setAvatarModalOpen] = useState(false); // 🔑 Nuevo estado para la modal
+    const [avatarModalOpen, setAvatarModalOpen] = useState(false); // 🔑 Estado para la modal
 
     const fileInputRef = useRef(null);
     const navigate = useNavigate();
@@ -31,8 +35,7 @@ const Ajustes = () => {
     // Función auxiliar para forzar la recarga del avatar y evitar caché
     const getAvatarUrl = (url) => {
         if (!url) return null;
-        // Añadir timestamp para evitar caché
-        return `${url}?t=${new Date().getTime()}`; 
+        return `${url}`; 
     };
 
     // 🔹 Cargar avatar
@@ -65,13 +68,14 @@ const Ajustes = () => {
         }
 
         try {
+            // Asegúrate de usar la URL base sin el timestamp para guardar
             await axios.put(
                 `${import.meta.env.VITE_BACKEND_URL}/actualizar`,
                 { avatar: selectedAvatarUrl },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
 
-            // 1. Actualiza el estado local con la nueva URL
+            // 1. Actualiza el estado local
             setAvatar(selectedAvatarUrl);
             
             // 2. Cierra la modal
@@ -119,6 +123,7 @@ const Ajustes = () => {
                     <div className="avatar-section">
                         <div className="avatar-container" onClick={handleAvatarClick}>
                             {avatar ? (
+                                // Usamos getAvatarUrl para evitar problemas de caché si la imagen es la misma
                                 <img src={getAvatarUrl(avatar)} alt="Avatar" className="avatar-img" />
                             ) : (
                                 <span className="default-avatar">👤</span>
@@ -139,35 +144,92 @@ const Ajustes = () => {
             <div className={`menu-overlay ${menuOpen ? "show" : ""}`} onClick={() => setMenuOpen(false)}></div>
 
 
-            {/* TÍTULO Y CONTENIDO PRINCIPAL */}
+            {/* TÍTULO */}
             <h2 className="ajustes-title">Ajustes</h2>
 
+            {/* CONTENIDO PRINCIPAL */}
             <div className="ajustes-container">
+
                 {/* CUENTA */}
                 <div className="ajustes-card">
                     <h3>Cuenta</h3>
-                    {/* ... Resto de la tarjeta de Cuenta ... */}
+
+                    <div
+                        className="ajustes-row hover-card"
+                        onClick={() => navigate("/ActualizarInfo")}
+                    >
+                        <span>Actualizar información de cuenta</span>
+                    </div>
+
+                    <div
+                        className="ajustes-row hover-highlight"
+                        onClick={() => navigate("/ActualizarPass")}
+                    >
+                        <span>Cambiar contraseña</span>
+                    </div>
                 </div>
 
                 {/* PERSONALIZACIÓN */}
                 <div className="ajustes-card">
                     <h3>Personalización</h3>
-                    {/* ... Resto de la tarjeta de Personalización ... */}
+
+                    <div className="ajustes-row">
+                        <span>Notificaciones</span>
+                        <label className="switch">
+                            <input
+                                type="checkbox"
+                                checked={notificaciones}
+                                onChange={() => setNotificaciones(!notificaciones)}
+                            />
+                            <span className="slider"></span>
+                        </label>
+                    </div>
+
+                    <div className="ajustes-row">
+                        <span>Tema</span>
+                        <select
+                            className="ajustes-select"
+                            value={tema}
+                            onChange={(e) => setTema(e.target.value)}
+                        >
+                            <option value="light">Claro</option>
+                            <option value="dark">Oscuro</option>
+                        </select>
+                    </div>
+
+                    <div className="ajustes-row">
+                        <span>Idioma</span>
+                        <select
+                            className="ajustes-select"
+                            value={idioma}
+                            onChange={(e) => setIdioma(e.target.value)}
+                        >
+                            <option value="es">Español</option>
+                            <option value="en">Inglés</option>
+                        </select>
+                    </div>
                 </div>
 
                 {/* SESIÓN */}
                 <div className="ajustes-card">
                     <h3>Sesión</h3>
-                    {/* ... Resto de la tarjeta de Sesión ... */}
+
+                    <div
+                        className="ajustes-row hover-card"
+                        onClick={handleLogout}
+                    >
+                        <span>Cerrar sesión</span>
+                    </div>
                 </div>
+
             </div>
 
             {/* 🔑 MODAL DE SELECCIÓN DE AVATAR */}
             {avatarModalOpen && (
                 <div className="modal-overlay" onClick={() => setAvatarModalOpen(false)}>
                     <div className="avatar-modal" onClick={(e) => e.stopPropagation()}>
-                        <h3>Seleccionar Avatar</h3>
-                        <p>Elige una imagen para tu perfil.</p>
+                        <h3>Seleccionar Avatar Kawaii</h3>
+                        <p>Elige tu nueva imagen de perfil. ¡Dale clic para seleccionar!</p>
                         <div className="avatar-grid">
                             {avatarOptions.map((url, index) => (
                                 <div 
@@ -176,7 +238,7 @@ const Ajustes = () => {
                                     onClick={() => handleAvatarSelect(url)}
                                 >
                                     <img src={url} alt={`Avatar ${index + 1}`} />
-                                    {/* Opcional: Marcar el avatar actualmente seleccionado */}
+                                    {/* Muestra un check si este es el avatar actualmente seleccionado */}
                                     {avatar === url && <span className="selected-check">✓</span>}
                                 </div>
                             ))}
