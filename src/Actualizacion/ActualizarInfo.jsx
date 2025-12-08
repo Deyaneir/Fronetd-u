@@ -24,17 +24,19 @@ const ActualizarInfo = () => {
   const [userUniversity, setUserUniversity] = useState("");
   const [userCareer, setUserCareer] = useState("");
 
-  /* ===============================
+  /* ================================
      AVATARES MULTIAVATAR (FIJOS)
-     =============================== */
+     ================================ */
   const AVATAR_COUNT = 80;
+
   const avatarOptions = Array.from({ length: AVATAR_COUNT }, (_, i) => {
-    return `https://api.multiavatar.com/usuario_${i + 1}.png`;
+    const seed = encodeURIComponent(`usuario_${i + 1}`);
+    return `https://api.multiavatar.com/${seed}.png`;
   });
 
-  /* ===============================
-     CARGAR PERFIL ✅ /api/usuarios
-     =============================== */
+  /* ================================
+     CARGAR PERFIL
+     ================================ */
   useEffect(() => {
     const fetchUserInfo = async () => {
       const token = localStorage.getItem("token");
@@ -57,16 +59,16 @@ const ActualizarInfo = () => {
         setUserUniversity(u.universidad || "");
         setUserCareer(u.carrera || "");
       } catch (err) {
-        console.error("Perfil:", err.response?.data || err);
+        console.error("Perfil:", err);
       }
     };
 
     fetchUserInfo();
   }, []);
 
-  /* ===============================
-     SUBIR FOTO PROPIA (CROP)
-     =============================== */
+  /* ================================
+     SUBIR FOTO PROPIA
+     ================================ */
   const handleFileClick = () => fileInputRef.current.click();
 
   const handleFileChange = (e) => {
@@ -103,38 +105,18 @@ const ActualizarInfo = () => {
     }
   };
 
-  /* ===============================
-     SELECCIONAR AVATAR MULTIAVATAR
-     → SUBIR A CLOUDINARY (FIJO)
-     =============================== */
-  const selectMultiAvatar = async (url) => {
-    try {
-      const response = await fetch(url);
-      const blob = await response.blob();
-
-      const formData = new FormData();
-      formData.append("file", blob);
-      formData.append("upload_preset", "VIBE-U");
-      formData.append("folder", "usuarios/avatars-multiavatar");
-      formData.append("resource_type", "image");
-
-      const cloud = await axios.post(
-        "https://api.cloudinary.com/v1_1/dm5yhmz9a/image/upload",
-        formData
-      );
-
-      setAvatar(cloud.data.secure_url);
-      setAvatarModalOpen(false);
-      toast.success("Avatar seleccionado ✅");
-    } catch (err) {
-      console.error(err);
-      toast.error("Error al seleccionar avatar");
-    }
+  /* ================================
+     SELECCIONAR AVATAR (NO ALEATORIO)
+     ================================ */
+  const selectAvatar = (url) => {
+    setAvatar(url);
+    setAvatarModalOpen(false);
+    toast.success("Avatar seleccionado ✅");
   };
 
-  /* ===============================
-     GUARDAR INFO ✅
-     =============================== */
+  /* ================================
+     GUARDAR INFO
+     ================================ */
   const handleUpdate = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -157,7 +139,7 @@ const ActualizarInfo = () => {
       toast.success("Información actualizada ✅");
       setTimeout(() => navigate("/ajustes"), 1200);
     } catch (err) {
-      console.error(err);
+      console.error("Guardar:", err);
       toast.error("Error al guardar");
     }
   };
@@ -172,18 +154,18 @@ const ActualizarInfo = () => {
       <div className="avatar-wrapper">
         <div className="avatar-circle" onClick={handleFileClick}>
           {avatar ? (
-            <img src={avatar} alt="Avatar" className="avatar-img-preview" />
+            <img src={avatar} alt="Avatar" />
           ) : (
             <span className="default-avatar">👤</span>
           )}
         </div>
 
         <div className="btns-avatar">
-          <button className="btn-upload" onClick={handleFileClick}>
+          <button className="btn-avatar" onClick={handleFileClick}>
             Subir foto
           </button>
           <button
-            className="btn-select"
+            className="btn-avatar"
             onClick={() => setAvatarModalOpen(true)}
           >
             Elegir avatar
@@ -193,7 +175,7 @@ const ActualizarInfo = () => {
         <input
           ref={fileInputRef}
           type="file"
-          hidden
+          className="input-file-hidden"
           accept="image/*"
           onChange={handleFileChange}
         />
@@ -205,20 +187,20 @@ const ActualizarInfo = () => {
           <div className="avatar-modal-content">
             <h3 className="modal-title">Seleccionar Avatar</h3>
 
-            <div className="avatar-options-grid">
+            <div className="avatar-modal">
               {avatarOptions.map((url, i) => (
                 <img
                   key={i}
                   src={url}
                   className="avatar-option"
-                  onClick={() => selectMultiAvatar(url)}
                   alt={`avatar-${i}`}
+                  onClick={() => selectAvatar(url)}
                 />
               ))}
             </div>
 
             <button
-              className="modal-close-btn"
+              className="btn-avatar"
               onClick={() => setAvatarModalOpen(false)}
             >
               Cerrar
@@ -227,7 +209,7 @@ const ActualizarInfo = () => {
         </div>
       )}
 
-      {/* MODAL CROP */}
+      {/* CROP */}
       {cropperModalOpen && imageToCrop && (
         <AvatarCropperModal
           imageSrc={imageToCrop}
@@ -237,7 +219,7 @@ const ActualizarInfo = () => {
         />
       )}
 
-      {/* FORMULARIO (INTOCABLE) */}
+      {/* FORM */}
       <div className="form-section">
         {[
           ["Usuario", userName, setUserName],
