@@ -24,15 +24,15 @@ const ActualizarInfo = () => {
   const [userUniversity, setUserUniversity] = useState("");
   const [userCareer, setUserCareer] = useState("");
 
-  // ---------- AVATARES DINÁMICOS MULTIAVATAR ----------
-  const AVATAR_COUNT = 100; // Puedes aumentar este número a tu gusto
-  const generateAvatars = () => {
+  // ---------- AVATARES KAWAII DINÁMICOS ----------
+  const AVATAR_COUNT = 50; // cantidad de avatares kawaii
+  const generateKawaiiAvatars = () => {
     return Array.from({ length: AVATAR_COUNT }, (_, i) => {
-      const seed = `usuario_${i + 1}`;
-      return `https://api.multiavatar.com/${seed}.png`;
+      const seed = `kawaii_${i + 1}`;
+      return `https://avatars.dicebear.com/api/avataaars/${seed}.png?eyes[]=happy&mouth[]=smile&accessories[]=round`;
     });
   };
-  const avatarOptions = generateAvatars();
+  const avatarOptions = generateKawaiiAvatars();
 
   // ---------- CARGAR INFO DEL USUARIO ----------
   useEffect(() => {
@@ -175,7 +175,7 @@ const ActualizarInfo = () => {
       {avatarModalOpen && (
         <div className="avatar-modal-overlay">
           <div className="avatar-modal-content">
-            <h3 className="modal-title">Seleccionar Avatar</h3>
+            <h3 className="modal-title">Seleccionar Avatar Kawaii</h3>
             <div className="avatar-options-grid">
               {avatarOptions.map((url, i) => (
                 <img
@@ -186,7 +186,7 @@ const ActualizarInfo = () => {
                     setAvatar(url);
                     setAvatarModalOpen(false);
                   }}
-                  alt={`avatar-${i}`}
+                  alt={`avatar-kawaii-${i}`}
                 />
               ))}
             </div>
