@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./Ajustes.css";
@@ -12,11 +12,8 @@ const Ajustes = () => {
     avatar: "",
   });
 
-  // ⚠️ ref SOLO existe pero no se usa en el menú
-  const fileInputRef = useRef(null);
-
   // =============================
-  // TRAER DATOS USUARIO
+  // TRAER DATOS DEL USUARIO
   // =============================
   useEffect(() => {
     const fetchUsuario = async () => {
@@ -25,7 +22,7 @@ const Ajustes = () => {
         if (!token) return;
 
         const res = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/perfil`,
+          `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/perfil`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -40,46 +37,14 @@ const Ajustes = () => {
     fetchUsuario();
   }, []);
 
-  // =============================
-  // SUBIR AVATAR (SOLO CUANDO SE LLAME)
-  // =============================
-  const handleFileChange = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", "VIBE-U");
-
-    try {
-      const resCloudinary = await axios.post(
-        "https://api.cloudinary.com/v1_1/dm5yhmz9a/image/upload",
-        formData
-      );
-
-      const avatarUrl = resCloudinary.data.secure_url;
-
-      const token = localStorage.getItem("token");
-      await axios.put(
-        `${import.meta.env.VITE_BACKEND_URL}/actualizar`,
-        { avatar: avatarUrl },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      setUsuario({ ...usuario, avatar: avatarUrl });
-    } catch (error) {
-      console.error("Error al subir avatar:", error);
-    }
-  };
-
   return (
     <div className="ajustes-container">
       <div className="ajustes-card">
         <h2>Ajustes</h2>
 
-        {/* ✅ AVATAR NO CLICKEABLE (MENÚ HAMBURGUESA / PERFIL SIMPLE) */}
+        {/* ✅ AVATAR SOLO VISUAL (NO CLICK, NO UPLOAD) */}
         <div className="avatar-section">
-          <div className="avatar-container">
+          <div className="avatar-container no-click">
             {usuario.avatar ? (
               <img src={usuario.avatar} alt="Avatar" />
             ) : (
@@ -87,14 +52,6 @@ const Ajustes = () => {
             )}
           </div>
         </div>
-
-        {/* ✅ INPUT OCULTO (NO SE ACTIVA DESDE EL AVATAR) */}
-        <input
-          type="file"
-          ref={fileInputRef}
-          onChange={handleFileChange}
-          style={{ display: "none" }}
-        />
 
         <div className="user-info">
           <p>
@@ -105,7 +62,7 @@ const Ajustes = () => {
           </p>
         </div>
 
-        <button onClick={() => navigate("/dashboard")}>
+        <button className="volver-btn" onClick={() => navigate("/dashboard")}>
           Volver al Dashboard
         </button>
       </div>
