@@ -24,14 +24,17 @@ const ActualizarInfo = () => {
   const [userUniversity, setUserUniversity] = useState("");
   const [userCareer, setUserCareer] = useState("");
 
-  /* ================= AVATARES KAWAII ================= */
-  const AVATAR_COUNT = 80;
-  const avatarOptions = Array.from({ length: AVATAR_COUNT }, (_, i) => {
-    const seed = `kawaii_${i + 1}`;
-    return `https://api.dicebear.com/7.x/adventurer/png?seed=${seed}&size=200`;
-  });
+  // ---------- AVATARES DINÁMICOS MULTIAVATAR ----------
+  const AVATAR_COUNT = 50; // Cambia este número a la cantidad de avatares que quieras
+  const generateAvatars = () => {
+    return Array.from({ length: AVATAR_COUNT }, (_, i) => {
+      const seed = `usuario_${i + 1}`; // Seed único por avatar
+      return `https://api.multiavatar.com/${seed}.png`;
+    });
+  };
+  const avatarOptions = generateAvatars();
 
-  /* ================= PERFIL ================= */
+  // ---------- CARGAR INFO DEL USUARIO ----------
   useEffect(() => {
     const fetchUserInfo = async () => {
       const token = localStorage.getItem("token");
@@ -39,29 +42,26 @@ const ActualizarInfo = () => {
 
       try {
         const res = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/perfil`,
+          `${import.meta.env.VITE_BACKEND_URL}/perfil`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
-        const u = res.data.usuario || res.data;
-
-        setUserName(u.nombre || "");
-        setAvatar(u.avatar || null);
-        setUserPhone(u.telefono || "");
-        setUserAddress(u.direccion || "");
-        setUserCedula(u.cedula || "");
-        setUserDescription(u.descripcion || "");
-        setUserUniversity(u.universidad || "");
-        setUserCareer(u.carrera || "");
+        setUserName(res.data.nombre || "");
+        setAvatar(res.data.avatar || null); // Avatar fijo del perfil
+        setUserPhone(res.data.telefono || "");
+        setUserAddress(res.data.direccion || "");
+        setUserCedula(res.data.cedula || "");
+        setUserDescription(res.data.descripcion || "");
+        setUserUniversity(res.data.universidad || "");
+        setUserCareer(res.data.carrera || "");
       } catch (err) {
-        console.error(err);
+        console.error("Error perfil:", err.response?.data || err);
       }
     };
 
     fetchUserInfo();
   }, []);
 
-  /* ================= SUBIR FOTO ================= */
   const handleFileClick = () => fileInputRef.current.click();
 
   const handleFileChange = (e) => {
@@ -76,103 +76,141 @@ const ActualizarInfo = () => {
     reader.readAsDataURL(file);
   };
 
-  const handleCroppedAvatar = async (blob) => {
+  // ---------- SUBIR AVATAR CORTADO A CLOUDINARY ----------
+  const handleCroppedAvatar = async (croppedImageBlob) => {
     setCropperModalOpen(false);
-    if (!blob) return;
+    setImageToCrop(null);
+
+    if (!croppedImageBlob) return;
+
+    const safeUserName = userName?.trim()
+      ? userName.replace(/\s+/g, "_")
+      : "usuario_sin_nombre";
 
     const formData = new FormData();
-    formData.append("file", blob);
+    formData.append("file", croppedImageBlob);
     formData.append("upload_preset", "VIBE-U");
-    formData.append("folder", "usuarios/avatars");
+    formData.append("folder", `usuarios/${safeUserName}`);
+    formData.append("public_id", "avatar");
 
-    const res = await axios.post(
-      "https://api.cloudinary.com/v1_1/dm5yhmz9a/image/upload",
-      formData
-    );
-
-    setAvatar(res.data.secure_url);
-    toast.success("Avatar actualizado ✅");
-  };
-
-  /* ================= AVATAR SELECCIONADO → CLOUDINARY ================= */
-  const selectAvatar = async (url) => {
     try {
-      const response = await fetch(url);
-      const blob = await response.blob();
-
-      const formData = new FormData();
-      formData.append("file", blob);
-      formData.append("upload_preset", "VIBE-U");
-      formData.append("folder", "usuarios/avatars");
-
-      const cloud = await axios.post(
+      const res = await axios.post(
         "https://api.cloudinary.com/v1_1/dm5yhmz9a/image/upload",
         formData
       );
-
-      setAvatar(cloud.data.secure_url);
-      setAvatarModalOpen(false);
-      toast.success("Avatar seleccionado ✅");
-    } catch {
-      toast.error("Error al seleccionar avatar");
+      setAvatar(res.data.secure_url);
+      toast.success("Avatar actualizado ✅");
+    } catch (err) {
+      console.error("Cloudinary:", err.response?.data || err);
+      toast.error("Error al subir avatar");
     }
   };
 
-  /* ================= GUARDAR ================= */
+  // ---------- ACTUALIZAR INFO EN BACKEND ----------
   const handleUpdate = async () => {
-    const token = localStorage.getItem("token");
+    try {
+      const token = localStorage.getItem("token");
 
-    await axios.put(
-      `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/actualizar`,
-      {
-        nombre: userName,
-        telefono: userPhone,
-        direccion: userAddress,
-        cedula: userCedula,
-        descripcion: userDescription,
-        universidad: userUniversity,
-        carrera: userCareer,
-        avatar,
-      },
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
+      await axios.put(
+        `${import.meta.env.VITE_BACKEND_URL}/actualizar`,
+        {
+          nombre: userName,
+          telefono: userPhone,
+          direccion: userAddress,
+          cedula: userCedula,
+          descripcion: userDescription,
+          universidad: userUniversity,
+          carrera: userCareer,
+          avatar, // Avatar fijo
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
-    toast.success("Información actualizada ✅");
-    setTimeout(() => navigate("/ajustes"), 1200);
+      toast.success("Información actualizada");
+      setTimeout(() => navigate("/ajustes"), 1200);
+    } catch (err) {
+      console.error("Actualizar:", err.response?.data || err);
+      toast.error("Error al guardar");
+    }
   };
 
   return (
     <div className="actualizar-container">
       <ToastContainer />
 
-      <h2 className="titulo">Actualizar información</h2>
+      <h2 className="titulo">Actualizar información de cuenta</h2>
 
+      {/* ---------- AVATAR ---------- */}
       <div className="avatar-wrapper">
-        <div className="avatar-circle">
-          {avatar ? <img src={avatar} /> : <span>👤</span>}
+        <div className="avatar-circle" onClick={handleFileClick}>
+          {avatar ? (
+            <img src={avatar} alt="Avatar" className="avatar-img-preview" />
+          ) : (
+            <span className="default-avatar">👤</span>
+          )}
         </div>
 
         <div className="btns-avatar">
-          <button className="btn-avatar" onClick={handleFileClick}>
+          <button className="btn-upload" onClick={handleFileClick}>
             Subir foto
           </button>
-          <button className="btn-avatar" onClick={() => setAvatarModalOpen(true)}>
+          <button
+            className="btn-select"
+            onClick={() => setAvatarModalOpen(!avatarModalOpen)}
+          >
             Elegir avatar
           </button>
         </div>
 
-        <input ref={fileInputRef} type="file" hidden onChange={handleFileChange} />
+        <input
+          ref={fileInputRef}
+          type="file"
+          className="input-file-hidden"
+          accept="image/*"
+          onChange={handleFileChange}
+        />
       </div>
 
+      {/* ---------- MODAL DE AVATARES ---------- */}
       {avatarModalOpen && (
-        <div className="avatar-modal">
-          {avatarOptions.map((url, i) => (
-            <img key={i} src={url} className="avatar-option" onClick={() => selectAvatar(url)} />
-          ))}
-          <button onClick={() => setAvatarModalOpen(false)}>Cerrar</button>
+        <div className="avatar-modal-overlay">
+          <div className="avatar-modal-content">
+            <h3 className="modal-title">Seleccionar Avatar</h3>
+            <div className="avatar-options-grid">
+              {avatarOptions.map((url, i) => (
+                <img
+                  key={i}
+                  src={url}
+                  className="avatar-option"
+                  onClick={() => {
+                    setAvatar(url);
+                    setAvatarModalOpen(false);
+                  }}
+                  alt={`avatar-${i}`}
+                />
+              ))}
+            </div>
+            <button
+              className="modal-close-btn"
+              onClick={() => setAvatarModalOpen(false)}
+            >
+              Cerrar
+            </button>
+          </div>
         </div>
       )}
 
+      {/* ---------- MODAL DE CROP ---------- */}
+      {cropperModalOpen && imageToCrop && (
+        <AvatarCropperModal
+          imageSrc={imageToCrop}
+          open={cropperModalOpen}
+          onClose={() => setCropperModalOpen(false)}
+          onCropComplete={handleCroppedAvatar}
+        />
+      )}
+
+      {/* ---------- FORMULARIO ---------- */}
       <div className="form-section">
         {[
           ["Usuario", userName, setUserName],
@@ -181,17 +219,34 @@ const ActualizarInfo = () => {
           ["Cédula", userCedula, setUserCedula],
           ["Universidad", userUniversity, setUserUniversity],
           ["Carrera", userCareer, setUserCareer],
-        ].map(([l, v, s], i) => (
-          <div key={i}>
-            <label>{l}</label>
-            <input value={v} onChange={(e) => s(e.target.value)} />
+        ].map(([label, value, setter], i) => (
+          <div className="field-row" key={i}>
+            <label className="field-label">{label}</label>
+            <input
+              className="field-input"
+              value={value}
+              onChange={(e) => setter(e.target.value)}
+            />
           </div>
         ))}
 
-        <label>Descripción</label>
-        <textarea value={userDescription} onChange={(e) => setUserDescription(e.target.value)} />
+        <div className="field-row">
+          <label className="field-label">Descripción</label>
+          <textarea
+            className="field-input textarea-input"
+            value={userDescription}
+            onChange={(e) => setUserDescription(e.target.value)}
+          />
+        </div>
 
-        <button onClick={handleUpdate}>Guardar cambios</button>
+        <div className="btn-row">
+          <button className="cancel-btn" onClick={() => navigate("/ajustes")}>
+            Cancelar
+          </button>
+          <button className="save-btn" onClick={handleUpdate}>
+            Guardar cambios
+          </button>
+        </div>
       </div>
     </div>
   );
