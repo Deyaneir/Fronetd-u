@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
@@ -14,8 +14,6 @@ const Dashboard = () => {
     const [quote, setQuote] = useState("");
     const [menuOpen, setMenuOpen] = useState(false);
     const [avatar, setAvatar] = useState(null);
-
-    const fileInputRef = useRef(null);
 
     // 🚀 Logout
     const handleLogout = () => {
@@ -74,17 +72,6 @@ const Dashboard = () => {
 
     }, []);
 
-    // 📸 Solo Dashboard permite cambiar avatar
-    const handleFileClick = () => fileInputRef.current.click();
-    const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = () => setAvatar(reader.result);
-            reader.readAsDataURL(file);
-        }
-    };
-
     return (
         <section className="dashboard-section">
             <ToastContainer />
@@ -101,26 +88,13 @@ const Dashboard = () => {
                 <div className="menu-header">
                     <h3 className="menu-title">Menú</h3>
 
-                    {/* AVATAR CLICKEABLE SOLO EN DASHBOARD */}
+                    {/* AVATAR SIN FUNCIONALIDAD CLIC */}
                     <div className="avatar-section">
-                        <div className="avatar-container" onClick={handleFileClick}>
-                            {avatar ? (
-                                <img src={avatar} alt="Avatar" className="avatar-img" />
-                            ) : (
-                                <span className="default-avatar">👤</span>
-                            )}
-                            <div className="avatar-overlay">
-                                <i className="fa fa-camera"></i>
-                            </div>
-                        </div>
-
-                        <input
-                            type="file"
-                            ref={fileInputRef}
-                            onChange={handleFileChange}
-                            className="input-file-hidden"
-                            accept="image/*"
-                        />
+                        {avatar ? (
+                            <img src={avatar} alt="Avatar" className="avatar-img" />
+                        ) : (
+                            <span className="default-avatar">👤</span>
+                        )}
                     </div>
                 </div>
 
