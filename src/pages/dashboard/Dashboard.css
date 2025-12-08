@@ -1,5 +1,5 @@
 /* ---------------------------- */
-/*      DASHBOARD GENERAL       */
+/* DASHBOARD GENERAL       */
 /* ---------------------------- */
 .dashboard-section {
     font-family: 'Poppins', sans-serif;
@@ -113,7 +113,7 @@
 }
 
 /* ---------------------------- */
-/*      MENÚ HAMBURGUESA       */
+/* MENÚ HAMBURGUESA       */
 /* ---------------------------- */
 .hamburger-btn {
     position: fixed;
@@ -139,7 +139,7 @@
 }
 
 /* ---------------------------- */
-/*      MENÚ LATERAL            */
+/* MENÚ LATERAL            */
 /* ---------------------------- */
 .side-menu {
     position: fixed;
@@ -193,10 +193,10 @@
 }
 
 /* ---------------------------- */
-/*      AVATAR                   */
+/* AVATAR (CORREGIDO)      */
 /* ---------------------------- */
 
-/* Contenedor principal del avatar */
+/* Contenedor principal del avatar - solo para centrar */
 .avatar-section {
     display: flex;
     flex-direction: column;
@@ -205,33 +205,39 @@
     width: 100%;
 }
 
+/* 🛑 CORRECCIÓN CLAVE: avatar-container se encarga del círculo */
 .avatar-container {
     width: 100px;
     height: 100px;
-    border-radius: 50%;
+    border-radius: 50%; /* Lo hace circular */
     overflow: hidden;
     cursor: pointer;
     margin-bottom: 10px;
+    
+    /* FUERZA LA RELACIÓN 1:1 para evitar el óvalo */
+    aspect-ratio: 1 / 1; 
+    
+    /* Fondo blanco que se ve si la imagen no carga, ahora es un círculo perfecto */
+    background-color: white; 
 }
 
 .avatar-img {
     width: 100%;
     height: 100%;
+    /* IMPOTANTE: object-fit: cover evita que la imagen se estire y se vea ovalada */
     object-fit: cover;
+    border-radius: 50%; /* Capa extra para asegurar la forma */
 }
 
-.menu-title {
-    width: 100%;
-    text-align: center; /* Esto centra la palabra "Menú" */
-    margin: 0;
-    color: white;
-    font-size: 1.2rem;
-}
 .default-avatar {
   font-size: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
+  /* Asegura que el emoji ocupe todo el contenedor */
+  width: 100%; 
+  height: 100%;
+  color: #760265;
 }
 
 .avatar-overlay {
@@ -247,6 +253,20 @@
   justify-content: center;
   font-size: 12px;
   cursor: pointer;
+}
+
+/* Fin de la sección de AVATAR */
+
+/* ---------------------------- */
+/* Resto de estilos sin cambios */
+/* ---------------------------- */
+
+.menu-title {
+    width: 100%;
+    text-align: center; 
+    margin: 0;
+    color: white;
+    font-size: 1.2rem;
 }
 
 /* Botones verticales debajo del avatar */
@@ -274,18 +294,6 @@
 .menu-buttons button:hover {
     background: rgba(255, 255, 255, 0.1); /* efecto hover */
 }
-
-
-/* Emoji por defecto */
-.default-avatar {
-  font-size: 50px;          /* Ajusta según el tamaño del círculo */
-  margin: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-
 
 .change-avatar-btn {
   margin-bottom: 5px;
