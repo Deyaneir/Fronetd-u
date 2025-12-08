@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import storeAuth from "../../context/storeAuth";
@@ -11,9 +11,10 @@ const Ajustes = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [avatar, setAvatar] = useState(null);
 
+  const fileInputRef = useRef(null);
   const navigate = useNavigate();
 
-  // 🔹 Cargar avatar (SOLO LECTURA)
+  // 🔹 Cargar avatar
   useEffect(() => {
     const fetchAvatar = async () => {
       try {
@@ -21,7 +22,7 @@ const Ajustes = () => {
         if (!token || !import.meta.env.VITE_BACKEND_URL) return;
 
         const res = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/perfil`,
+          `${import.meta.env.VITE_BACKEND_URL}/perfil`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
@@ -57,9 +58,8 @@ const Ajustes = () => {
         <div className="menu-header">
           <h3 className="menu-title">Menú</h3>
 
-          {/* ✅ AVATAR SOLO VISUAL */}
           <div className="avatar-section">
-            <div className="avatar-container no-click">
+            <div className="avatar-container">
               {avatar ? (
                 <img src={avatar} alt="Avatar" className="avatar-img" />
               ) : (
@@ -81,7 +81,7 @@ const Ajustes = () => {
       {/* TÍTULO */}
       <h2 className="ajustes-title">Ajustes</h2>
 
-      {/* CONTENEDOR PRINCIPAL */}
+      {/* ✅ CONTENEDOR QUE LIMITA EL ANCHO */}
       <div className="ajustes-container">
 
         {/* CUENTA */}
