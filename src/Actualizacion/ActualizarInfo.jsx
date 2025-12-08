@@ -11,8 +11,8 @@ const ActualizarInfo = () => {
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
 
-  const [avatar, setAvatar] = useState(null);
-  const [selectedAvatarUrl, setSelectedAvatarUrl] = useState(null);
+  const [avatar, setAvatar] = useState(null); // Avatar principal
+  const [selectedAvatarUrl, setSelectedAvatarUrl] = useState(null); // Avatar temporal
   const [avatarModalOpen, setAvatarModalOpen] = useState(false);
 
   const [imageToCrop, setImageToCrop] = useState(null);
@@ -146,7 +146,6 @@ const ActualizarInfo = () => {
     }
   };
 
-  // ---------- RENDER ----------
   return (
     <div className="actualizar-container">
       <ToastContainer />
@@ -184,29 +183,26 @@ const ActualizarInfo = () => {
         />
       </div>
 
-      {/* ---------- MODAL AVATARES ---------- */}
+      {/* ---------- MINI POP-OVER AVATARES ---------- */}
       {avatarModalOpen && (
-        <div className="avatar-modal-overlay">
-          <div className="avatar-modal-content">
-            <h3 className="modal-title">Seleccionar Avatar Kawaii</h3>
-            <p>Elige una opción y presiona 'Aplicar' para fijarla en tu perfil.</p>
-
+        <div className="avatar-popover-overlay">
+          <div className="avatar-popover-content">
+            <h4 className="popover-title">Seleccionar Avatar Kawaii</h4>
             <div className="avatar-options-grid">
               {avatarOptions.map((url, i) => (
-                <div 
+                <div
                   key={i}
                   className={`avatar-option ${selectedAvatarUrl === url ? 'selected' : ''}`}
                   onClick={() => setSelectedAvatarUrl(url)}
                 >
-                  <img src={url} alt={`kawaii-avatar-${i}`} />
+                  <img src={url} alt={`avatar-${i}`} />
                   {selectedAvatarUrl === url && <span className="selected-check">✓</span>}
                 </div>
               ))}
             </div>
-
-            <div className="modal-btns-row">
+            <div className="popover-btn-row">
               <button
-                className="modal-apply-btn"
+                className="popover-apply-btn"
                 onClick={() => {
                   setAvatar(selectedAvatarUrl);
                   setAvatarModalOpen(false);
@@ -216,7 +212,7 @@ const ActualizarInfo = () => {
                 Aplicar
               </button>
               <button
-                className="modal-close-btn"
+                className="popover-cancel-btn"
                 onClick={() => {
                   setSelectedAvatarUrl(avatar);
                   setAvatarModalOpen(false);
