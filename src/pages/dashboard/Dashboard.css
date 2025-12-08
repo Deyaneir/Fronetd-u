@@ -198,12 +198,10 @@
 
 /* Contenedor principal del avatar - le damos el tamaño y la forma circular */
 .avatar-section {
-    /* --- ✅ ESTILOS CLAVE AÑADIDOS/MODIFICADOS --- */
-    width: 80px; /* Tamaño fijo para el contenedor */
-    height: 80px; /* Tamaño fijo para el contenedor */
-    border-radius: 50%; /* Lo hace circular */
+    width: 80px;         
+    height: 80px;        
+    border-radius: 50%; 
     overflow: hidden;
-    /* --- FIN ESTILOS CLAVE --- */
     
     display: flex;
     justify-content: center;
@@ -218,14 +216,14 @@
 }
 
 /* Ya no necesitamos avatar-container si usamos avatar-section directamente */
-/* .avatar-container {
+.avatar-container {
     width: 100px;
     height: 100px;
     border-radius: 50%;
     overflow: hidden;
     cursor: pointer;
     margin-bottom: 10px;
-} */
+} 
 
 .avatar-img {
     width: 100%;
