@@ -20,17 +20,24 @@ const MUsuario = () => {
   const [userUniversity, setUserUniversity] = useState("");
   const [userCareer, setUserCareer] = useState("");
 
-  // 🔑 1. Función corregida: NO añade el timestamp para evitar la recarga constante.
+  // Función de utilidad para obtener la URL sin cambios innecesarios
   const getAvatarUrl = (url) => {
     if (!url) return null;
-    return url; // Ya no tiene ?t=${new Date().getTime()}
+    return url; 
   };
 
-  // 🔑 2. Función para generar un avatar por defecto FIJO (ej: DiceBear)
-  const getDefaultAvatar = (seed) => {
-    // Usamos un estilo 'micah' (kawaii) y una seed fija
-    return `https://api.dicebear.com/7.x/micah/svg?seed=${seed}`;
-  };
+  // 🔑 NUEVA FUNCIÓN CLAVE: Asegura que el avatar de DiceBear tenga una seed
+  const ensureFixedSeed = (url, name) => {
+    // Verifica si es una URL de DiceBear y le falta el parámetro ?seed=
+    if (url && url.includes("dicebear") && !url.includes("?seed=")) {
+      const defaultStyle = "micah"; 
+      // Crea una seed basada en el nombre para que el avatar sea fijo para el usuario
+      const seed = name?.trim().replace(/\s+/g, '_') || "default-user-vibe"; 
+      return `https://api.dicebear.com/7.x/${defaultStyle}/svg?seed=${seed}`;
+    }
+    return url; // Devuelve la URL original si ya es fija (Cloudinary o ya tiene seed)
+  };
+
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -42,9 +49,10 @@ const MUsuario = () => {
           `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/perfil`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        
-        const userData = response.data;
+        
+        const userData = response.data;
 
+        // Actualizar datos de usuario
         if (userData?.nombre) setUserName(userData.nombre);
         if (userData?.estado) setUserStatus(userData.estado);
         if (userData?.telefono) setUserPhone(userData.telefono);
@@ -54,15 +62,11 @@ const MUsuario = () => {
         if (userData?.universidad) setUserUniversity(userData.universidad);
         if (userData?.carrera) setUserCareer(userData.carrera);
 
-        // 🔑 3. Lógica del avatar: Si no hay avatar guardado, genera uno fijo.
-        if (userData?.avatar) {
-            setAvatar(userData.avatar);
-        } else {
-            // Usa el ID del usuario o un string fijo como seed para que el avatar no cambie
-            // Aquí uso el nombre para que el avatar sea único por usuario (si el nombre es estable)
-            const seed = userData?.nombre || 'default-user-vibe'; 
-            setAvatar(getDefaultAvatar(seed)); 
-        }
+        // 🔑 APLICAR LA CORRECCIÓN DE AVATAR AL CARGAR
+        let loadedAvatar = userData?.avatar || null;
+        const fixedAvatar = ensureFixedSeed(loadedAvatar, userData?.nombre);
+
+        setAvatar(fixedAvatar); // Guarda la URL fija en el estado
 
       } catch (error) {
         console.error("Error al obtener el usuario:", error);
@@ -73,12 +77,12 @@ const MUsuario = () => {
     };
 
     fetchUserInfo();
-  }, []);
+  }, []); // Se ejecuta una sola vez al montar el componente
 
   const renderRightContent = () => {
-    // Usa el avatar ya cargado en el estado
+    // Usa el avatar ya cargado y corregido en el estado
     const currentAvatarUrl = getAvatarUrl(avatar);
-    
+    
     switch (activeTab) {
       case "cuenta":
         return (
@@ -162,10 +166,10 @@ const MUsuario = () => {
                 backgroundColor: "#ddd",
               }}
             >
-              {/* Usa la URL ya procesada */}
+              {/* Usa la URL ya corregida y guardada en el estado 'avatar' */}
               {avatar ? (
                 <img
-                  src={getAvatarUrl(avatar)} 
+                  src={getAvatarUrl(avatar)} 
                   style={{ width: "100%", height: "100%", objectFit: "cover" }}
                 />
               ) : (
