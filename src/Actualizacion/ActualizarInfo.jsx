@@ -12,7 +12,6 @@ const ActualizarInfo = () => {
   const fileInputRef = useRef(null);
 
   const [avatar, setAvatar] = useState(null);
-  const [selectedAvatarUrl, setSelectedAvatarUrl] = useState(null);
   const [avatarModalOpen, setAvatarModalOpen] = useState(false);
   const [imageToCrop, setImageToCrop] = useState(null);
   const [cropperModalOpen, setCropperModalOpen] = useState(false);
@@ -25,30 +24,15 @@ const ActualizarInfo = () => {
   const [userUniversity, setUserUniversity] = useState("");
   const [userCareer, setUserCareer] = useState("");
 
-  // ---------- AVATARES KAWAIIS FIJOS ----------
-  const AVATAR_COUNT = 12;
+  // ---------- AVATARES DINÁMICOS MULTIAVATAR ----------
+  const AVATAR_COUNT = 50; // Cambia este número a la cantidad de avatares que quieras
   const generateAvatars = () => {
-    const styles = ["adventurer", "micah"];
-    const seeds = [
-      "Aura", "Kiko", "Leo", "Panda", "Luna", "Star",
-      "Bob", "Ivy", "Felix", "Nina", "Ryu", "Toby"
-    ];
     return Array.from({ length: AVATAR_COUNT }, (_, i) => {
-      const style = styles[i % 2];
-      const seed = seeds[i];
-      return `https://api.dicebear.com/7.x/${style}/svg?seed=${seed}`;
+      const seed = `usuario_${i + 1}`; // Seed único por avatar
+      return `https://api.multiavatar.com/${seed}.png`;
     });
   };
   const avatarOptions = generateAvatars();
-
-  const ensureFixedSeed = (url, name) => {
-    if (url && url.includes("dicebear") && !url.includes("?seed=")) {
-      const defaultStyle = "micah";
-      const seed = name?.trim() || "default-user";
-      return `https://api.dicebear.com/7.x/${defaultStyle}/svg?seed=${seed}`;
-    }
-    return url;
-  };
 
   // ---------- CARGAR INFO DEL USUARIO ----------
   useEffect(() => {
@@ -58,22 +42,18 @@ const ActualizarInfo = () => {
 
       try {
         const res = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/perfil`,
+          `${import.meta.env.VITE_BACKEND_URL}/perfil`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
-        const userData = res.data;
-        const fixedAvatar = ensureFixedSeed(userData.avatar, userData.nombre);
-
-        setUserName(userData.nombre || "");
-        setAvatar(fixedAvatar);
-        setSelectedAvatarUrl(fixedAvatar);
-        setUserPhone(userData.telefono || "");
-        setUserAddress(userData.direccion || "");
-        setUserCedula(userData.cedula || "");
-        setUserDescription(userData.descripcion || "");
-        setUserUniversity(userData.universidad || "");
-        setUserCareer(userData.carrera || "");
+        setUserName(res.data.nombre || "");
+        setAvatar(res.data.avatar || null); // Avatar fijo del perfil
+        setUserPhone(res.data.telefono || "");
+        setUserAddress(res.data.direccion || "");
+        setUserCedula(res.data.cedula || "");
+        setUserDescription(res.data.descripcion || "");
+        setUserUniversity(res.data.universidad || "");
+        setUserCareer(res.data.carrera || "");
       } catch (err) {
         console.error("Error perfil:", err.response?.data || err);
       }
@@ -82,7 +62,6 @@ const ActualizarInfo = () => {
     fetchUserInfo();
   }, []);
 
-  // ---------- FUNCIONES DE AVATAR ----------
   const handleFileClick = () => fileInputRef.current.click();
 
   const handleFileChange = (e) => {
@@ -93,14 +72,15 @@ const ActualizarInfo = () => {
     reader.onload = () => {
       setImageToCrop(reader.result);
       setCropperModalOpen(true);
-      setAvatarModalOpen(false);
     };
     reader.readAsDataURL(file);
   };
 
+  // ---------- SUBIR AVATAR CORTADO A CLOUDINARY ----------
   const handleCroppedAvatar = async (croppedImageBlob) => {
     setCropperModalOpen(false);
     setImageToCrop(null);
+
     if (!croppedImageBlob) return;
 
     const safeUserName = userName?.trim()
@@ -119,7 +99,6 @@ const ActualizarInfo = () => {
         formData
       );
       setAvatar(res.data.secure_url);
-      setSelectedAvatarUrl(res.data.secure_url);
       toast.success("Avatar actualizado ✅");
     } catch (err) {
       console.error("Cloudinary:", err.response?.data || err);
@@ -127,14 +106,13 @@ const ActualizarInfo = () => {
     }
   };
 
-  // ---------- ACTUALIZAR INFO ----------
+  // ---------- ACTUALIZAR INFO EN BACKEND ----------
   const handleUpdate = async () => {
-    const token = localStorage.getItem("token");
-    const finalAvatar = selectedAvatarUrl;
-
     try {
+      const token = localStorage.getItem("token");
+
       await axios.put(
-        `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/actualizar`,
+        `${import.meta.env.VITE_BACKEND_URL}/actualizar`,
         {
           nombre: userName,
           telefono: userPhone,
@@ -143,7 +121,7 @@ const ActualizarInfo = () => {
           descripcion: userDescription,
           universidad: userUniversity,
           carrera: userCareer,
-          avatar: finalAvatar,
+          avatar, // Avatar fijo
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -162,14 +140,14 @@ const ActualizarInfo = () => {
 
       <h2 className="titulo">Actualizar información de cuenta</h2>
 
-      {/* AVATAR */}
+      {/* ---------- AVATAR ---------- */}
       <div className="avatar-wrapper">
         <div className="avatar-circle" onClick={handleFileClick}>
-          <img
-            src={avatar || "https://via.placeholder.com/150"}
-            alt="Avatar"
-            className="avatar-img-preview"
-          />
+          {avatar ? (
+            <img src={avatar} alt="Avatar" className="avatar-img-preview" />
+          ) : (
+            <span className="default-avatar">👤</span>
+          )}
         </div>
 
         <div className="btns-avatar">
@@ -178,7 +156,7 @@ const ActualizarInfo = () => {
           </button>
           <button
             className="btn-select"
-            onClick={() => setAvatarModalOpen(true)}
+            onClick={() => setAvatarModalOpen(!avatarModalOpen)}
           >
             Elegir avatar
           </button>
@@ -193,49 +171,36 @@ const ActualizarInfo = () => {
         />
       </div>
 
-      {/* MINI POP-OVER AVATARES */}
+      {/* ---------- MODAL DE AVATARES ---------- */}
       {avatarModalOpen && (
-        <div className="avatar-popover-overlay">
-          <div className="avatar-popover-content">
-            <h4 className="popover-title">Seleccionar Avatar Kawaii</h4>
+        <div className="avatar-modal-overlay">
+          <div className="avatar-modal-content">
+            <h3 className="modal-title">Seleccionar Avatar</h3>
             <div className="avatar-options-grid">
               {avatarOptions.map((url, i) => (
-                <div
+                <img
                   key={i}
-                  className={`avatar-option ${selectedAvatarUrl === url ? 'selected' : ''}`}
-                  onClick={() => setSelectedAvatarUrl(url)}
-                >
-                  <img src={url} alt={`avatar-${i}`} />
-                  {selectedAvatarUrl === url && <span className="selected-check">✓</span>}
-                </div>
+                  src={url}
+                  className="avatar-option"
+                  onClick={() => {
+                    setAvatar(url);
+                    setAvatarModalOpen(false);
+                  }}
+                  alt={`avatar-${i}`}
+                />
               ))}
             </div>
-            <div className="popover-btn-row">
-              <button
-                className="popover-apply-btn"
-                onClick={() => {
-                  setAvatar(selectedAvatarUrl);
-                  setAvatarModalOpen(false);
-                  toast.success("Avatar seleccionado ✅");
-                }}
-              >
-                Aplicar
-              </button>
-              <button
-                className="popover-cancel-btn"
-                onClick={() => {
-                  setSelectedAvatarUrl(avatar);
-                  setAvatarModalOpen(false);
-                }}
-              >
-                Cancelar
-              </button>
-            </div>
+            <button
+              className="modal-close-btn"
+              onClick={() => setAvatarModalOpen(false)}
+            >
+              Cerrar
+            </button>
           </div>
         </div>
       )}
 
-      {/* MODAL DE CROP */}
+      {/* ---------- MODAL DE CROP ---------- */}
       {cropperModalOpen && imageToCrop && (
         <AvatarCropperModal
           imageSrc={imageToCrop}
@@ -245,7 +210,7 @@ const ActualizarInfo = () => {
         />
       )}
 
-      {/* FORMULARIO */}
+      {/* ---------- FORMULARIO ---------- */}
       <div className="form-section">
         {[
           ["Usuario", userName, setUserName],
