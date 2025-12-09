@@ -150,7 +150,6 @@ const ActualizarInfo = () => {
       <ToastContainer />
       <h2 className="titulo">Actualizar información de cuenta</h2>
 
-      {/* Avatar */}
       <div className="avatar-wrapper">
         <div className="avatar-circle" onClick={handleFileClick}>
           <img src={avatar || "https://via.placeholder.com/150"} alt="Avatar" className="avatar-img-preview"/>
@@ -162,7 +161,6 @@ const ActualizarInfo = () => {
         <input ref={fileInputRef} type="file" className="input-file-hidden" accept="image/*" onChange={handleFileChange}/>
       </div>
 
-      {/* Popover de avatars */}
       {avatarModalOpen && (
         <div className="avatar-popover-overlay">
           <div className="avatar-popover-content">
@@ -190,7 +188,6 @@ const ActualizarInfo = () => {
         </div>
       )}
 
-      {/* Modal crop */}
       {cropperModalOpen && imageToCrop && (
         <AvatarCropperModal
           imageSrc={imageToCrop}
@@ -200,7 +197,6 @@ const ActualizarInfo = () => {
         />
       )}
 
-      {/* Formulario */}
       <div className="form-section">
         {[
           ["Usuario", userName, setUserName],
