@@ -224,50 +224,41 @@ const MUsuario = () => {
       </button>
 
       {/* MENÚ DESLIZABLE (side-menu) */}
-       <nav className={`side-menu ${menuOpen ? "show" : ""}`}>
+      <nav className={`side-menu ${menuOpen ? "show" : ""}`}>
 
-                {/* TOP DEL MENÚ */}
-                <div className="menu-header">
-                    <h3 className="menu-title">Menú</h3>
+    {/* TOP DEL MENÚ */}
+    <div className="menu-header">
+        <h3 className="menu-title">Menú</h3>
 
-                    {/* Avatar */}
-                    <div className="avatar-section">
-                
-                            {avatar ? (
-                                <img src={avatar} alt="Avatar" className="avatar-img" />
-                            ) : (
-                                <span className="default-avatar">👤</span>
-                            )}
-                            <div className="avatar-overlay">
-                                <i className="fa fa-camera"></i>
-                            </div>
-                        </div>
+        {/* Avatar */}
+        <div className="avatar-section">
+            <div className="avatar-container">
+                {avatar ? (
+                    <img src={avatar} alt="Avatar" className="avatar-img" />
+                ) : (
+                    <span className="default-avatar">👤</span>
+                )}
+                {/* Overlay eliminado para que no parezca clickeable */}
+            </div>
+        </div>
+    </div>
 
-                        <input
-                            type="file"
-                            ref={fileInputRef}
-                            onChange={handleFileChange}
-                            className="input-file-hidden"
-                            accept="image/*"
-                        />
-                    </div>
-                </div>
+    {/* BOTONES DEL MENÚ */}
+    <div className="menu-buttons">
+        <button onClick={() => navigate("/Dashboard")}>Inicio</button>
+        <button onClick={() => navigate("/MUsuario")}>Mi cuenta</button>
+        <button onClick={() => {}}>Favoritos</button>
+        <button onClick={() => navigate("/Ajustes")}>Ajustes</button>
+        <button onClick={handleLogout}>Cerrar sesión</button>
+    </div>
+</nav>
 
-                {/* BOTONES DEL MENÚ */}
-                <div className="menu-buttons">
-                    <button onClick={() => navigate("/Dashboard")}>Inicio</button>
-                    <button onClick={() => navigate("/MUsuario")}>Mi cuenta</button>
-                    <button onClick={() => { }}>Favoritos</button>
-                    <button onClick={() => navigate("/Ajustes")}>Ajustes</button>
-                    <button onClick={handleLogout}>Cerrar sesión</button>
-                </div>
-            </nav>
+{/* OVERLAY DEL MENÚ */}
+<div
+    className={`menu-overlay ${menuOpen ? "show" : ""}`}
+    onClick={() => setMenuOpen(false)}
+></div>
 
-            {/* OVERLAY DEL MENÚ */}
-            <div
-                className={`menu-overlay ${menuOpen ? "show" : ""}`}
-                onClick={() => setMenuOpen(false)}
-            ></div>
 
         <div className="menu-buttons">
           <button onClick={() => navigate("/Dashboard")}>Inicio</button>
