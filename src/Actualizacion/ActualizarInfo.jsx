@@ -11,10 +11,9 @@ const ActualizarInfo = () => {
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
 
-  const [avatar, setAvatar] = useState(null); // Avatar principal (URL fijo)
-  const [selectedAvatarUrl, setSelectedAvatarUrl] = useState(null); // Avatar temporal
+  const [avatar, setAvatar] = useState(null);
+  const [selectedAvatarUrl, setSelectedAvatarUrl] = useState(null);
   const [avatarModalOpen, setAvatarModalOpen] = useState(false);
-
   const [imageToCrop, setImageToCrop] = useState(null);
   const [cropperModalOpen, setCropperModalOpen] = useState(false);
 
@@ -26,14 +25,11 @@ const ActualizarInfo = () => {
   const [userUniversity, setUserUniversity] = useState("");
   const [userCareer, setUserCareer] = useState("");
 
-  // ---------- AVATARES KAWAIIS FIJOS ----------
+  // AVATARES FIJOS
   const AVATAR_COUNT = 12;
   const generateAvatars = () => {
     const styles = ["adventurer", "micah"];
-    const seeds = [
-      "Aura", "Kiko", "Leo", "Panda", "Luna", "Star",
-      "Bob", "Ivy", "Felix", "Nina", "Ryu", "Toby"
-    ];
+    const seeds = ["Aura","Kiko","Leo","Panda","Luna","Star","Bob","Ivy","Felix","Nina","Ryu","Toby"];
     return Array.from({ length: AVATAR_COUNT }, (_, i) => {
       const style = styles[i % 2];
       const seed = seeds[i];
@@ -42,7 +38,6 @@ const ActualizarInfo = () => {
   };
   const avatarOptions = generateAvatars();
 
-  // ---------- CORREGIR URL DE AVATAR ----------
   const ensureFixedSeed = (url, name) => {
     if (url && url.includes("dicebear") && !url.includes("?seed=")) {
       const defaultStyle = "micah";
@@ -52,7 +47,6 @@ const ActualizarInfo = () => {
     return url;
   };
 
-  // ---------- CARGAR INFO DEL USUARIO ----------
   useEffect(() => {
     const fetchUserInfo = async () => {
       const token = localStorage.getItem("token");
@@ -63,7 +57,6 @@ const ActualizarInfo = () => {
           `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/perfil`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
-
         const userData = res.data;
         const fixedAvatar = ensureFixedSeed(userData.avatar, userData.nombre);
 
@@ -80,11 +73,9 @@ const ActualizarInfo = () => {
         console.error("Error perfil:", err.response?.data || err);
       }
     };
-
     fetchUserInfo();
   }, []);
 
-  // ---------- FUNCIONES DE AVATAR ----------
   const handleFileClick = () => fileInputRef.current.click();
 
   const handleFileChange = (e) => {
@@ -129,11 +120,8 @@ const ActualizarInfo = () => {
     }
   };
 
-  // ---------- ACTUALIZAR INFO ----------
   const handleUpdate = async () => {
     const token = localStorage.getItem("token");
-    const finalAvatar = selectedAvatarUrl;
-
     try {
       await axios.put(
         `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/actualizar`,
@@ -145,11 +133,10 @@ const ActualizarInfo = () => {
           descripcion: userDescription,
           universidad: userUniversity,
           carrera: userCareer,
-          avatar: finalAvatar,
+          avatar: selectedAvatarUrl,
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
       toast.success("Información actualizada");
       setTimeout(() => navigate("/ajustes"), 1200);
     } catch (err) {
@@ -161,94 +148,59 @@ const ActualizarInfo = () => {
   return (
     <div className="actualizar-container">
       <ToastContainer />
-
       <h2 className="titulo">Actualizar información de cuenta</h2>
 
-      {/* ---------- AVATAR ---------- */}
+      {/* Avatar */}
       <div className="avatar-wrapper">
         <div className="avatar-circle" onClick={handleFileClick}>
-          <img 
-            src={avatar || "https://via.placeholder.com/150"} 
-            alt="Avatar" 
-            className="avatar-img-preview" 
-          />
+          <img src={avatar || "https://via.placeholder.com/150"} alt="Avatar" className="avatar-img-preview"/>
         </div>
-
         <div className="btns-avatar">
-          <button className="btn-upload" onClick={handleFileClick}>
-            Subir foto
-          </button>
-          <button
-            className="btn-select"
-            onClick={() => setAvatarModalOpen(true)}
-          >
-            Elegir avatar
-          </button>
+          <button className="btn-upload" onClick={handleFileClick}>Subir foto</button>
+          <button className="btn-select" onClick={() => setAvatarModalOpen(true)}>Elegir avatar</button>
         </div>
-
-        <input
-          ref={fileInputRef}
-          type="file"
-          className="input-file-hidden"
-          accept="image/*"
-          onChange={handleFileChange}
-        />
+        <input ref={fileInputRef} type="file" className="input-file-hidden" accept="image/*" onChange={handleFileChange}/>
       </div>
 
-      {/* ---------- MINI POP-OVER AVATARES ---------- */}
+      {/* Popover de avatars */}
       {avatarModalOpen && (
         <div className="avatar-popover-overlay">
           <div className="avatar-popover-content">
             <h4 className="popover-title">Seleccionar Avatar Kawaii</h4>
             <div className="avatar-options-grid">
               {avatarOptions.map((url, i) => (
-                <div
-                  key={i}
-                  className={`avatar-option ${selectedAvatarUrl === url ? 'selected' : ''}`}
-                  onClick={() => setSelectedAvatarUrl(url)}
-                >
+                <div key={i} className={`avatar-option ${selectedAvatarUrl===url?'selected':''}`} onClick={()=>setSelectedAvatarUrl(url)}>
                   <img src={url} alt={`avatar-${i}`} />
-                  {selectedAvatarUrl === url && <span className="selected-check">✓</span>}
+                  {selectedAvatarUrl===url && <span className="selected-check">✓</span>}
                 </div>
               ))}
             </div>
-
             <div className="popover-btn-row">
-              <button
-                className="popover-apply-btn"
-                onClick={() => {
-                  setAvatar(selectedAvatarUrl);
-                  setAvatarModalOpen(false);
-                  toast.success("Avatar seleccionado ✅");
-                }}
-              >
-                Aplicar
-              </button>
-              <button
-                className="popover-cancel-btn"
-                onClick={() => {
-                  setSelectedAvatarUrl(avatar);
-                  setAvatarModalOpen(false);
-                }}
-              >
-                Cancelar
-              </button>
+              <button className="popover-apply-btn" onClick={()=>{
+                setAvatar(selectedAvatarUrl);
+                setAvatarModalOpen(false);
+                toast.success("Avatar seleccionado ✅");
+              }}>Aplicar</button>
+              <button className="popover-cancel-btn" onClick={()=>{
+                setSelectedAvatarUrl(avatar);
+                setAvatarModalOpen(false);
+              }}>Cancelar</button>
             </div>
           </div>
         </div>
       )}
 
-      {/* ---------- MODAL DE CROP ---------- */}
+      {/* Modal crop */}
       {cropperModalOpen && imageToCrop && (
         <AvatarCropperModal
           imageSrc={imageToCrop}
           open={cropperModalOpen}
-          onClose={() => setCropperModalOpen(false)}
+          onClose={()=>setCropperModalOpen(false)}
           onCropComplete={handleCroppedAvatar}
         />
       )}
 
-      {/* ---------- FORMULARIO ---------- */}
+      {/* Formulario */}
       <div className="form-section">
         {[
           ["Usuario", userName, setUserName],
@@ -256,34 +208,20 @@ const ActualizarInfo = () => {
           ["Dirección", userAddress, setUserAddress],
           ["Cédula", userCedula, setUserCedula],
           ["Universidad", userUniversity, setUserUniversity],
-          ["Carrera", userCareer, setUserCareer],
-        ].map(([label, value, setter], i) => (
+          ["Carrera", userCareer, setUserCareer]
+        ].map(([label,value,setter],i)=>(
           <div className="field-row" key={i}>
             <label className="field-label">{label}</label>
-            <input
-              className="field-input"
-              value={value}
-              onChange={(e) => setter(e.target.value)}
-            />
+            <input className="field-input" value={value} onChange={(e)=>setter(e.target.value)}/>
           </div>
         ))}
-
         <div className="field-row">
           <label className="field-label">Descripción</label>
-          <textarea
-            className="field-input textarea-input"
-            value={userDescription}
-            onChange={(e) => setUserDescription(e.target.value)}
-          />
+          <textarea className="field-input textarea-input" value={userDescription} onChange={(e)=>setUserDescription(e.target.value)}/>
         </div>
-
         <div className="btn-row">
-          <button className="cancel-btn" onClick={() => navigate("/ajustes")}>
-            Cancelar
-          </button>
-          <button className="save-btn" onClick={handleUpdate}>
-            Guardar cambios
-          </button>
+          <button className="cancel-btn" onClick={()=>navigate("/ajustes")}>Cancelar</button>
+          <button className="save-btn" onClick={handleUpdate}>Guardar cambios</button>
         </div>
       </div>
     </div>
