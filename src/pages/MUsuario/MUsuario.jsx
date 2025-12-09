@@ -232,7 +232,7 @@ const MUsuario = () => {
 
                     {/* Avatar */}
                     <div className="avatar-section">
-                        <div className="avatar-container" onClick={handleFileClick}>
+                
                             {avatar ? (
                                 <img src={avatar} alt="Avatar" className="avatar-img" />
                             ) : (
