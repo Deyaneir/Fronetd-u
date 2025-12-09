@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
@@ -12,15 +12,6 @@ const MUsuario = () => {
   const [avatar, setAvatar] = useState(null);
   const [activeTab, setActiveTab] = useState("cuenta");
   const [menuOpen, setMenuOpen] = useState(false);
-  const fileInputRef = useRef(null);
-
-  const avatarOptions = [
-    "https://api.dicebear.com/6.x/bottts/svg?seed=Avatar1",
-    "https://api.dicebear.com/6.x/bottts/svg?seed=Avatar2",
-    "https://api.dicebear.com/6.x/bottts/svg?seed=Avatar3",
-    "https://api.dicebear.com/6.x/bottts/svg?seed=Avatar4",
-    "https://api.dicebear.com/6.x/bottts/svg?seed=Avatar5"
-  ];
 
   const [userPhone, setUserPhone] = useState("");
   const [userAddress, setUserAddress] = useState("");
@@ -29,10 +20,7 @@ const MUsuario = () => {
   const [userUniversity, setUserUniversity] = useState("");
   const [userCareer, setUserCareer] = useState("");
 
-  const getAvatarUrl = (url) => {
-    if (!url) return null;
-    return `${url}?t=${new Date().getTime()}`;
-  };
+  const getAvatarUrl = (url) => url ? `${url}?t=${new Date().getTime()}` : null;
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -40,23 +28,21 @@ const MUsuario = () => {
         const token = localStorage.getItem('token');
         if (!token) return;
 
-        const response = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/perfil`, 
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/perfil`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
 
-        if (response.data?.nombre) setUserName(response.data.nombre);
-        if (response.data?.estado) setUserStatus(response.data.estado);
-        if (response.data?.avatar) setAvatar(response.data.avatar);
-        if (response.data?.telefono) setUserPhone(response.data.telefono);
-        if (response.data?.direccion) setUserAddress(response.data.direccion);
-        if (response.data?.cedula) setUserCedula(response.data.cedula);
-        if (response.data?.descripcion) setUserDescription(response.data.descripcion);
-        if (response.data?.universidad) setUserUniversity(response.data.universidad);
-        if (response.data?.carrera) setUserCareer(response.data.carrera);
-
-      } catch (error) {
-        console.error("Error al obtener el usuario:", error);
+        if (res.data?.nombre) setUserName(res.data.nombre);
+        if (res.data?.estado) setUserStatus(res.data.estado);
+        if (res.data?.avatar) setAvatar(res.data.avatar);
+        setUserPhone(res.data?.telefono || "");
+        setUserAddress(res.data?.direccion || "");
+        setUserCedula(res.data?.cedula || "");
+        setUserDescription(res.data?.descripcion || "");
+        setUserUniversity(res.data?.universidad || "");
+        setUserCareer(res.data?.carrera || "");
+      } catch (err) {
+        console.error("Error al obtener usuario:", err);
       }
     };
 
@@ -68,29 +54,19 @@ const MUsuario = () => {
     navigate('/login');
   };
 
-  const handleMenuToggle = () => {
-    setMenuOpen(!menuOpen);
-  };
+  const handleMenuToggle = () => setMenuOpen(!menuOpen);
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
+    const handleClickOutside = (e) => {
       const menu = document.querySelector(".side-menu");
       const hamburger = document.querySelector(".hamburger-btn");
-
-      if (menuOpen && menu && !menu.contains(event.target) && hamburger && !hamburger.contains(event.target)) {
+      if (menuOpen && menu && !menu.contains(e.target) && hamburger && !hamburger.contains(e.target)) {
         setMenuOpen(false);
       }
     };
-
-    const handleEscape = (event) => {
-      if (event.key === "Escape" && menuOpen) {
-        setMenuOpen(false);
-      }
-    };
-
+    const handleEscape = (e) => { if (e.key === "Escape" && menuOpen) setMenuOpen(false); };
     document.addEventListener("click", handleClickOutside);
     document.addEventListener("keydown", handleEscape);
-
     return () => {
       document.removeEventListener("click", handleClickOutside);
       document.removeEventListener("keydown", handleEscape);
@@ -102,9 +78,7 @@ const MUsuario = () => {
       case "cuenta":
         return (
           <div className="user-profile-section">
-            <h3 style={{ textAlign: "center", marginBottom: "15px", color: "#000" }}>
-              {userName || "Usuario"}
-            </h3>
+            <h3 style={{ textAlign: "center", marginBottom: "15px", color: "#000" }}>{userName}</h3>
 
             <div className="profile-header" style={{ justifyContent: "center" }}>
               <div className="avatar-circle-large">
@@ -114,72 +88,32 @@ const MUsuario = () => {
                   <span className="default-avatar-large">👤</span>
                 )}
               </div>
-
-              {/* Botón cambiar avatar random */}
-              <button
-                className="btn-avatar"
-                onClick={() => {
-                  const randomIndex = Math.floor(Math.random() * avatarOptions.length);
-                  setAvatar(avatarOptions[randomIndex]);
-                  toast.success("Avatar cambiado ✅");
-                }}
-              >
-                Cambiar Avatar
-              </button>
             </div>
 
             <div className="profile-info">
-              <div className="info-row">
-                <strong>Descripción:</strong>
-                <span style={{ color: userDescription ? "#333" : "#000" }}>{userDescription || "No disponible"}</span>
-              </div>
-              <div className="info-row">
-                <strong>Teléfono:</strong>
-                <span style={{ color: userPhone ? "#333" : "#000" }}>{userPhone || "No disponible"}</span>
-              </div>
-              <div className="info-row">
-                <strong>Dirección:</strong>
-                <span style={{ color: userAddress ? "#333" : "#000" }}>{userAddress || "No disponible"}</span>
-              </div>
-              <div className="info-row">
-                <strong>Cédula:</strong>
-                <span style={{ color: userCedula ? "#333" : "#000" }}>{userCedula || "No disponible"}</span>
-              </div>
-              <div className="info-row">
-                <strong>Universidad:</strong>
-                <span style={{ color: userUniversity ? "#333" : "#000" }}>{userUniversity || "No disponible"}</span>
-              </div>
-              <div className="info-row">
-                <strong>Carrera:</strong>
-                <span style={{ color: userCareer ? "#333" : "#000" }}>{userCareer || "No disponible"}</span>
-              </div>
+              <div className="info-row"><strong>Descripción:</strong> <span>{userDescription || "No disponible"}</span></div>
+              <div className="info-row"><strong>Teléfono:</strong> <span>{userPhone || "No disponible"}</span></div>
+              <div className="info-row"><strong>Dirección:</strong> <span>{userAddress || "No disponible"}</span></div>
+              <div className="info-row"><strong>Cédula:</strong> <span>{userCedula || "No disponible"}</span></div>
+              <div className="info-row"><strong>Universidad:</strong> <span>{userUniversity || "No disponible"}</span></div>
+              <div className="info-row"><strong>Carrera:</strong> <span>{userCareer || "No disponible"}</span></div>
             </div>
           </div>
         );
-
-      case "favoritos":
-        return <div><h3>Favoritos</h3><p>Información de tu cuenta...</p></div>;
-      case "chats":
-        return <div><h3>Chats</h3><p>Tus conversaciones...</p></div>;
-      case "notificaciones":
-        return <div><h3>Notificaciones</h3><p>Tus notificaciones...</p></div>;
-      default:
-        return null;
+      case "favoritos": return <div><h3>Favoritos</h3><p>Información de tu cuenta...</p></div>;
+      case "chats": return <div><h3>Chats</h3><p>Tus conversaciones...</p></div>;
+      case "notificaciones": return <div><h3>Notificaciones</h3><p>Tus notificaciones...</p></div>;
+      default: return null;
     }
   };
 
   return (
     <div className="musuario-container">
       <ToastContainer />
-
-      {/* BOTÓN DE HAMBURGUESA */}
       <button className={`hamburger-btn ${menuOpen ? "open" : ""}`} onClick={handleMenuToggle}>
-        <span></span>
-        <span></span>
-        <span></span>
+        <span></span><span></span><span></span>
       </button>
 
-      {/* MENÚ DESLIZABLE */}
       <nav className={`side-menu ${menuOpen ? "show" : ""}`}>
         <div className="menu-header">
           <h3 className="menu-title">Menú</h3>
@@ -191,19 +125,8 @@ const MUsuario = () => {
                 <span className="default-avatar">👤</span>
               )}
             </div>
-            <button
-              className="btn-avatar"
-              onClick={() => {
-                const randomIndex = Math.floor(Math.random() * avatarOptions.length);
-                setAvatar(avatarOptions[randomIndex]);
-                toast.success("Avatar cambiado ✅");
-              }}
-            >
-              Aleatorio
-            </button>
           </div>
         </div>
-
         <div className="menu-buttons">
           <button onClick={() => navigate("/Dashboard")}>Inicio</button>
           <button onClick={() => navigate("/MUsuario")}>Mi cuenta</button>
@@ -217,19 +140,11 @@ const MUsuario = () => {
         <div className="left-panel-content">
           <div style={{ textAlign: "center", marginBottom: "20px" }}>
             <div className="avatar-container">
-              {avatar ? (
-                <img src={getAvatarUrl(avatar)} alt="Avatar" className="avatar-img" />
-              ) : (
-                <span className="default-avatar">👤</span>
-              )}
+              {avatar ? <img src={getAvatarUrl(avatar)} alt="Avatar" className="avatar-img" /> : <span className="default-avatar">👤</span>}
             </div>
-
             <h3 style={{ color: "white", marginTop: "10px" }}>{userName}</h3>
             <p style={{ color: "#8bc34a", marginTop: "-5px" }}>{userStatus}</p>
-
-            <hr style={{ marginTop: "10px", marginBottom: "10px", borderTop: "1px solid rgba(255, 255, 255, 0.2)" }} />
           </div>
-
           <div className="menu-buttons">
             <button className={activeTab === "cuenta" ? "active" : ""} onClick={() => setActiveTab("cuenta")}>Cuenta</button>
             <button className={activeTab === "favoritos" ? "active" : ""} onClick={() => setActiveTab("favoritos")}>Favoritos</button>
@@ -239,9 +154,7 @@ const MUsuario = () => {
         </div>
       </div>
 
-      <div className="right-panel">
-        {renderRightContent()}
-      </div>
+      <div className="right-panel">{renderRightContent()}</div>
     </div>
   );
 };
