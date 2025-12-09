@@ -8,6 +8,8 @@
   color: black;
   border-radius: 20px;
   box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+  position: relative;
+  z-index: 1;
 }
 
 /* Título */
@@ -130,7 +132,6 @@
   margin-top: 25px;
 }
 
-/* Cancelar */
 .cancel-btn {
   flex: 1;
   background-color: #bbb;
@@ -147,7 +148,6 @@
   background-color: #999;
 }
 
-/* Guardar */
 .save-btn {
   flex: 1;
   background-color: black;
@@ -170,18 +170,44 @@
   display: none;
 }
 
-/* Mini panel de avatars dentro del contenedor */
-.avatar-modal-inline {
+/* -------------------- */
+/* POP-OVER DE AVATARES */
+/* -------------------- */
+
+/* Overlay */
+.avatar-popover-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Contenedor popover */
+.avatar-popover-content {
   background: #fff;
   border-radius: 15px;
-  padding: 15px;
-  margin: 15px 0;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
-  border: 1px solid #ddd;
+  padding: 20px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  position: relative;
   text-align: center;
   animation: fadeIn 0.2s ease-in-out;
 }
 
+/* Título */
+.popover-title {
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+/* Grid de opciones */
 .avatar-options-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -217,6 +243,7 @@
   right: -5px;
 }
 
+/* Botones del popover */
 .popover-btn-row {
   display: flex;
   justify-content: space-between;
@@ -253,6 +280,7 @@
   background-color: #bbb;
 }
 
+/* Animación */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-5px); }
   to { opacity: 1; transform: translateY(0); }
