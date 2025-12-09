@@ -8,7 +8,8 @@ import MenuHamburguesa from "../../Global_Styles/Menu.jsx";
 
 const MUsuario = () => {
   const [userName, setUserName] = useState("Usuario");
-  const [userStatus, setUserStatus] = useState("Disponible");
+  // 🔑 CAMBIO 1: Cambiamos el nombre de la variable para que sea explícita (ROL)
+  const [userRole, setUserRole] = useState("disponible"); 
   const [avatar, setAvatar] = useState(null); // URL del avatar guardada en la DB
   const [activeTab, setActiveTab] = useState("cuenta");
   const fileInputRef = useRef(null);
@@ -26,16 +27,21 @@ const MUsuario = () => {
     return url; 
   };
 
-  // 🔑 NUEVA FUNCIÓN CLAVE: Asegura que el avatar de DiceBear tenga una seed
+  // 🔑 FUNCIÓN CLAVE: Asegura que el avatar de DiceBear tenga una seed
   const ensureFixedSeed = (url, name) => {
-    // Verifica si es una URL de DiceBear y le falta el parámetro ?seed=
     if (url && url.includes("dicebear") && !url.includes("?seed=")) {
       const defaultStyle = "micah"; 
-      // Crea una seed basada en el nombre para que el avatar sea fijo para el usuario
+      // Crea una seed basada en el nombre para que el avatar sea fijo
       const seed = name?.trim().replace(/\s+/g, '_') || "default-user-vibe"; 
       return `https://api.dicebear.com/7.x/${defaultStyle}/svg?seed=${seed}`;
     }
-    return url; // Devuelve la URL original si ya es fija (Cloudinary o ya tiene seed)
+    return url; 
+  };
+
+  // 🔑 FUNCIÓN DE FORMATO: Capitaliza la primera letra del rol
+  const formatRole = (role) => {
+    if (!role) return "";
+    return role.charAt(0).toUpperCase() + role.slice(1).toLowerCase();
   };
 
 
@@ -52,9 +58,11 @@ const MUsuario = () => {
         
         const userData = response.data;
 
-        // Actualizar datos de usuario
+        // 🔑 CARGA Y CORRECCIÓN DEL ROL
+        if (userData?.rol) setUserRole(userData.rol); 
+        
         if (userData?.nombre) setUserName(userData.nombre);
-        if (userData?.estado) setUserStatus(userData.estado);
+        // Quitamos userStatus que no existe en el perfil, y usamos userRole en su lugar.
         if (userData?.telefono) setUserPhone(userData.telefono);
         if (userData?.direccion) setUserAddress(userData.direccion);
         if (userData?.cedula) setUserCedula(userData.cedula);
@@ -62,11 +70,11 @@ const MUsuario = () => {
         if (userData?.universidad) setUserUniversity(userData.universidad);
         if (userData?.carrera) setUserCareer(userData.carrera);
 
-        // 🔑 APLICAR LA CORRECCIÓN DE AVATAR AL CARGAR
+        // APLICAR LA CORRECCIÓN DE AVATAR AL CARGAR
         let loadedAvatar = userData?.avatar || null;
         const fixedAvatar = ensureFixedSeed(loadedAvatar, userData?.nombre);
 
-        setAvatar(fixedAvatar); // Guarda la URL fija en el estado
+        setAvatar(fixedAvatar); 
 
       } catch (error) {
         console.error("Error al obtener el usuario:", error);
@@ -77,10 +85,9 @@ const MUsuario = () => {
     };
 
     fetchUserInfo();
-  }, []); // Se ejecuta una sola vez al montar el componente
+  }, []); 
 
   const renderRightContent = () => {
-    // Usa el avatar ya cargado y corregido en el estado
     const currentAvatarUrl = getAvatarUrl(avatar);
     
     switch (activeTab) {
@@ -166,7 +173,6 @@ const MUsuario = () => {
                 backgroundColor: "#ddd",
               }}
             >
-              {/* Usa la URL ya corregida y guardada en el estado 'avatar' */}
               {avatar ? (
                 <img
                   src={getAvatarUrl(avatar)} 
@@ -178,7 +184,8 @@ const MUsuario = () => {
             </div>
 
             <h3 style={{ color: "white", marginTop: "10px" }}>{userName}</h3>
-            <p style={{ color: "#8bc34a", marginTop: "-5px" }}>{userStatus}</p>
+            {/* 🔑 CAMBIO 2: Mostrar el rol con la primera letra mayúscula */}
+            <p style={{ color: "#8bc34a", marginTop: "-5px" }}>{formatRole(userRole)}</p>
 
             <hr style={{ opacity: 0.3 }} />
           </div>
