@@ -117,26 +117,26 @@ const MUsuario = () => {
           <h3 className="menu-title">Menú</h3>
 
           {/* ✅ DIVS CORRECTAMENTE CERRADOS */}
-          <div className="avatar-section">
-            {avatar ? (
-              <img src={getAvatarUrl(avatar)} alt="Avatar" className="avatar-img" />
-            ) : (
-              <span className="default-avatar">👤</span>
-            )}
+         <div className="avatar-section">
+  {avatar ? (
+    <img src={getAvatarUrl(avatar)} alt="Avatar" className="avatar-img" />
+  ) : (
+    <span className="default-avatar">👤</span>
+  )}
 
-            <div className="avatar-overlay" onClick={handleFileClick}>
-              <i className="fa fa-camera"></i>
-            </div>
+  <div className="avatar-overlay" onClick={handleFileClick}>
+    <i className="fa fa-camera"></i>
+  </div>
 
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleFileChange}
-              className="input-file-hidden"
-              accept="image/*"
-            />
-          </div>
-        </div>
+  <input
+    type="file"
+    ref={fileInputRef}
+    onChange={handleFileChange}
+    className="input-file-hidden"
+    accept="image/*"
+  />
+</div>
+
 
         <div className="menu-buttons">
           <button onClick={() => navigate("/Dashboard")}>Inicio</button>
