@@ -25,10 +25,10 @@ const ActualizarInfo = () => {
   const [userCareer, setUserCareer] = useState("");
 
   // ---------- AVATARES DINÁMICOS MULTIAVATAR ----------
-  const AVATAR_COUNT = 50; // Cambia este número a la cantidad de avatares que quieras
+  const AVATAR_COUNT = 50; 
   const generateAvatars = () => {
     return Array.from({ length: AVATAR_COUNT }, (_, i) => {
-      const seed = `usuario_${i + 1}`; // Seed único por avatar
+      const seed = `usuario_${i + 1}`;
       return `https://api.multiavatar.com/${seed}.png`;
     });
   };
@@ -47,7 +47,7 @@ const ActualizarInfo = () => {
         );
 
         setUserName(res.data.nombre || "");
-        setAvatar(res.data.avatar || null); // Avatar fijo del perfil
+        setAvatar(res.data.avatar || null); 
         setUserPhone(res.data.telefono || "");
         setUserAddress(res.data.direccion || "");
         setUserCedula(res.data.cedula || "");
@@ -76,32 +76,33 @@ const ActualizarInfo = () => {
     reader.readAsDataURL(file);
   };
 
-  // ---------- SUBIR AVATAR CORTADO A CLOUDINARY ----------
+  // ---------- SUBIR AVATAR CORTADO AL BACKEND ----------
   const handleCroppedAvatar = async (croppedImageBlob) => {
     setCropperModalOpen(false);
     setImageToCrop(null);
 
     if (!croppedImageBlob) return;
 
-    const safeUserName = userName?.trim()
-      ? userName.replace(/\s+/g, "_")
-      : "usuario_sin_nombre";
-
     const formData = new FormData();
-    formData.append("file", croppedImageBlob);
-    formData.append("upload_preset", "VIBE-U");
-    formData.append("folder", `usuarios/${safeUserName}`);
-    formData.append("public_id", "avatar");
+    formData.append("avatar", croppedImageBlob); // coincidir con multer single('avatar')
 
     try {
-      const res = await axios.post(
-        "https://api.cloudinary.com/v1_1/dm5yhmz9a/image/upload",
-        formData
+      const token = localStorage.getItem("token");
+      const res = await axios.put(
+        `${import.meta.env.VITE_BACKEND_URL}/avatar`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
       );
-      setAvatar(res.data.secure_url);
+
+      setAvatar(res.data.avatar); // URL que devuelve el backend
       toast.success("Avatar actualizado ✅");
     } catch (err) {
-      console.error("Cloudinary:", err.response?.data || err);
+      console.error("Error al subir avatar:", err.response?.data || err);
       toast.error("Error al subir avatar");
     }
   };
